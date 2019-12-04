@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "m_emp_type")
+@Table(name = "m_access_role_name")
 public class EmpType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
