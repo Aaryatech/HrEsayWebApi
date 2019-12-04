@@ -11,11 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.common.DateConvertor;
+import com.ats.hrmgt.model.CalenderYear;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveSummary;
 import com.ats.hrmgt.model.LeaveType;
+import com.ats.hrmgt.model.Location;
+import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.LeaveSummaryRepository;
 import com.ats.hrmgt.repository.LeaveTypeRepository;
+import com.ats.hrmgt.repository.LocationRepository; 
  
  
 @RestController
@@ -26,6 +31,12 @@ public class MasterApiController {
 	
 	@Autowired
 	LeaveSummaryRepository leaveSummaryRepository;
+	
+	@Autowired
+	LocationRepository locationRepository;
+	
+	@Autowired
+	CalculateYearRepository calculateYearRepository;
 	
 	@RequestMapping(value = { "/saveLeaveType" }, method = RequestMethod.POST)
 	public @ResponseBody LeaveType saveLeaveType(@RequestBody LeaveType leaveType) {
@@ -182,6 +193,128 @@ public class MasterApiController {
 		}
 
 		return list;
+
+	}
+	
+	@RequestMapping(value = { "/saveLocation" }, method = RequestMethod.POST)
+	public @ResponseBody Location saveLocation(@RequestBody Location location) {
+
+		Location save = new Location();
+		try {
+
+			save = locationRepository.saveAndFlush(location);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+
+	@RequestMapping(value = { "/getLocationList" }, method = RequestMethod.POST)
+	public @ResponseBody List<Location> getLocationList(@RequestParam("companyId") int companyId) {
+
+		List<Location> list = new ArrayList<Location>();
+		try {
+
+			if (companyId != 0) {
+				list = locationRepository.findByDelStatusAndCompIdOrderByLocIdDesc(1, companyId);
+			} else {
+				list = locationRepository.findByDelStatus(1);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
+	@RequestMapping(value = { "/deleteLocation" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteLocation(@RequestParam("locId") int locId) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = locationRepository.deleteLocation(locId);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
+		}
+
+		return info;
+
+	}
+
+	@RequestMapping(value = { "/getLocationById" }, method = RequestMethod.POST)
+	public @ResponseBody Location getLocationById(@RequestParam("locId") int locId) {
+
+		Location location = new Location();
+		try {
+
+			location = locationRepository.findByLocIdAndDelStatus(locId, 1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return location;
+
+	}
+	
+	@RequestMapping(value = { "/getCalculateYearListIsCurrent" }, method = RequestMethod.GET)
+	public @ResponseBody CalenderYear getCalculateYearListIsCurrent() {
+
+		CalenderYear calendearYear = new CalenderYear();
+		try {
+
+			calendearYear = calculateYearRepository.findByIsCurrent(1);
+
+			System.out.println(calendearYear);
+			calendearYear.setCalYrFromDate(DateConvertor.convertToDMY(calendearYear.getCalYrFromDate()));
+			calendearYear.setCalYrToDate(DateConvertor.convertToDMY(calendearYear.getCalYrToDate()));
+			System.out.println(calendearYear);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return calendearYear;
+
+	}
+
+	@RequestMapping(value = { "/getcurrentyear" }, method = RequestMethod.GET)
+	public @ResponseBody CalenderYear getcurrentyear() {
+
+		CalenderYear calendearYear = new CalenderYear();
+		try {
+
+			calendearYear = calculateYearRepository.findByIsCurrent(1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return calendearYear;
 
 	}
 
