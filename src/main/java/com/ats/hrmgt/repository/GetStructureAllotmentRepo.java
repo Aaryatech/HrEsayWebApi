@@ -11,19 +11,28 @@ import com.ats.hrmgt.model.GetStructureAllotment;
 
 public interface GetStructureAllotmentRepo extends JpaRepository<GetStructureAllotment, Integer> {
 
-	@Query(value = "   SELECT\n" + "        e.emp_id,\n" + "        e.emp_code,\n" + "        e.emp_fname,\n"
-			+ "        e.emp_mname,\n" + "        e.emp_sname    ,\n" + "        d.emp_dept_name,\n"
-			+ "        c.emp_cat_name ,\n" + "        l.lvs_name \n" + "    FROM\n" + "        emp_info e     \n"
-			+ "    LEFT JOIN\n" + "        leave_structure_allotment lsa \n" + "            ON e.emp_id=lsa.emp_id \n"
-			+ "            AND lsa.cal_yr_id=:calYrId  \n" + "    LEFT JOIN\n" + "        m_emp_department d \n"
-			+ "            ON e.emp_dept_id=d.emp_dept_id    \n" + "    LEFT JOIN\n" + "        m_emp_category c    \n"
-			+ "            ON e.emp_cat_id =c.emp_cat_id \n" + "    LEFT JOIN\n" + "        leave_structure_header l \n"
-			+ "            ON    lsa.lvs_id=l.lvs_id \n" + "            AND l.del_status=1  \n" + "    WHERE\n"
-			+ "        e.del_status=1 \n" + "        AND e.is_active=1  \n" + "        AND e.company_id=:companyId\n"
-			+ "        AND e.loc_id IN(\n" + "            :locIdList\n" + "        )", nativeQuery = true)
+	@Query(value = "SELECT\n" + 
+			"        e.emp_id,\n" + 
+			"        e.emp_code,\n" + 
+			"        e.first_name as emp_fname,\n" + 
+			"        e.middle_name as emp_mname,\n" + 
+			"        e.surname as emp_sname    ,\n" + 
+			"        \"\" as emp_dept_name,\n" + 
+			"        \"\" as emp_cat_name ,\n" + 
+			"        l.lvs_name      \n" + 
+			"    FROM\n" + 
+			"        m_employees e          \n" + 
+			"    LEFT JOIN\n" + 
+			"        leave_structure_allotment lsa              \n" + 
+			"            ON e.emp_id=lsa.emp_id              \n" + 
+			"            AND lsa.cal_yr_id=2   \n" + 
+			"    LEFT JOIN\n" + 
+			"        leave_structure_header l              \n" + 
+			"            ON    lsa.lvs_id=l.lvs_id              \n" + 
+			"            AND l.del_status=1       \n" + 
+			"     ", nativeQuery = true)
 
-	List<GetStructureAllotment> getStructureAllotment(@Param("companyId") int companyId,
-			@Param("locIdList") List<Integer> locIdList, @Param("calYrId") int calYrId);
+	List<GetStructureAllotment> getStructureAllotment(@Param("companyId") int companyId);
 	
 	
 
