@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.model.CalenderYear;
+import com.ats.hrmgt.model.EmployeeMaster; 
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveSummary;
 import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
 import com.ats.hrmgt.repository.CalculateYearRepository;
+import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveSummaryRepository;
 import com.ats.hrmgt.repository.LeaveTypeRepository;
 import com.ats.hrmgt.repository.LocationRepository; 
@@ -37,6 +39,9 @@ public class MasterApiController {
 	
 	@Autowired
 	CalculateYearRepository calculateYearRepository;
+	
+	@Autowired
+	EmployeeMasterRepository employeeMasterRepository;
 	
 	@RequestMapping(value = { "/saveLeaveType" }, method = RequestMethod.POST)
 	public @ResponseBody LeaveType saveLeaveType(@RequestBody LeaveType leaveType) {
@@ -315,6 +320,58 @@ public class MasterApiController {
 		}
 
 		return calendearYear;
+
+	}
+	
+	
+	@RequestMapping(value = { "/getEmplistForAssignAuthority" }, method = RequestMethod.GET)
+	public @ResponseBody List<EmployeeMaster> getEmplistForAssignAuthority() {
+
+		List<EmployeeMaster> list = new ArrayList<>();
+		try {
+
+			list = employeeMasterRepository.getEmplistForAssignAuthority();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@RequestMapping(value = { "/getEmpInfoListForLeaveAuth" }, method = RequestMethod.GET)
+	public @ResponseBody List<EmployeeMaster> getEmpInfoListForLeaveAuth() {
+
+		List<EmployeeMaster> list = new ArrayList<EmployeeMaster>();
+		try {
+
+			list = employeeMasterRepository.getEmpListByCompanyIdForAuth();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@RequestMapping(value = { "/getEmpInfoListByEmpIdList" }, method = RequestMethod.POST)
+	public @ResponseBody List<EmployeeMaster> getEmpInfoListByEmpIdList(@RequestParam("empIdList") List<Integer> empIdList) {
+
+		List<EmployeeMaster> list = new ArrayList<EmployeeMaster>();
+		try {
+
+			list = employeeMasterRepository.getEmpListByCompanyIdAndEmpIdList(empIdList);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
 
 	}
 

@@ -63,10 +63,8 @@ public class GetLeaveAuthority {
 	private String empCode;
 	private String iniEmpCode;
 	private String finiEmpCode;
-	
-	
-	@Transient
-	List<String> rePortingName;
+	 
+	String rePortingName;
 
 	public int getLaPkey() {
 		return laPkey;
@@ -292,11 +290,11 @@ public class GetLeaveAuthority {
 		this.finiEmpCode = finiEmpCode;
 	}
 
-	public List<String> getRePortingName() {
+	public String getRePortingName() {
 		return rePortingName;
 	}
 
-	public void setRePortingName(List<String> rePortingName) {
+	public void setRePortingName(String rePortingName) {
 		this.rePortingName = rePortingName;
 	}
 
@@ -313,5 +311,6 @@ public class GetLeaveAuthority {
 				+ empCode + ", iniEmpCode=" + iniEmpCode + ", finiEmpCode=" + finiEmpCode + ", rePortingName="
 				+ rePortingName + "]";
 	}
+ 
 
 }
