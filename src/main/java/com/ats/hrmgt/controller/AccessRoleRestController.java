@@ -1,5 +1,7 @@
 package com.ats.hrmgt.controller;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,38 +17,69 @@ import com.ats.hrmgt.model.AccessRightModule;
 import com.ats.hrmgt.model.AccessRightSubModule;
 import com.ats.hrmgt.model.EmpType;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.model.LoginResponse;
 import com.ats.hrmgt.repository.AccessRightModuleRepository;
 import com.ats.hrmgt.repository.AccessRightSubModuleRepository;
 import com.ats.hrmgt.repository.EmpTypeRepository;
- 
- 
+import com.ats.hrmgt.repository.LoginResponseRepository;
 
 @RestController
 public class AccessRoleRestController {
- 
-	 
-	
+
 	@Autowired
 	AccessRightModuleRepository accessRightModuleRepository;
-	
+
 	@Autowired
 	AccessRightSubModuleRepository accessRightSubModuleRepository;
-	
+
 	@Autowired
 	EmpTypeRepository empTypeRepository;
-	
+
+	@Autowired
+	LoginResponseRepository loginResponseRepository;
+
+	@RequestMapping(value = { "/loginProcess" }, method = RequestMethod.POST)
+	public @ResponseBody LoginResponse loginProcess(@RequestParam("username") String username,
+			@RequestParam("password") String password) {
+
+		LoginResponse loginResponse = new LoginResponse();
+		try {
+
+			 
+	        /*MessageDigest md = MessageDigest.getInstance("MD5");
+	        byte[] messageDigest = md.digest(password.getBytes());
+	        BigInteger number = new BigInteger(1, messageDigest);
+	        String hashtext = number.toString(16);*/
+	        
+			loginResponse = loginResponseRepository.loginProcess(username, password);
+
+			if (loginResponse == null) {
+				loginResponse = new LoginResponse();
+				loginResponse.setIsError(true);
+			} else {
+				loginResponse.setIsError(false);
+			}
+
+		} catch (Exception e) {
+			loginResponse = new LoginResponse();
+			loginResponse.setIsError(true);
+			e.printStackTrace();
+		}
+
+		return loginResponse;
+
+	}
+
 	@RequestMapping(value = { "/getModuleAndSubModuleList" }, method = RequestMethod.GET)
 	public @ResponseBody List<AccessRightModule> getModuleAndSubModuleList() {
 
-		 
 		List<AccessRightModule> accessRightModuleList = new ArrayList<>();
 		try {
-			 
-			 accessRightModuleList = accessRightModuleRepository.getModule();
+
+			accessRightModuleList = accessRightModuleRepository.getModule();
 
 			for (int i = 0; i < accessRightModuleList.size(); i++) {
 
-				
 				List<AccessRightSubModule> accessRightSubModuleList = accessRightSubModuleRepository
 						.getSubModule(accessRightModuleList.get(i).getModuleId());
 				accessRightModuleList.get(i).setAccessRightSubModuleList(accessRightSubModuleList);
@@ -54,14 +87,14 @@ public class AccessRoleRestController {
 			}
 			System.out.println(accessRightModuleList);
 		} catch (Exception e) {
- 
+
 			e.printStackTrace();
 		}
 
 		return accessRightModuleList;
 
 	}
-	
+
 	@RequestMapping(value = { "/saveEmpType" }, method = RequestMethod.POST)
 	public @ResponseBody EmpType saveEmpType(@RequestBody EmpType empType) {
 
@@ -137,7 +170,7 @@ public class AccessRoleRestController {
 		return info;
 
 	}
-	
+
 	@RequestMapping(value = { "/getEmpTypeById" }, method = RequestMethod.POST)
 	public @ResponseBody EmpType getEmpTypeById(@RequestParam("empTypeId") int empTypeId) {
 
@@ -154,5 +187,5 @@ public class AccessRoleRestController {
 		return location;
 
 	}
-	
+
 }
