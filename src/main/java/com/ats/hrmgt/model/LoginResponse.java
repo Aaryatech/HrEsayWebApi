@@ -34,6 +34,9 @@ public class LoginResponse {
 	@Column(name="email_id")
 	private String emailId; 
 	
+	@Column(name="user_id")
+	private int userId; 
+	
 	@Transient
 	private boolean isError;
 
@@ -101,11 +104,23 @@ public class LoginResponse {
 		this.isError = isError;
 	}
 
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public void setError(boolean isError) {
+		this.isError = isError;
+	}
+
 	@Override
 	public String toString() {
 		return "LoginResponse [empId=" + empId + ", empCode=" + empCode + ", firstName=" + firstName + ", middleName="
 				+ middleName + ", surname=" + surname + ", motherName=" + motherName + ", emailId=" + emailId
-				+ ", isError=" + isError + "]";
+				+ ", userId=" + userId + ", isError=" + isError + "]";
 	}
 	
 	
