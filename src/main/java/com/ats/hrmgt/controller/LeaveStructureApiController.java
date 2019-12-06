@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
+ 
 import com.ats.hrmgt.model.CalenderYear;
+import com.ats.hrmgt.model.EmployeeLeaveDetail;
+import com.ats.hrmgt.model.GetLeaveApplyAuthwise;
 import com.ats.hrmgt.model.GetLeaveAuthority;
+import com.ats.hrmgt.model.GetLeaveStatus;
 import com.ats.hrmgt.model.GetStructureAllotment;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveBalanceCal;
@@ -24,7 +27,10 @@ import com.ats.hrmgt.model.LeaveStructureDetails;
 import com.ats.hrmgt.model.LeaveStructureHeader;
 import com.ats.hrmgt.model.LeavesAllotment;
 import com.ats.hrmgt.repository.CalculateYearRepository;
+import com.ats.hrmgt.repository.EmployeeLeaveDetailRepo;
+import com.ats.hrmgt.repository.GetLeaveApplyAuthwiseRepo;
 import com.ats.hrmgt.repository.GetLeaveAuthorityRepo;
+import com.ats.hrmgt.repository.GetLeaveStatusRepo;
 import com.ats.hrmgt.repository.GetStructureAllotmentRepo;
 import com.ats.hrmgt.repository.LeaveAllotmentRepository;
 import com.ats.hrmgt.repository.LeaveBalanceCalRepo;
@@ -55,7 +61,16 @@ public class LeaveStructureApiController {
 	
 	@Autowired
 	LeaveAllotmentRepository leaveAllotmentRepository;
+	
+	@Autowired
+	EmployeeLeaveDetailRepo employeeLeaveDetailRepo;
+	
+	@Autowired
+	GetLeaveApplyAuthwiseRepo getLeaveApplyAuthwiseRepo;
 
+	@Autowired
+	GetLeaveStatusRepo getLeaveStatusRepo;
+	
 	// ----------------------Leave balance Cal---------------------
 
 	@RequestMapping(value = { "/saveLeaveBalanceCal" }, method = RequestMethod.POST)
@@ -407,6 +422,58 @@ public class LeaveStructureApiController {
 		}
 
 		return info;
+
+	}
+	
+	
+	@RequestMapping(value = { "getLeaveListByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody List<EmployeeLeaveDetail> getLeaveListByEmpId(@RequestParam("empId") int empId) {
+
+		List<EmployeeLeaveDetail> employeeInfo = new ArrayList<EmployeeLeaveDetail>();
+
+		try {
+
+			employeeInfo = employeeLeaveDetailRepo.getLeaveListByEmp(empId);
+
+			System.out.println("info" + employeeInfo);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return employeeInfo;
+
+	}
+	
+	@RequestMapping(value = { "/getLeaveApplyDetailsByLeaveId" }, method = RequestMethod.POST)
+	public @ResponseBody GetLeaveApplyAuthwise getLeaveApplyDetailsByLeaveId(@RequestParam("leaveId") int leaveId) {
+		GetLeaveApplyAuthwise list = new GetLeaveApplyAuthwise();
+		  
+		try {
+
+			list = getLeaveApplyAuthwiseRepo.getLeaveApplyDetails(leaveId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@RequestMapping(value = { "/getEmpInfoListByTrailEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetLeaveStatus> getEmpInfoListByTrailEmpId(@RequestParam("leaveId") int leaveId) {
+
+		List<GetLeaveStatus> leaveStatus = new ArrayList<GetLeaveStatus>();
+		try {
+			leaveStatus = getLeaveStatusRepo.getEmpInfoByLeaveId(leaveId);
+			} catch (Exception e) { 
+
+			e.printStackTrace();
+		}
+
+		return leaveStatus;
 
 	}
 

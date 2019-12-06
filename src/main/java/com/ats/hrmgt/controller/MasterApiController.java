@@ -374,5 +374,22 @@ public class MasterApiController {
 		return list;
 
 	}
+	
+	@RequestMapping(value = { "/getAuthorityWiseEmpListByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody List<EmployeeMaster> getAuthorityWiseEmpListByEmpId(@RequestParam("empId") int empId) {
+
+		List<EmployeeMaster> list = new ArrayList<EmployeeMaster>();
+		try {
+
+			list = employeeMasterRepository.getAuthorityWiseEmpListByEmpId(empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
 
 }

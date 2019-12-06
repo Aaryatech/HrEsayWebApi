@@ -32,4 +32,7 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	@Query(value = "SELECT e.* from m_employees e  where e.emp_id IN(:empIdList)", nativeQuery = true)
 	List<EmployeeMaster> getEmpListByCompanyIdAndEmpIdList(@Param("empIdList") List<Integer> empIdList);
 
+	@Query(value = "SELECT e.* from m_employees e, leave_authority au where au.emp_id=e.emp_id and (au.ini_auth_emp_id=:empId or au.fin_auth_emp_id=:empId or e.emp_id=:empId)", nativeQuery = true)
+	List<EmployeeMaster> getAuthorityWiseEmpListByEmpId(@Param("empId")int empId);
+
 }
