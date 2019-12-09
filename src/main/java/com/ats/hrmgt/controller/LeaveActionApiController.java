@@ -346,4 +346,31 @@ public class LeaveActionApiController {
 		return list;
 
 	}
+	
+	@RequestMapping(value = { "/checkDateForRepetedLeaveValidation" }, method = RequestMethod.POST)
+	public @ResponseBody Info checkDateForRepetedLeaveValidation(@RequestParam("fromDate") String fromDate,@RequestParam("toDate") String toDate,
+			@RequestParam("empId") int empId) {
+
+		 Info info = new Info();
+		 
+		try {
+
+			List<LeaveApply> list = leaveApplyRepository.checkDateForRepetedLeaveValidation(fromDate,toDate,empId);
+			 
+
+			if(list.size()>0) {
+				info.setError(true);
+				info.setMsg("Leave Alrdy Apply");
+			}else {
+				info.setError(false);
+				info.setMsg("you can apply");
+			}
+		} catch (Exception e) {
+			 
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
 }

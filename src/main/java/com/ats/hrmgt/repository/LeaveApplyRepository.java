@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ats.hrmgt.model.LeaveApply;
  
@@ -35,6 +36,10 @@ public interface LeaveApplyRepository extends JpaRepository<LeaveApply, Integer>
 	@Modifying
 	@Query("update LeaveApply set ex_int1=:status  WHERE leave_id=:leaveId")
 	int updateLeaveStatus(int leaveId,int status);
+
+	@Query(value="SELECT * FROM leave_apply WHERE (:fromDate between leave_fromdt and leave_todt) or (:toDate between leave_fromdt and leave_todt) or "
+			+ "(leave_fromdt between :fromDate and :toDate)or (leave_todt between :fromDate and :toDate) and ex_int1 in (1,2,3) and emp_id=:empId",nativeQuery=true)
+	List<LeaveApply> checkDateForRepetedLeaveValidation(@Param("fromDate") String fromDate,@Param("toDate") String toDate,@Param("empId") int empId);
 
 	
 
