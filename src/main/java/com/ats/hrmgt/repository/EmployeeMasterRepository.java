@@ -35,4 +35,27 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	@Query(value = "SELECT e.* from m_employees e, leave_authority au where au.emp_id=e.emp_id and (au.ini_auth_emp_id=:empId or au.fin_auth_emp_id=:empId or e.emp_id=:empId)", nativeQuery = true)
 	List<EmployeeMaster> getAuthorityWiseEmpListByEmpId(@Param("empId")int empId);
 
+	@Query(value = "select\n" + 
+			"        * \n" + 
+			"    from\n" + 
+			"        m_employees \n" + 
+			"    where\n" + 
+			"        emp_id not in (\n" + 
+			"            select\n" + 
+			"                emp_id \n" + 
+			"            from\n" + 
+			"                leave_balance_cal \n" + 
+			"            where\n" + 
+			"                cal_yr_id=(\n" + 
+			"                    select\n" + 
+			"                        cal_yr_id \n" + 
+			"                    from\n" + 
+			"                        dm_cal_year \n" + 
+			"                    where\n" + 
+			"                        is_current=1\n" + 
+			"                )\n" + 
+			"            ) \n" + 
+			"            ", nativeQuery = true)
+	List<EmployeeMaster> getemplistwhichisnotyearend();
+
 }

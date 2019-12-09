@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
- 
+
+import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.common.Firebase; 
-import com.ats.hrmgt.model.AuthorityInformation; 
+import com.ats.hrmgt.model.AuthorityInformation;
+import com.ats.hrmgt.model.CalenderYear;
+import com.ats.hrmgt.model.EmpLeaveHistoryRep;
+import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.GetAuthorityIds;
 import com.ats.hrmgt.model.GetLeaveApplyAuthwise;
 import com.ats.hrmgt.model.Info;
@@ -26,6 +30,9 @@ import com.ats.hrmgt.model.LeaveHistory;
 import com.ats.hrmgt.model.LeaveTrail;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.repository.AuthorityInformationRepository;
+import com.ats.hrmgt.repository.CalculateYearRepository;
+import com.ats.hrmgt.repository.EmpLeaveHistoryRepRepo;
+import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetAuthorityIdsRepo;
 import com.ats.hrmgt.repository.GetLeaveApplyAuthwiseRepo;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
@@ -52,6 +59,12 @@ public class LeaveActionApiController {
 	
 	@Autowired
 	GetLeaveApplyAuthwiseRepo getLeaveApplyAuthwiseRepo;
+	
+	@Autowired
+	CalculateYearRepository calculateYearRepository;
+	
+	@Autowired
+	EmployeeMasterRepository employeeMasterRepository;
 
 	@RequestMapping(value = { "/updateLeaveStatus" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateLeaveStatus(@RequestParam("leaveId") int leaveId,
@@ -251,5 +264,86 @@ public class LeaveActionApiController {
 		return list;
 
 	}
+	
+	@RequestMapping(value = { "/getCalculateYearList" }, method = RequestMethod.GET)
+	public @ResponseBody List<CalenderYear> getCalculateYearList() {
 
+		List<CalenderYear> list = new ArrayList<CalenderYear>();
+		try {
+
+			list = calculateYearRepository.findAll();
+			for (int i = 0; i < list.size(); i++) {
+				list.get(i).setCalYrFromDate(DateConvertor.convertToDMY(list.get(i).getCalYrFromDate()));
+				list.get(i).setCalYrToDate(DateConvertor.convertToDMY(list.get(i).getCalYrToDate()));
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@Autowired
+	EmpLeaveHistoryRepRepo empLeaveHistoryRepRepo;
+
+	@RequestMapping(value = { "/getLeaveHistoryRep" }, method = RequestMethod.POST)
+	public @ResponseBody List<EmpLeaveHistoryRep> getLeaveHistoryRep(@RequestParam("empId") int empId,
+			@RequestParam("calYrId") int calYrId) {
+		List<EmpLeaveHistoryRep> list = new ArrayList<EmpLeaveHistoryRep>();
+
+		try {
+			if (empId == -1) {
+				list = empLeaveHistoryRepRepo.getEmpLeaveHistoryRepAll(calYrId);
+			} else {
+				list = empLeaveHistoryRepRepo.getEmpLeaveHistoryRep(empId, calYrId);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
+	@RequestMapping(value = { "getemplistwhichisnotyearend" }, method = RequestMethod.GET)
+	public @ResponseBody List<EmployeeMaster> getemplistwhichisnotyearend() {
+
+		List<EmployeeMaster> employeeInfo = new ArrayList<EmployeeMaster>();
+
+		try {
+
+			employeeInfo = employeeMasterRepository.getemplistwhichisnotyearend();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return employeeInfo;
+
+	}
+	
+	@RequestMapping(value = { "/getPreviousleaveHistory" }, method = RequestMethod.POST)
+	public @ResponseBody List<LeaveHistory> getPreviousleaveHistory(@RequestParam("empId") int empId) {
+
+		List<LeaveHistory> list = new ArrayList<LeaveHistory>();
+		try {
+
+			list = leaveHistoryRepo.getPreviousleaveHistory(empId);
+
+			// System.err.println("LeaveHistory" + list.toString());
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
 }

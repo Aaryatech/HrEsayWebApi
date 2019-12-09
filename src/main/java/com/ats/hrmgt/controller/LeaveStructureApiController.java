@@ -476,5 +476,32 @@ public class LeaveStructureApiController {
 		return leaveStatus;
 
 	}
+	
+	@RequestMapping(value = { "/saveNewLeaveAllotment" }, method = RequestMethod.POST)
+	public @ResponseBody LeavesAllotment saveNewLeaveAllotmentWith(@RequestBody LeavesAllotment leavesAllotment) {
+
+		LeavesAllotment save = new LeavesAllotment();
+
+		try {
+
+			 
+			save = leaveAllotmentRepository.saveAndFlush(leavesAllotment);
+			if (save != null) {
+				 
+				save.setError(false);
+ 
+			} else {
+
+				save = new LeavesAllotment();
+				save.setError(true);
+			}
+
+		} catch (Exception e) {
+			save = new LeavesAllotment();
+			save.setError(true);
+			e.printStackTrace();
+		}
+		return save;
+	}
 
 }
