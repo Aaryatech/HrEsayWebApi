@@ -53,6 +53,7 @@ public class AccessRoleRestController {
 	        
 			loginResponse = loginResponseRepository.loginProcess(username, password);
 
+			//System.out.println(loginResponse);
 			if (loginResponse == null) {
 				loginResponse = new LoginResponse();
 				loginResponse.setIsError(true);
