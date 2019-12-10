@@ -13,11 +13,11 @@ import com.ats.hrmgt.model.Designation;
 
 public interface DesignationRepo extends JpaRepository<Designation, Integer> {
 	
-	public List<Designation> findByCompanyIdAndDelStatus(int companyId, int del);
+	public List<Designation> findByDelStatusOrderByDesigIdDesc(int del);
 	
-	public Designation findByDesigIdAndCompanyIdAndDelStatus(int desigId, int companyId, int del);
+	public Designation findByDesigIdAndDelStatus(int desigId, int del);
 	@Transactional
 	@Modifying
-	@Query(value="UPDATE m_designation SET del_status=0 WHERE desig_id=:desigId And company_id=:companyId",nativeQuery=true)
-	public int deleteDesignation(@Param("desigId") int desigId, @Param("companyId") int companyId);
+	@Query(value="UPDATE m_designation SET del_status=0 WHERE desig_id=:desigId",nativeQuery=true)
+	public int deleteDesignation(@Param("desigId") int desigId);
 }
