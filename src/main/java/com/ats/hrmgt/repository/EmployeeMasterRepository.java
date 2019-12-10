@@ -58,4 +58,7 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 			"            ", nativeQuery = true)
 	List<EmployeeMaster> getemplistwhichisnotyearend();
 
+	@Query(value = "SELECT e.* from m_employees e  where e.emp_id=:empId", nativeQuery = true)
+	EmployeeMaster getEmpInfoByEmpId(@Param("empId") int empId);
+
 }

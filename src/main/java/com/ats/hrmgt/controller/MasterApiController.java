@@ -392,4 +392,21 @@ public class MasterApiController {
 
 	}
 
+	@RequestMapping(value = { "/getEmpInfoByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody EmployeeMaster getEmpInfoByEmpId(@RequestParam("empId") int empId) {
+
+		EmployeeMaster employeeMaster = new EmployeeMaster();
+		try {
+
+			employeeMaster = employeeMasterRepository.getEmpInfoByEmpId(empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return employeeMaster;
+
+	}
+	
 }
