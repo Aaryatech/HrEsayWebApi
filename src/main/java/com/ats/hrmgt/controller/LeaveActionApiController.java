@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.common.DateConvertor;
-import com.ats.hrmgt.common.Firebase; 
+import com.ats.hrmgt.common.Firebase;
 import com.ats.hrmgt.model.AuthorityInformation;
 import com.ats.hrmgt.model.CalenderYear;
 import com.ats.hrmgt.model.EmpLeaveHistoryRep;
@@ -38,6 +38,7 @@ import com.ats.hrmgt.repository.GetLeaveApplyAuthwiseRepo;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
 import com.ats.hrmgt.repository.LeaveHistoryRepo;
 import com.ats.hrmgt.repository.LeaveTrailRepository;
+import com.ats.hrmgt.repository.SettingRepo;
 
 @RestController
 public class LeaveActionApiController {
@@ -56,15 +57,18 @@ public class LeaveActionApiController {
 
 	@Autowired
 	GetAuthorityIdsRepo getAuthorityIdsRepo;
-	
+
 	@Autowired
 	GetLeaveApplyAuthwiseRepo getLeaveApplyAuthwiseRepo;
-	
+
 	@Autowired
 	CalculateYearRepository calculateYearRepository;
-	
+
 	@Autowired
 	EmployeeMasterRepository employeeMasterRepository;
+
+	@Autowired
+	SettingRepo settingRepo;
 
 	@RequestMapping(value = { "/updateLeaveStatus" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateLeaveStatus(@RequestParam("leaveId") int leaveId,
@@ -228,7 +232,7 @@ public class LeaveActionApiController {
 		return save;
 
 	}
-	
+
 	@RequestMapping(value = { "/getLeaveApplyListForPending" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetLeaveApplyAuthwise> getLeaveApplyAuthwiseList(@RequestParam("empId") int empId,
 			@RequestParam("currYrId") int currYrId) {
@@ -246,7 +250,7 @@ public class LeaveActionApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getLeaveApplyListForInformation" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetLeaveApplyAuthwise> getLeaveApplyListForInformation(@RequestParam("empId") int empId,
 			@RequestParam("currYrId") int currYrId) {
@@ -264,7 +268,7 @@ public class LeaveActionApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getCalculateYearList" }, method = RequestMethod.GET)
 	public @ResponseBody List<CalenderYear> getCalculateYearList() {
 
@@ -285,7 +289,7 @@ public class LeaveActionApiController {
 		return list;
 
 	}
-	
+
 	@Autowired
 	EmpLeaveHistoryRepRepo empLeaveHistoryRepRepo;
 
@@ -327,7 +331,7 @@ public class LeaveActionApiController {
 		return employeeInfo;
 
 	}
-	
+
 	@RequestMapping(value = { "/getPreviousleaveHistory" }, method = RequestMethod.POST)
 	public @ResponseBody List<LeaveHistory> getPreviousleaveHistory(@RequestParam("empId") int empId) {
 
@@ -346,27 +350,46 @@ public class LeaveActionApiController {
 		return list;
 
 	}
-	
-	@RequestMapping(value = { "/checkDateForRepetedLeaveValidation" }, method = RequestMethod.POST)
-	public @ResponseBody Info checkDateForRepetedLeaveValidation(@RequestParam("fromDate") String fromDate,@RequestParam("toDate") String toDate,
-			@RequestParam("empId") int empId) {
 
-		 Info info = new Info();
-		 
+	@RequestMapping(value = { "/checkDateForRepetedLeaveValidation" }, method = RequestMethod.POST)
+	public @ResponseBody Info checkDateForRepetedLeaveValidation(@RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate, @RequestParam("empId") int empId,
+			@RequestParam("leaveTypeId") int leaveTypeId) {
+
+		Info info = new Info();
+
 		try {
 
-			List<LeaveApply> list = leaveApplyRepository.checkDateForRepetedLeaveValidation(fromDate,toDate,empId);
-			 
+			Setting setting = settingRepo.findByKey("CONTILEAVE");
 
-			if(list.size()>0) {
+			List<LeaveApply> list = leaveApplyRepository.checkDateForRepetedLeaveValidation(fromDate, toDate, empId);
+
+			if (list.size() > 0) {
+
 				info.setError(true);
-				info.setMsg("Leave Alrdy Apply");
-			}else {
-				info.setError(false);
-				info.setMsg("you can apply");
+				info.setMsg("You Have Already Apply Leave on this Date.");
+
+			} else {
+
+				if (Integer.parseInt(setting.getValue()) == 1) {
+
+					list = leaveApplyRepository.checkContinueDateLeave(fromDate, toDate, empId, leaveTypeId);
+					if (list.size() > 0) {
+						info.setError(true);
+						info.setMsg("You Cannot Apply Continue Leave As Diffrent Type. ");
+					} else {
+						info.setError(false);
+						info.setMsg("you can apply");
+					}
+
+				} else {
+					info.setError(false);
+					info.setMsg("you can apply");
+				}
+
 			}
 		} catch (Exception e) {
-			 
+
 			e.printStackTrace();
 		}
 
