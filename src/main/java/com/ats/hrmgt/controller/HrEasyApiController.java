@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.Contractor;
+import com.ats.hrmgt.model.Department;
 import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.repository.ContractorRepo;
+import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 
@@ -26,6 +28,8 @@ public class HrEasyApiController {
 	@Autowired ContractorRepo contractRepo;
 	
 	@Autowired EmployeeMasterRepository empRepo;
+	
+	@Autowired DepartmentRepo deptRepo;
 	
 	@RequestMapping(value = {"/getAllDesignations"}, method = RequestMethod.GET)
 	public List<Designation> getAllDesignations(){
@@ -92,6 +96,22 @@ public class HrEasyApiController {
 		}
 		
 		return designation;
+		
+	}
+	
+	@RequestMapping(value = {"/getEmpByDesignationId"}, method = RequestMethod.POST)
+	public int getEmpByDesignationId(@RequestParam int desigId) {
+		
+		int resp = 0;
+		try {
+			resp = empRepo.getEmpInfoByDesigId(desigId);
+		
+		}catch (Exception e) {
+			System.err.println("Excep in getEmpByDesignationId : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return resp;
 		
 	}
 	
@@ -165,16 +185,102 @@ public class HrEasyApiController {
 	
 	
 	@RequestMapping(value = {"/getEmpByContractorId"}, method = RequestMethod.POST)
-	public EmployeeMaster getEmpByContractorId(@RequestParam int contractorId) {
-		EmployeeMaster emp = new EmployeeMaster();
+	public int getEmpByContractorId(@RequestParam int contractorId) {
+		
+		int resp = 0;
 		try {
-			emp = empRepo.getEmpInfoByContractId(contractorId);
+			resp = empRepo.getEmpInfoByContractId(contractorId);
+		
 		}catch (Exception e) {
 			System.err.println("Excep in getEmpByContractorId : "+e.getMessage());
 			e.printStackTrace();
 		}
 		
-		return emp;
+		return resp;
+		
+	}
+	
+	/******************************Department********************************/
+	@RequestMapping(value = {"/getAllDepartments"}, method = RequestMethod.GET)
+	public List<Department> getAllDepartments(){
+		List<Department> list = new ArrayList<Department>();
+		try {
+			list = deptRepo.findBydelStatusOrderByDepartIdDesc(1);
+		}catch (Exception e) {
+			System.err.println("Excep in getAllDepartments : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return list;
+		
+	}
+	
+	@RequestMapping(value = {"/getDepartmentById"}, method = RequestMethod.POST)
+	public Department getDepartmentById(@RequestParam int deptId) {
+		Department depart = new Department();
+		try {
+			depart = deptRepo.findByDepartIdAndDelStatus(deptId, 1);
+		}catch (Exception e) {
+			System.err.println("Excep in getDepartmentById : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return depart;
+		
+	}
+	
+	@RequestMapping(value = { "/deleteDepartment" }, method = RequestMethod.POST)
+	public Info deleteDepartment(@RequestParam int deptId) {
+
+		Info info = new Info();
+		try {
+
+			int res = deptRepo.deleteDepartment(deptId);
+			
+			if (res > 0) {
+				info.setError(false);
+				info.setMsg("Sucess");
+			}else{
+				info.setError(true);
+				info.setMsg("Fail");
+			}
+
+		} catch (Exception e) {
+			System.err.println("Excep in deleteDepartment : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+	
+	@RequestMapping(value = {"/saveDepartment"}, method = RequestMethod.POST)
+	public Department saveDepartment(@RequestBody Department dept) {
+		Department depart = new Department();
+		try {
+			depart = deptRepo.save(dept);
+		}catch (Exception e) {
+			System.err.println("Excep in saveDepartment : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return depart;
+		
+	}
+	
+	@RequestMapping(value = {"/getEmpByDeptId"}, method = RequestMethod.POST)
+	public int getEmpByDeptId(@RequestParam int deptId) {
+		
+		int resp = 0;
+		try {
+			resp = empRepo.getEmpInfoByDepartment(deptId);
+		
+		}catch (Exception e) {
+			System.err.println("Excep in /getEmpByDeptId : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return resp;
 		
 	}
 }

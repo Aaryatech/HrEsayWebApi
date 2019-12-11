@@ -61,7 +61,14 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	@Query(value = "SELECT e.* from m_employees e  where e.emp_id=:empId", nativeQuery = true)
 	EmployeeMaster getEmpInfoByEmpId(@Param("empId") int empId);
 	
-	@Query(value = "SELECT * FROM m_employees WHERE contractor_id=:contractId AND is_emp=1", nativeQuery = true)
-	EmployeeMaster getEmpInfoByContractId(@Param("contractId") int contractId);
+	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE contractor_id=:contractId", nativeQuery = true)
+	int getEmpInfoByContractId(@Param("contractId") int contractId);
+	
+	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE depart_id=:deptId",nativeQuery=true)
+	int getEmpInfoByDepartment(@Param("deptId") int deptId);
+	
+	
+	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE designation_id=:desigId",nativeQuery=true)
+	int getEmpInfoByDesigId(@Param("desigId") int desigId);
 
 }
