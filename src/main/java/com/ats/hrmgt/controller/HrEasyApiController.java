@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.model.Bank;
+import com.ats.hrmgt.model.BankRepo;
 import com.ats.hrmgt.model.Contractor;
 import com.ats.hrmgt.model.Department;
 import com.ats.hrmgt.model.Designation;
@@ -30,6 +32,8 @@ public class HrEasyApiController {
 	@Autowired EmployeeMasterRepository empRepo;
 	
 	@Autowired DepartmentRepo deptRepo;
+	
+	@Autowired BankRepo bankRepo;
 	
 	@RequestMapping(value = {"/getAllDesignations"}, method = RequestMethod.GET)
 	public List<Designation> getAllDesignations(){
@@ -281,6 +285,75 @@ public class HrEasyApiController {
 		}
 		
 		return resp;
+		
+	}
+	
+	/**********************************Bank*********************************/
+	
+	@RequestMapping(value = {"/getAllBanks"}, method = RequestMethod.GET)
+	public List<Bank> getAllBanks(){
+		List<Bank> list = new ArrayList<Bank>();
+		try {
+			list = bankRepo.findByDelStatusOrderByBankIdDesc(1);
+		}catch (Exception e) {
+			System.err.println("Excep in getAllBanks : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return list;
+		
+	}
+	
+	@RequestMapping(value = {"/getBankById"}, method = RequestMethod.POST)
+	public Bank getBankById(@RequestParam int bankId) {
+		Bank bank = new Bank();
+		try {
+			bank = bankRepo.findByBankIdAndDelStatus(bankId, 1);
+		}catch (Exception e) {
+			System.err.println("Excep in getBankById : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return bank;
+		
+	}
+	
+	@RequestMapping(value = { "/deleteBank" }, method = RequestMethod.POST)
+	public Info deleteBank(@RequestParam int bankId) {
+
+		Info info = new Info();
+		try {
+
+			int res = bankRepo.deleteBankById(bankId);
+			
+			if (res > 0) {
+				info.setError(false);
+				info.setMsg("Sucess");
+			}else{
+				info.setError(true);
+				info.setMsg("Fail");
+			}
+
+		} catch (Exception e) {
+			System.err.println("Excep in deleteBank : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+	
+	@RequestMapping(value = {"/saveBank"}, method = RequestMethod.POST)
+	public Bank saveBank(@RequestBody Bank bank) {
+		Bank savBank = new Bank();
+		try {
+			savBank = bankRepo.save(bank);
+		}catch (Exception e) {
+			System.err.println("Excep in saveBank : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return savBank;
 		
 	}
 }
