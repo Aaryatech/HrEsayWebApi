@@ -91,6 +91,9 @@ public class SummaryDailyAttendance {
 	@Column(name="tot_late")
 	private int totLate;
 	
+	@Column(name="rec_status")
+	private String recStatus;
+	
 	@Column(name="login_name")
 	private String loginName;
 	
@@ -519,6 +522,14 @@ public class SummaryDailyAttendance {
 		this.empId = empId;
 	}
 
+	public String getRecStatus() {
+		return recStatus;
+	}
+
+	public void setRecStatus(String recStatus) {
+		this.recStatus = recStatus;
+	}
+
 	@Override
 	public String toString() {
 		return "SummaryDailyAttendance [id=" + id + ", companyId=" + companyId + ", empId=" + empId + ", empCode="
@@ -528,13 +539,14 @@ public class SummaryDailyAttendance {
 				+ ", unpaidHoliday=" + unpaidHoliday + ", unpaidLeave=" + unpaidLeave + ", absentDays=" + absentDays
 				+ ", payableDays=" + payableDays + ", ncpDays=" + ncpDays + ", totlateMins=" + totlateMins
 				+ ", totlateDays=" + totlateDays + ", totoutMins=" + totoutMins + ", totworkingHrs=" + totworkingHrs
-				+ ", tototHrs=" + tototHrs + ", totOthr=" + totOthr + ", totLate=" + totLate + ", loginName="
-				+ loginName + ", loginTime=" + loginTime + ", status=" + status + ", importDate=" + importDate
-				+ ", recStatusPaid=" + recStatusPaid + ", totalDaysInmonth=" + totalDaysInmonth + ", lateDedLeavePaid="
-				+ lateDedLeavePaid + ", holidayPresent=" + holidayPresent + ", weeklyOffPresent=" + weeklyOffPresent
-				+ ", fullNight=" + fullNight + ", halfNight=" + halfNight + ", holidayPresentHalf=" + holidayPresentHalf
-				+ ", weeklyOffPresentHalf=" + weeklyOffPresentHalf + ", weeklyOffHoliday0ff=" + weeklyOffHoliday0ff
-				+ ", weeklyOffHolidayOffPresent=" + weeklyOffHolidayOffPresent + ", weeklyOffHolidayOffPresentHalfday="
+				+ ", tototHrs=" + tototHrs + ", totOthr=" + totOthr + ", totLate=" + totLate + ", recStatus="
+				+ recStatus + ", loginName=" + loginName + ", loginTime=" + loginTime + ", status=" + status
+				+ ", importDate=" + importDate + ", recStatusPaid=" + recStatusPaid + ", totalDaysInmonth="
+				+ totalDaysInmonth + ", lateDedLeavePaid=" + lateDedLeavePaid + ", holidayPresent=" + holidayPresent
+				+ ", weeklyOffPresent=" + weeklyOffPresent + ", fullNight=" + fullNight + ", halfNight=" + halfNight
+				+ ", holidayPresentHalf=" + holidayPresentHalf + ", weeklyOffPresentHalf=" + weeklyOffPresentHalf
+				+ ", weeklyOffHoliday0ff=" + weeklyOffHoliday0ff + ", weeklyOffHolidayOffPresent="
+				+ weeklyOffHolidayOffPresent + ", weeklyOffHolidayOffPresentHalfday="
 				+ weeklyOffHolidayOffPresentHalfday + ", hdpresentHdleave=" + hdpresentHdleave + ", totEarlyGoing="
 				+ totEarlyGoing + ", atsummUid=" + atsummUid + ", calculationDone=" + calculationDone + "]";
 	}

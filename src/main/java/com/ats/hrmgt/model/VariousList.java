@@ -6,7 +6,7 @@ import java.util.List;
 public class VariousList {
 	
 	private List<ShiftMaster> shiftList;
-	private List<MstWeeklyOff> mstWeeklyOffList;
+	private List<MstEmpType> mstWeeklyOffList;
 	private List<Holiday> holidayList;
 	private List<LvType> lvTypeList;
 	private List<LvmSumUp> LvmSumUpList;
@@ -19,10 +19,10 @@ public class VariousList {
 	public void setShiftList(List<ShiftMaster> shiftList) {
 		this.shiftList = shiftList;
 	}
-	public List<MstWeeklyOff> getMstWeeklyOffList() {
+	public List<MstEmpType> getMstWeeklyOffList() {
 		return mstWeeklyOffList;
 	}
-	public void setMstWeeklyOffList(List<MstWeeklyOff> mstWeeklyOffList) {
+	public void setMstWeeklyOffList(List<MstEmpType> mstWeeklyOffList) {
 		this.mstWeeklyOffList = mstWeeklyOffList;
 	}
 	public List<Holiday> getHolidayList() {

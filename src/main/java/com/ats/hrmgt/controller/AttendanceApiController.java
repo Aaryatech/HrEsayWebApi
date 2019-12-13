@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,16 +15,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.DailyAttendance;
+import com.ats.hrmgt.model.DataForUpdateAttendance;
 import com.ats.hrmgt.model.EmpInfo;
 import com.ats.hrmgt.model.EmpJsonData;
 import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.FileUploadedData;
 import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.InfoForUploadAttendance;
 import com.ats.hrmgt.model.LoginResponse;
 import com.ats.hrmgt.model.LvType;
 import com.ats.hrmgt.model.LvmSumUp;
-import com.ats.hrmgt.model.MstWeeklyOff;
+import com.ats.hrmgt.model.MstEmpType;
 import com.ats.hrmgt.model.ShiftMaster;
 import com.ats.hrmgt.model.SummaryDailyAttendance;
 import com.ats.hrmgt.model.VariousList;
@@ -35,6 +38,7 @@ import com.ats.hrmgt.repository.HolidayRepo;
 import com.ats.hrmgt.repository.InfoForUploadAttendanceRepository;
 import com.ats.hrmgt.repository.LvTypeRepository;
 import com.ats.hrmgt.repository.LvmSumUpRepository;
+import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.MstWeeklyOffRepository;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
@@ -77,6 +81,9 @@ public class AttendanceApiController {
 	@Autowired
 	LvmSumUpRepository lvmSumUpRepository;
 
+	@Autowired
+	MstEmpTypeRepository mstEmpTypeRepository;
+
 	@RequestMapping(value = { "/initiallyInsertDailyRecord" }, method = RequestMethod.POST)
 	public @ResponseBody Info initiallyInsertDailyRecord(@RequestParam("fromDate") String fromDate,
 			@RequestParam("toDate") String toDate, @RequestParam("userId") int userId) {
@@ -111,6 +118,7 @@ public class AttendanceApiController {
 				summaryDailyAttendance.setYear(year);
 				summaryDailyAttendance.setCompanyId(1);
 				summaryDailyAttendance.setLoginName(String.valueOf(userId));
+				summaryDailyAttendance.setRecStatus("O");
 				summaryDailyAttendanceList.add(summaryDailyAttendance);
 
 				EmpJsonData empJsonData = new EmpJsonData();
@@ -154,6 +162,7 @@ public class AttendanceApiController {
 					dailyAttendance.setEmpName(empList.get(i).getFirstName() + " " + empList.get(i).getSurname());
 					dailyAttendance.setLoginName(String.valueOf(userId));
 					dailyAttendance.setEmpJson(json);
+					dailyAttendance.setRecStatus("O");
 					dailyAttendanceList.add(dailyAttendance);
 					j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
@@ -195,35 +204,84 @@ public class AttendanceApiController {
 
 	}
 
-	@RequestMapping(value = { "/getVariousListForUploadAttendace" }, method = RequestMethod.POST)
-	public @ResponseBody VariousList getVariousListForUploadAttendace(@RequestParam("fromDate") String fromDate,
-			@RequestParam("toDate") String toDate,@RequestParam("month") int month,@RequestParam("year") int year) {
+	@RequestMapping(value = { "/importAttendanceByFileAndUpdate" }, method = RequestMethod.POST)
+	public @ResponseBody Info getVariousListForUploadAttendace(
+			@RequestBody DataForUpdateAttendance dataForUpdateAttendance) {
 
-		VariousList list = new VariousList();
+		Info info = new Info();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dd = new SimpleDateFormat("dd-MM-yyyy");
+
 		try {
-			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
-			List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
-			List<Holiday> holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
-			List<LvType> lvTypeList = lvTypeRepository.findAll();
-			List<LvmSumUp> lvmSumUpList = lvmSumUpRepository.findAll();
-			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceList(fromDate, toDate);
-			List<SummaryDailyAttendance> summaryDailyAttendanceList = summaryDailyAttendanceRepository
-					.summaryDailyAttendanceList(month, year);
 
-			list.setDailyAttendanceList(dailyAttendanceList);
-			list.setHolidayList(holidayList);
-			list.setLvmSumUpList(lvmSumUpList);
-			list.setLvTypeList(lvTypeList);
-			list.setMstWeeklyOffList(mstWeeklyOffList);
-			list.setShiftList(shiftList);
-			list.setSummaryDailyAttendanceList(summaryDailyAttendanceList);
-			
+			String fromDate = dataForUpdateAttendance.getFromDate();
+			String toDate = dataForUpdateAttendance.getToDate();
+			int month = dataForUpdateAttendance.getMonth();
+			int year = dataForUpdateAttendance.getYear();
+
+			List<FileUploadedData> fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
+			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
+			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
+			//List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
+			/*
+			 * List<LvType> lvTypeList = lvTypeRepository.findAll(); List<Holiday>
+			 * holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
+			 * List<LvmSumUp> lvmSumUpList = lvmSumUpRepository.findAll();
+			 * List<SummaryDailyAttendance> summaryDailyAttendanceList =
+			 * summaryDailyAttendanceRepository .summaryDailyAttendanceList(month, year);
+			 */
+
+			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceList(fromDate, toDate);
+			MstEmpType mstEmpType = new MstEmpType();
+
+			for (int i = 0; i < dailyAttendanceList.size(); i++) {
+
+				Date defaultDate = sf.parse(dailyAttendanceList.get(i).getAttDate());
+				ObjectMapper mapper = new ObjectMapper();
+				EmpJsonData employee = mapper.readValue(dailyAttendanceList.get(i).getEmpJson(), EmpJsonData.class);
+				dailyAttendanceList.get(i).setEmpType(employee.getEmpType());
+
+				for (int j = 0; j < mstEmpTypeList.size(); j++) {
+
+					if (mstEmpTypeList.get(j).getEmpTypeId() == employee.getEmpType()) {
+						mstEmpType = mstEmpTypeList.get(j);
+						break;
+					}
+
+				}
+
+				for (int j = 0; j < fileUploadedDataList.size(); j++) {
+
+					Date uploadedDate = dd.parse(fileUploadedDataList.get(j).getLogDate());
+
+					if (dailyAttendanceList.get(i).getEmpCode().equals(fileUploadedDataList.get(j).getEmpCode())
+							&& defaultDate.compareTo(uploadedDate) == 0) {
+
+						dailyAttendanceList.get(i).setInTime(fileUploadedDataList.get(j).getInTime());
+						dailyAttendanceList.get(i).setOutTime(fileUploadedDataList.get(j).getOutTime());
+
+						/*
+						 * EmpJsonData empJsonData = new
+						 * Gson().fromJson(dailyAttendanceList.get(i).getEmpJson(), EmpJsonData.class);
+						 */
+
+						// System.out.println(employee);
+
+						break;
+
+					}
+
+				}
+
+			}
+			//
+
 		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
 
-		return list;
+		return info;
 
 	}
 

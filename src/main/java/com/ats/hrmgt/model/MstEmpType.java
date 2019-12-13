@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "tbl_mst_emp_types")
-public class MstWeeklyOff {
+public class MstEmpType {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
