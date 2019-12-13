@@ -12,15 +12,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.model.TblEmpBankInfo;
 import com.ats.hrmgt.model.TblEmpInfo;
+import com.ats.hrmgt.model.TblEmpNominees;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
+import com.ats.hrmgt.repository.TblEmpBankInfoRepo;
+import com.ats.hrmgt.repository.TblEmpInfoRepo;
+import com.ats.hrmgt.repository.TblEmpNomineesRepo;
 @RestController
 public class EmployeeApiController {
 	@Autowired EmployeeMasterRepository empRepo;
 	
 	//EmpSupportRepository
-		 
-		
+	@Autowired TblEmpInfoRepo empInfoRepo;
+	
+	@Autowired TblEmpBankInfoRepo bankInfoRepo;
+	
+	@Autowired TblEmpNomineesRepo nomineeRepo;
+	
 		/**********************************Employee*********************************/
 		
 		@RequestMapping(value = {"/getAllEmployee"}, method = RequestMethod.GET)
@@ -78,12 +87,60 @@ public class EmployeeApiController {
 		@RequestMapping(value = {"/saveEmployee"}, method = RequestMethod.POST)
 		public EmployeeMaster saveEmployee(@RequestBody EmployeeMaster emp) {
 			EmployeeMaster empSave = new EmployeeMaster();
-			
+			 
 			try {
 				empSave = empRepo.save(emp);
+							}catch (Exception e) {
+				System.err.println("Excep in saveBank : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return empSave;
+			
+		}
+		
+		/***********************************************************************/
+		@RequestMapping(value = {"/saveEmployeeIdInfo"}, method = RequestMethod.POST)
+		public TblEmpInfo saveEmployee(@RequestBody TblEmpInfo empInfo) {
+			 TblEmpInfo empSave = new TblEmpInfo();
+			System.out.println("Obj--------"+empInfo);
+			try {
+				empSave = empInfoRepo.save(empInfo);
 				
 			}catch (Exception e) {
-				System.err.println("Excep in saveBank : "+e.getMessage());
+				System.err.println("Excep in saveEmployeeInfo : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return empSave;
+			
+		}
+		
+		@RequestMapping(value = {"/saveEmployeeIdBank"}, method = RequestMethod.POST)
+		public TblEmpBankInfo saveEmployee(@RequestBody TblEmpBankInfo empBank) {
+			TblEmpBankInfo empSave = new TblEmpBankInfo();
+			System.out.println("Obj--------"+empBank);
+			try {
+				empSave = bankInfoRepo.save(empBank);
+				
+			}catch (Exception e) {
+				System.err.println("Excep in saveEmployeeIdBank : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return empSave;
+			
+		}
+		
+		@RequestMapping(value = {"/saveEmployeeIdNominee"}, method = RequestMethod.POST)
+		public TblEmpNominees saveEmployeeIdNominee(@RequestBody TblEmpNominees empNominee) {
+			TblEmpNominees empSave = new TblEmpNominees();
+			System.out.println("Obj--------"+empNominee);
+			try {
+				empSave = nomineeRepo.save(empNominee);
+				
+			}catch (Exception e) {
+				System.err.println("Excep in saveEmployeeIdNominee : "+e.getMessage());
 				e.printStackTrace();
 			}
 			

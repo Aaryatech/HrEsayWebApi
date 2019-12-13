@@ -13,8 +13,8 @@ public class TblEmpInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="bank_info_id")
-	private int bankInfoId;
+	@Column(name="emp_info_id")
+	private int empInfoId;
 	
 	@Column(name="emp_id")
 	private int empId;
@@ -108,14 +108,6 @@ public class TblEmpInfo {
 	
 	@Column(name="ex_var2")
 	private String exVar2;
-
-	public int getBankInfoId() {
-		return bankInfoId;
-	}
-
-	public void setBankInfoId(int bankInfoId) {
-		this.bankInfoId = bankInfoId;
-	}
 
 	public int getEmpId() {
 		return empId;
@@ -365,9 +357,17 @@ public class TblEmpInfo {
 		this.exVar2 = exVar2;
 	}
 
+	public int getEmpInfoId() {
+		return empInfoId;
+	}
+
+	public void setEmpInfoId(int empInfoId) {
+		this.empInfoId = empInfoId;
+	}
+
 	@Override
 	public String toString() {
-		return "tbl_emp_info [bankInfoId=" + bankInfoId + ", empId=" + empId + ", middleName=" + middleName
+		return "TblEmpInfo [empInfoId=" + empInfoId + ", empId=" + empId + ", middleName=" + middleName
 				+ ", middlePersonName=" + middlePersonName + ", middleNameRelation=" + middleNameRelation + ", dob="
 				+ dob + ", gender=" + gender + ", maritalStatus=" + maritalStatus + ", address=" + address
 				+ ", permanentAddress=" + permanentAddress + ", empQualification=" + empQualification
@@ -379,6 +379,6 @@ public class TblEmpInfo {
 				+ photoSignature + ", rawData=" + rawData + ", delStatus=" + delStatus + ", exInt1=" + exInt1
 				+ ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
 	}
-	
+
 	
 }
