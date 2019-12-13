@@ -80,8 +80,7 @@ public class TblEmpInfo {
 	private String photoBankpassbook;
 	
 	@Column(name="email")
-	private String email;
-	
+	private String email;	
 	
 	@Column(name="emer_name")
 	private String emerName;
