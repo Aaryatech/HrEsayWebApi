@@ -1,4 +1,4 @@
-package com.ats.hrmgt.model;
+package com.ats.hrmgt.repository;
 
 import java.util.List;
 
@@ -9,9 +9,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.ats.hrmgt.model.Bank;
+
 public interface BankRepo extends JpaRepository<Bank, Integer> {
 
-		public List<Bank> findByDelStatusOrderByBankIdDesc(int del);
+		public List<Bank> findByCompanyIdAndDelStatusOrderByBankIdDesc(int companyId, int del);
 		
 		public Bank findByBankIdAndDelStatus(int bankId, int del);
 		

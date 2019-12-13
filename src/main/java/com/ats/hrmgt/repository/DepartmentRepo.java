@@ -13,7 +13,7 @@ import com.ats.hrmgt.model.Department;
 
 public interface DepartmentRepo extends JpaRepository<Department, Integer> {
 
-	public List<Department> findBydelStatusOrderByDepartIdDesc(int del);
+	public List<Department> findByCompanyIdAndDelStatusOrderByDepartIdDesc(int companyId, int del);
 	
 	public Department findByDepartIdAndDelStatus(int deptId, int del);
 	

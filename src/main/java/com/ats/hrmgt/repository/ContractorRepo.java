@@ -13,7 +13,7 @@ import com.ats.hrmgt.model.Contractor;
 
 public interface ContractorRepo extends JpaRepository<Contractor, Integer> {
 	
-		public List<Contractor> findByDelStatusOrderByContractorIdDesc(int del);
+		public List<Contractor> findByCompanyIdAndDelStatusOrderByContractorIdDesc(int companyId, int del);
 		
 		public Contractor findByContractorIdAndDelStatus(int contractorId, int del);
 		

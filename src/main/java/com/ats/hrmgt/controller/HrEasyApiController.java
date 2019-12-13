@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.Bank;
-import com.ats.hrmgt.model.BankRepo;
 import com.ats.hrmgt.model.Contractor;
 import com.ats.hrmgt.model.Department;
 import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.repository.BankRepo;
 import com.ats.hrmgt.repository.ContractorRepo;
 import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
@@ -35,18 +35,18 @@ public class HrEasyApiController {
 	
 	@Autowired BankRepo bankRepo;
 	
-	@RequestMapping(value = {"/getAllDesignations"}, method = RequestMethod.GET)
-	public List<Designation> getAllDesignations(){
+	
+	@RequestMapping(value = {"/getAllDesignations"}, method = RequestMethod.POST)
+	public List<Designation> getAllDesignations(@RequestParam int companyId){
 		List<Designation> list = new ArrayList<Designation>();
 		try {
-			list = desigRepo.findByDelStatusOrderByDesigIdDesc(1);
+			list = desigRepo.findByCompanyIdAndDelStatusOrderByDesigIdDesc(companyId, 1);
 		}catch (Exception e) {
 			System.err.println("Excep in getAllDesignations : "+e.getMessage());
 			e.printStackTrace();
 		}
 		
-		return list;
-		
+		return list;		
 	}
 	
 	@RequestMapping(value = {"/getDesignationById"}, method = RequestMethod.POST)
@@ -104,11 +104,11 @@ public class HrEasyApiController {
 	}
 	
 	@RequestMapping(value = {"/getEmpByDesignationId"}, method = RequestMethod.POST)
-	public int getEmpByDesignationId(@RequestParam int desigId) {
+	public int getEmpByDesignationId(@RequestParam int desigId, @RequestParam int companyId) {
 		
 		int resp = 0;
 		try {
-			resp = empRepo.getEmpInfoByDesigId(desigId);
+			resp = empRepo.getEmpInfoByDesigId(desigId, companyId);
 		
 		}catch (Exception e) {
 			System.err.println("Excep in getEmpByDesignationId : "+e.getMessage());
@@ -120,11 +120,11 @@ public class HrEasyApiController {
 	}
 	
 	/******************************Contractor********************************/
-	@RequestMapping(value = {"/getAllContractors"}, method = RequestMethod.GET)
-	public List<Contractor> getAllContractors(){
+	@RequestMapping(value = {"/getAllContractors"}, method = RequestMethod.POST)
+	public List<Contractor> getAllContractors(@RequestParam int companyId){
 		List<Contractor> list = new ArrayList<Contractor>();
 		try {
-			list = contractRepo.findByDelStatusOrderByContractorIdDesc(1);
+			list = contractRepo.findByCompanyIdAndDelStatusOrderByContractorIdDesc(companyId, 1);
 		}catch (Exception e) {
 			System.err.println("Excep in getAllContractors : "+e.getMessage());
 			e.printStackTrace();
@@ -189,11 +189,11 @@ public class HrEasyApiController {
 	
 	
 	@RequestMapping(value = {"/getEmpByContractorId"}, method = RequestMethod.POST)
-	public int getEmpByContractorId(@RequestParam int contractorId) {
+	public int getEmpByContractorId(@RequestParam int contractorId, @RequestParam int companyId) {
 		
 		int resp = 0;
 		try {
-			resp = empRepo.getEmpInfoByContractId(contractorId);
+			resp = empRepo.getEmpInfoByContractId(contractorId, companyId);
 		
 		}catch (Exception e) {
 			System.err.println("Excep in getEmpByContractorId : "+e.getMessage());
@@ -205,11 +205,11 @@ public class HrEasyApiController {
 	}
 	
 	/******************************Department********************************/
-	@RequestMapping(value = {"/getAllDepartments"}, method = RequestMethod.GET)
-	public List<Department> getAllDepartments(){
+	@RequestMapping(value = {"/getAllDepartments"}, method = RequestMethod.POST)
+	public List<Department> getAllDepartments(@RequestParam int companyId){
 		List<Department> list = new ArrayList<Department>();
 		try {
-			list = deptRepo.findBydelStatusOrderByDepartIdDesc(1);
+			list = deptRepo.findByCompanyIdAndDelStatusOrderByDepartIdDesc(companyId, 1);
 		}catch (Exception e) {
 			System.err.println("Excep in getAllDepartments : "+e.getMessage());
 			e.printStackTrace();
@@ -273,11 +273,11 @@ public class HrEasyApiController {
 	}
 	
 	@RequestMapping(value = {"/getEmpByDeptId"}, method = RequestMethod.POST)
-	public int getEmpByDeptId(@RequestParam int deptId) {
+	public int getEmpByDeptId(@RequestParam int deptId, @RequestParam int companyId) {
 		
 		int resp = 0;
 		try {
-			resp = empRepo.getEmpInfoByDepartment(deptId);
+			resp = empRepo.getEmpInfoByDepartment(deptId, companyId);
 		
 		}catch (Exception e) {
 			System.err.println("Excep in /getEmpByDeptId : "+e.getMessage());
@@ -290,11 +290,11 @@ public class HrEasyApiController {
 	
 	/**********************************Bank*********************************/
 	
-	@RequestMapping(value = {"/getAllBanks"}, method = RequestMethod.GET)
-	public List<Bank> getAllBanks(){
+	@RequestMapping(value = {"/getAllBanks"}, method = RequestMethod.POST)
+	public List<Bank> getAllBanks(@RequestParam int companyId){
 		List<Bank> list = new ArrayList<Bank>();
 		try {
-			list = bankRepo.findByDelStatusOrderByBankIdDesc(1);
+			list = bankRepo.findByCompanyIdAndDelStatusOrderByBankIdDesc(companyId, 1);
 		}catch (Exception e) {
 			System.err.println("Excep in getAllBanks : "+e.getMessage());
 			e.printStackTrace();
@@ -356,4 +356,5 @@ public class HrEasyApiController {
 		return savBank;
 		
 	}
+	
 }

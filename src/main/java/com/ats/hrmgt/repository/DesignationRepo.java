@@ -13,7 +13,7 @@ import com.ats.hrmgt.model.Designation;
 
 public interface DesignationRepo extends JpaRepository<Designation, Integer> {
 	
-	public List<Designation> findByDelStatusOrderByDesigIdDesc(int del);
+	public List<Designation> findByCompanyIdAndDelStatusOrderByDesigIdDesc(int companyId, int del);
 	
 	public Designation findByDesigIdAndDelStatus(int desigId, int del);
 	@Transactional
