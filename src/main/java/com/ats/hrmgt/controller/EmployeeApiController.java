@@ -19,7 +19,7 @@ public class EmployeeApiController {
 	@Autowired EmployeeMasterRepository empRepo;
 	
 	//EmpSupportRepository
-		@Autowired TblEmpInfo empInfoRepo;
+		 
 		
 		/**********************************Employee*********************************/
 		
