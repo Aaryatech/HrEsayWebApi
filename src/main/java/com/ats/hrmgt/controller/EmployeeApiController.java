@@ -78,8 +78,10 @@ public class EmployeeApiController {
 		@RequestMapping(value = {"/saveEmployee"}, method = RequestMethod.POST)
 		public EmployeeMaster saveEmployee(@RequestBody EmployeeMaster emp) {
 			EmployeeMaster empSave = new EmployeeMaster();
+			
 			try {
 				empSave = empRepo.save(emp);
+				
 			}catch (Exception e) {
 				System.err.println("Excep in saveBank : "+e.getMessage());
 				e.printStackTrace();
