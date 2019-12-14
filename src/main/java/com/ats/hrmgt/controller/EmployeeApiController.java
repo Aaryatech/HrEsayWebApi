@@ -16,11 +16,13 @@ import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.TblEmpBankInfo;
 import com.ats.hrmgt.model.TblEmpInfo;
 import com.ats.hrmgt.model.TblEmpNominees;
+import com.ats.hrmgt.model.User;
 import com.ats.hrmgt.repository.EmpSalaryInfoRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.TblEmpBankInfoRepo;
 import com.ats.hrmgt.repository.TblEmpInfoRepo;
 import com.ats.hrmgt.repository.TblEmpNomineesRepo;
+import com.ats.hrmgt.repository.UserRepo;
 @RestController
 public class EmployeeApiController {
 	@Autowired EmployeeMasterRepository empRepo;
@@ -33,6 +35,8 @@ public class EmployeeApiController {
 	@Autowired TblEmpNomineesRepo nomineeRepo;
 	
 	@Autowired EmpSalaryInfoRepo empSalRepo;
+	
+	@Autowired UserRepo userRepo;
 		/**********************************Employee*********************************/
 		
 		@RequestMapping(value = {"/getAllEmployee"}, method = RequestMethod.GET)
@@ -106,7 +110,7 @@ public class EmployeeApiController {
 		@RequestMapping(value = {"/saveEmployeeIdInfo"}, method = RequestMethod.POST)
 		public TblEmpInfo saveEmployee(@RequestBody TblEmpInfo empInfo) {
 			 TblEmpInfo empSave = new TblEmpInfo();
-			System.out.println("Obj--------"+empInfo);
+			System.out.println("empInfo--------"+empInfo);
 			try {
 				empSave = empInfoRepo.save(empInfo);
 				
@@ -122,7 +126,7 @@ public class EmployeeApiController {
 		@RequestMapping(value = {"/saveEmployeeIdBank"}, method = RequestMethod.POST)
 		public TblEmpBankInfo saveEmployee(@RequestBody TblEmpBankInfo empBank) {
 			TblEmpBankInfo empSave = new TblEmpBankInfo();
-			System.out.println("Obj--------"+empBank);
+			System.out.println("empBank--------"+empBank);
 			try {
 				empSave = bankInfoRepo.save(empBank);
 				
@@ -138,7 +142,7 @@ public class EmployeeApiController {
 		@RequestMapping(value = {"/saveEmployeeIdNominee"}, method = RequestMethod.POST)
 		public TblEmpNominees saveEmployeeIdNominee(@RequestBody TblEmpNominees empNominee) {
 			TblEmpNominees empSave = new TblEmpNominees();
-			System.out.println("Obj--------"+empNominee);
+			System.out.println("empNominee--------"+empNominee);
 			try {
 				empSave = nomineeRepo.save(empNominee);
 				
@@ -156,12 +160,29 @@ public class EmployeeApiController {
 		@RequestMapping(value = {"/saveEmployeeIdSalary"}, method = RequestMethod.POST)
 		public EmpSalaryInfo saveEmployeeIdNominee(@RequestBody EmpSalaryInfo empSal) {
 			EmpSalaryInfo empSave = new EmpSalaryInfo();
-			System.out.println("Obj--------"+empSal);
+			System.out.println("empSal--------"+empSal);
 			try {
 				empSave = empSalRepo.save(empSal);
 				
 			}catch (Exception e) {
 				System.err.println("Excep in saveEmployeeIdSalary : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return empSave;
+			
+		}
+		
+		
+		@RequestMapping(value = {"/saveEmployeeIdUser"}, method = RequestMethod.POST)
+		public User saveEmployeeIdNominee(@RequestBody User user) {
+			User empSave = new User();
+			System.out.println("user--------"+user);
+			try {
+				empSave = userRepo.save(user);
+				
+			}catch (Exception e) {
+				System.err.println("Excep in saveEmployeeIdUser : "+e.getMessage());
 				e.printStackTrace();
 			}
 			
