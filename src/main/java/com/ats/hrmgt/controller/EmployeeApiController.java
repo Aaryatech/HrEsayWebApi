@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.model.EmpSalaryInfo;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.TblEmpBankInfo;
 import com.ats.hrmgt.model.TblEmpInfo;
 import com.ats.hrmgt.model.TblEmpNominees;
+import com.ats.hrmgt.repository.EmpSalaryInfoRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.TblEmpBankInfoRepo;
 import com.ats.hrmgt.repository.TblEmpInfoRepo;
@@ -30,6 +32,7 @@ public class EmployeeApiController {
 	
 	@Autowired TblEmpNomineesRepo nomineeRepo;
 	
+	@Autowired EmpSalaryInfoRepo empSalRepo;
 		/**********************************Employee*********************************/
 		
 		@RequestMapping(value = {"/getAllEmployee"}, method = RequestMethod.GET)
@@ -141,6 +144,24 @@ public class EmployeeApiController {
 				
 			}catch (Exception e) {
 				System.err.println("Excep in saveEmployeeIdNominee : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return empSave;
+			
+		}
+		
+		
+		
+		@RequestMapping(value = {"/saveEmployeeIdSalary"}, method = RequestMethod.POST)
+		public EmpSalaryInfo saveEmployeeIdNominee(@RequestBody EmpSalaryInfo empSal) {
+			EmpSalaryInfo empSave = new EmpSalaryInfo();
+			System.out.println("Obj--------"+empSal);
+			try {
+				empSave = empSalRepo.save(empSal);
+				
+			}catch (Exception e) {
+				System.err.println("Excep in saveEmployeeIdSalary : "+e.getMessage());
 				e.printStackTrace();
 			}
 			
