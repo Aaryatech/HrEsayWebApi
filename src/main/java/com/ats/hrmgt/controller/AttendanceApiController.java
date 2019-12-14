@@ -214,7 +214,7 @@ public class AttendanceApiController {
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat dd = new SimpleDateFormat("dd-MM-yyyy");
 
-		SimpleDateFormat yyDtTm = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat yyDtTm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		try {
 
@@ -242,6 +242,7 @@ public class AttendanceApiController {
 			ShiftMaster shiftMaster = new ShiftMaster();
 			List<ShiftMaster> possibleShiftList = new ArrayList<>();
 			String inDttime = new String();
+			String outDttime = new String();
 			String shiftTime = new String();
 
 			for (int i = 0; i < dailyAttendanceList.size(); i++) {
@@ -278,7 +279,7 @@ public class AttendanceApiController {
 				// get possible timeShifting records List by same deptId of employee
 				for (int j = 0; j < shiftList.size(); j++) {
 
-					if (shiftList.get(j).getDepartmentId() == shiftMaster.getDepartmentId()) {
+					if (shiftList.get(j).getSelfGroupId() == shiftMaster.getSelfGroupId()) {
 						possibleShiftList.add(shiftList.get(j));
 					}
 
@@ -303,23 +304,37 @@ public class AttendanceApiController {
 				// create default date and time
 				inDttime = dailyAttendanceList.get(i).getAttDate() + " " + dailyAttendanceList.get(i).getInTime()
 						+ ":00";
+				outDttime = dailyAttendanceList.get(i).getAttDate() + " " + dailyAttendanceList.get(i).getOutTime()
+						+ ":00";
 
-				int minimumMin = 0;
+				long minimumMin = 0;
 
+				// find current shift by thumb
 				for (int j = 0; j < possibleShiftList.size(); j++) {
 
 					try {
+
+						long x = 0;
 						shiftTime = dailyAttendanceList.get(i).getAttDate() + " "
 								+ possibleShiftList.get(j).getFromtime();
 
-						Date startDate = yyDtTm.parse(inDttime);// Set start date
+						Date startDate = yyDtTm.parse(inDttime);
 						Date endDate = yyDtTm.parse(shiftTime);// Set end date
-						System.out.println("startDate " + startDate );
-						System.out.println("endDate " + endDate );
-						long duration = endDate.getTime() - startDate.getTime();
 
-						String diffInMinutes = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(duration));
-						int x = Math.abs(Integer.parseInt(diffInMinutes));
+						if (startDate.compareTo(endDate) > 0) {
+							long duration = startDate.getTime() - endDate.getTime();
+							long diffHours = duration / (60 * 60 * 1000);
+							long diffMinutes = (duration / (60 * 1000) % 60) + (diffHours * 60);
+							x = diffMinutes;
+
+						} else {
+							long duration = endDate.getTime() - startDate.getTime();
+							long diffHours = duration / (60 * 60 * 1000);
+							long diffMinutes = (duration / (60 * 1000) % 60) + (diffHours * 60);
+
+							x = diffMinutes;
+
+						}
 
 						if (j == 0) {
 							minimumMin = x;
@@ -329,23 +344,31 @@ public class AttendanceApiController {
 							minimumMin = x;
 							shiftMaster = possibleShiftList.get(j);
 							dailyAttendanceList.get(i).setCurrentShiftid(possibleShiftList.get(j).getId());
-							/*System.out.println("startDate " + startDate );
-							System.out.println("endDate " + endDate );
-							System.out.println("x " + x );
-							System.out.println("possibleShiftList.get(j).getId() " + possibleShiftList.get(j).getId() );*/
 						}
-						System.out.println("minimumMin " + minimumMin );
-						
+
 					} catch (Exception e) {
 						// e.printStackTrace();
 					}
-					
-				}
-				System.out.println("next " );
-				// break;
 
+				}
+
+				// calculate working hours
+				try {
+					Date inDt = yyDtTm.parse(inDttime);// Set start date
+					Date outDt = yyDtTm.parse(outDttime);
+
+					long durationBetweenInOut = outDt.getTime() - inDt.getTime();
+					long diffHoursBetweenInOut = durationBetweenInOut / (60 * 60 * 1000);
+					long diffMinutesBetweenInOut = (durationBetweenInOut / (60 * 1000) % 60)
+							+ (diffHoursBetweenInOut * 60);
+
+					dailyAttendanceList.get(i).setWorkingHrs(diffMinutesBetweenInOut);
+
+				} catch (Exception e) {
+					// e.printStackTrace();
+				}
 			}
-			 System.out.println(dailyAttendanceList);
+			System.out.println(dailyAttendanceList);
 
 		} catch (Exception e) {
 

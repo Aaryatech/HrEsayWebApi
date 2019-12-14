@@ -58,6 +58,9 @@ public class ShiftMaster {
 	@Column(name="department_id")
 	private int departmentId; 
 	
+	@Column(name="self_group_id")
+	private int selfGroupId; 
+	
 	@Column(name="status")
 	private int status;
 
@@ -189,6 +192,14 @@ public class ShiftMaster {
 		this.status = status;
 	}
 
+	public int getSelfGroupId() {
+		return selfGroupId;
+	}
+
+	public void setSelfGroupId(int selfGroupId) {
+		this.selfGroupId = selfGroupId;
+	}
+
 	@Override
 	public String toString() {
 		return "ShiftMaster [id=" + id + ", shiftname=" + shiftname + ", fromtime=" + fromtime + ", totime=" + totime
@@ -196,7 +207,7 @@ public class ShiftMaster {
 				+ ", maxLateTimeAllowed=" + maxLateTimeAllowed + ", shift_hr=" + shift_hr + ", shiftHalfdayHr="
 				+ shiftHalfdayHr + ", earlyGoingMin=" + earlyGoingMin + ", otCalculatedTime=" + otCalculatedTime
 				+ ", otCalculatedAfterHr=" + otCalculatedAfterHr + ", shiftOtHour=" + shiftOtHour + ", departmentId="
-				+ departmentId + ", status=" + status + "]";
+				+ departmentId + ", selfGroupId=" + selfGroupId + ", status=" + status + "]";
 	} 
 	
 	
