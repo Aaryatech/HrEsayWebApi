@@ -392,7 +392,7 @@ public class AttendanceApiController {
 
 					Date inDateTime = yyDtTm.parse(inDttime);
 					Date shiftDatetime = yyDtTm.parse(shiftTime);// Set end date
-					 
+
 					if (inDateTime.compareTo(shiftDatetime) > 0) {
 						long durationBetweenInOut = inDateTime.getTime() - shiftDatetime.getTime();
 						long diffHoursBetweenInOut = durationBetweenInOut / (60 * 60 * 1000);
@@ -416,13 +416,16 @@ public class AttendanceApiController {
 			}
 			System.out.println(dailyAttendanceList);
 
+			info.setError(false);
+			info.setMsg("success");
+
 		} catch (Exception e) {
 
+			info.setError(true);
+			info.setMsg("failed");
 			e.printStackTrace();
 		}
-
 		return info;
-
 	}
 
 }
