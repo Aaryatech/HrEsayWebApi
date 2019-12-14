@@ -338,12 +338,16 @@ public class AttendanceApiController {
 
 						if (j == 0) {
 							minimumMin = x;
+							shiftMaster = possibleShiftList.get(j);
+							dailyAttendanceList.get(i).setCurrentShiftid(possibleShiftList.get(j).getId());
+							dailyAttendanceList.get(i).setCurrentShiftname(possibleShiftList.get(j).getShiftname());
 						}
 
 						if (minimumMin > x) {
 							minimumMin = x;
 							shiftMaster = possibleShiftList.get(j);
 							dailyAttendanceList.get(i).setCurrentShiftid(possibleShiftList.get(j).getId());
+							dailyAttendanceList.get(i).setCurrentShiftname(possibleShiftList.get(j).getShiftname());
 						}
 
 					} catch (Exception e) {
@@ -363,6 +367,48 @@ public class AttendanceApiController {
 							+ (diffHoursBetweenInOut * 60);
 
 					dailyAttendanceList.get(i).setWorkingHrs(diffMinutesBetweenInOut);
+
+					if (diffMinutesBetweenInOut > shiftMaster.getShiftOtHour()) {
+						dailyAttendanceList.get(i)
+								.setOtHr(String.valueOf(diffMinutesBetweenInOut - shiftMaster.getShiftOtHour()));
+					} else {
+						dailyAttendanceList.get(i).setOtHr("0");
+					}
+
+				} catch (Exception e) {
+					// e.printStackTrace();
+				}
+
+				// calculate late time
+				try {
+
+					int allowdLateTime = 0;
+					shiftTime = dailyAttendanceList.get(i).getAttDate() + " " + shiftMaster.getFromtime();
+					if (mstEmpType.getMaxLateTimeAllowed() > shiftMaster.getMaxLateTimeAllowed()) {
+						allowdLateTime = mstEmpType.getMaxLateTimeAllowed();
+					} else {
+						allowdLateTime = shiftMaster.getMaxLateTimeAllowed();
+					}
+
+					Date inDateTime = yyDtTm.parse(inDttime);
+					Date shiftDatetime = yyDtTm.parse(shiftTime);// Set end date
+					 
+					if (inDateTime.compareTo(shiftDatetime) > 0) {
+						long durationBetweenInOut = inDateTime.getTime() - shiftDatetime.getTime();
+						long diffHoursBetweenInOut = durationBetweenInOut / (60 * 60 * 1000);
+						long diffMinutesBetweenInOut = (durationBetweenInOut / (60 * 1000) % 60)
+								+ (diffHoursBetweenInOut * 60);
+						dailyAttendanceList.get(i).setLateMin((int) diffMinutesBetweenInOut);
+
+						if (diffMinutesBetweenInOut > allowdLateTime) {
+							dailyAttendanceList.get(i).setLateMark("1");
+						} else {
+							dailyAttendanceList.get(i).setLateMark("0");
+						}
+					} else {
+						dailyAttendanceList.get(i).setLateMin(0);
+						dailyAttendanceList.get(i).setLateMark("0");
+					}
 
 				} catch (Exception e) {
 					// e.printStackTrace();
