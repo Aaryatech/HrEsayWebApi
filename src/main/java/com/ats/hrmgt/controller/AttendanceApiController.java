@@ -38,8 +38,7 @@ import com.ats.hrmgt.repository.HolidayRepo;
 import com.ats.hrmgt.repository.InfoForUploadAttendanceRepository;
 import com.ats.hrmgt.repository.LvTypeRepository;
 import com.ats.hrmgt.repository.LvmSumUpRepository;
-import com.ats.hrmgt.repository.MstEmpTypeRepository;
-import com.ats.hrmgt.repository.MstWeeklyOffRepository;
+import com.ats.hrmgt.repository.MstEmpTypeRepository; 
 import com.ats.hrmgt.repository.ShiftMasterRepository;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,8 +71,7 @@ public class AttendanceApiController {
 	@Autowired
 	ShiftMasterRepository shiftMasterRepository;
 
-	@Autowired
-	MstWeeklyOffRepository mstWeeklyOffRepository;
+	 
 
 	@Autowired
 	LvTypeRepository lvTypeRepository;
@@ -222,6 +220,8 @@ public class AttendanceApiController {
 			List<FileUploadedData> fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
 			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
 			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
+			
+			
 			//List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
 			/*
 			 * List<LvType> lvTypeList = lvTypeRepository.findAll(); List<Holiday>
