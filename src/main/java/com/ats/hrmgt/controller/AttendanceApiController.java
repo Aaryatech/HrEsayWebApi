@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,7 @@ import com.ats.hrmgt.model.MstEmpType;
 import com.ats.hrmgt.model.ShiftMaster;
 import com.ats.hrmgt.model.SummaryDailyAttendance;
 import com.ats.hrmgt.model.VariousList;
+import com.ats.hrmgt.model.WeeklyOffShit;
 import com.ats.hrmgt.repository.AccessRightModuleRepository;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmpInfoRepository;
@@ -38,9 +40,10 @@ import com.ats.hrmgt.repository.HolidayRepo;
 import com.ats.hrmgt.repository.InfoForUploadAttendanceRepository;
 import com.ats.hrmgt.repository.LvTypeRepository;
 import com.ats.hrmgt.repository.LvmSumUpRepository;
-import com.ats.hrmgt.repository.MstEmpTypeRepository; 
+import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
+import com.ats.hrmgt.repository.WeeklyOffShitRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -71,7 +74,8 @@ public class AttendanceApiController {
 	@Autowired
 	ShiftMasterRepository shiftMasterRepository;
 
-	 
+	@Autowired
+	WeeklyOffShitRepository weeklyOffShitRepository;
 
 	@Autowired
 	LvTypeRepository lvTypeRepository;
@@ -210,6 +214,8 @@ public class AttendanceApiController {
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat dd = new SimpleDateFormat("dd-MM-yyyy");
 
+		SimpleDateFormat yyDtTm = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
 		try {
 
 			String fromDate = dataForUpdateAttendance.getFromDate();
@@ -220,9 +226,9 @@ public class AttendanceApiController {
 			List<FileUploadedData> fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
 			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
 			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
-			
-			
-			//List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
+			// List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.findAll();
+
+			// List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
 			/*
 			 * List<LvType> lvTypeList = lvTypeRepository.findAll(); List<Holiday>
 			 * holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
@@ -233,13 +239,21 @@ public class AttendanceApiController {
 
 			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceList(fromDate, toDate);
 			MstEmpType mstEmpType = new MstEmpType();
+			ShiftMaster shiftMaster = new ShiftMaster();
+			List<ShiftMaster> possibleShiftList = new ArrayList<>();
+			String inDttime = new String();
+			String shiftTime = new String();
 
 			for (int i = 0; i < dailyAttendanceList.size(); i++) {
+
+				possibleShiftList = new ArrayList<>();
 
 				Date defaultDate = sf.parse(dailyAttendanceList.get(i).getAttDate());
 				ObjectMapper mapper = new ObjectMapper();
 				EmpJsonData employee = mapper.readValue(dailyAttendanceList.get(i).getEmpJson(), EmpJsonData.class);
 				dailyAttendanceList.get(i).setEmpType(employee.getEmpType());
+
+				// get emptype record and break;
 
 				for (int j = 0; j < mstEmpTypeList.size(); j++) {
 
@@ -250,6 +264,27 @@ public class AttendanceApiController {
 
 				}
 
+				// get timeShifting record by shiftid
+				for (int j = 0; j < shiftList.size(); j++) {
+
+					if (shiftList.get(j).getId() == employee.getCurrentShiftid()) {
+						shiftMaster = shiftList.get(j);
+						dailyAttendanceList.get(i).setCurrentShiftid(shiftList.get(j).getId());
+						break;
+					}
+
+				}
+
+				// get possible timeShifting records List by same deptId of employee
+				for (int j = 0; j < shiftList.size(); j++) {
+
+					if (shiftList.get(j).getDepartmentId() == shiftMaster.getDepartmentId()) {
+						possibleShiftList.add(shiftList.get(j));
+					}
+
+				}
+
+				// assign in time and out time from uploaded csv to record
 				for (int j = 0; j < fileUploadedDataList.size(); j++) {
 
 					Date uploadedDate = dd.parse(fileUploadedDataList.get(j).getLogDate());
@@ -259,22 +294,58 @@ public class AttendanceApiController {
 
 						dailyAttendanceList.get(i).setInTime(fileUploadedDataList.get(j).getInTime());
 						dailyAttendanceList.get(i).setOutTime(fileUploadedDataList.get(j).getOutTime());
-
-						/*
-						 * EmpJsonData empJsonData = new
-						 * Gson().fromJson(dailyAttendanceList.get(i).getEmpJson(), EmpJsonData.class);
-						 */
-
-						// System.out.println(employee);
-
 						break;
 
 					}
 
 				}
 
+				// create default date and time
+				inDttime = dailyAttendanceList.get(i).getAttDate() + " " + dailyAttendanceList.get(i).getInTime()
+						+ ":00";
+
+				int minimumMin = 0;
+
+				for (int j = 0; j < possibleShiftList.size(); j++) {
+
+					try {
+						shiftTime = dailyAttendanceList.get(i).getAttDate() + " "
+								+ possibleShiftList.get(j).getFromtime();
+
+						Date startDate = yyDtTm.parse(inDttime);// Set start date
+						Date endDate = yyDtTm.parse(shiftTime);// Set end date
+						System.out.println("startDate " + startDate );
+						System.out.println("endDate " + endDate );
+						long duration = endDate.getTime() - startDate.getTime();
+
+						String diffInMinutes = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(duration));
+						int x = Math.abs(Integer.parseInt(diffInMinutes));
+
+						if (j == 0) {
+							minimumMin = x;
+						}
+
+						if (minimumMin > x) {
+							minimumMin = x;
+							shiftMaster = possibleShiftList.get(j);
+							dailyAttendanceList.get(i).setCurrentShiftid(possibleShiftList.get(j).getId());
+							/*System.out.println("startDate " + startDate );
+							System.out.println("endDate " + endDate );
+							System.out.println("x " + x );
+							System.out.println("possibleShiftList.get(j).getId() " + possibleShiftList.get(j).getId() );*/
+						}
+						System.out.println("minimumMin " + minimumMin );
+						
+					} catch (Exception e) {
+						// e.printStackTrace();
+					}
+					
+				}
+				System.out.println("next " );
+				// break;
+
 			}
-			//
+			 System.out.println(dailyAttendanceList);
 
 		} catch (Exception e) {
 
