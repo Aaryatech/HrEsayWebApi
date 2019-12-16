@@ -44,6 +44,7 @@ import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
 import com.ats.hrmgt.repository.WeeklyOffShitRepository;
+import com.ats.hrmgt.service.CommonFunctionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -85,6 +86,9 @@ public class AttendanceApiController {
 
 	@Autowired
 	MstEmpTypeRepository mstEmpTypeRepository;
+
+	@Autowired
+	CommonFunctionService commonFunctionService;
 
 	@RequestMapping(value = { "/initiallyInsertDailyRecord" }, method = RequestMethod.POST)
 	public @ResponseBody Info initiallyInsertDailyRecord(@RequestParam("fromDate") String fromDate,
@@ -226,12 +230,14 @@ public class AttendanceApiController {
 			List<FileUploadedData> fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
 			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
 			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
+			List<Holiday> holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
+
 			// List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.findAll();
 
 			// List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
 			/*
 			 * List<LvType> lvTypeList = lvTypeRepository.findAll(); List<Holiday>
-			 * holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
+			 * 
 			 * List<LvmSumUp> lvmSumUpList = lvmSumUpRepository.findAll();
 			 * List<SummaryDailyAttendance> summaryDailyAttendanceList =
 			 * summaryDailyAttendanceRepository .summaryDailyAttendanceList(month, year);
@@ -413,6 +419,10 @@ public class AttendanceApiController {
 				} catch (Exception e) {
 					// e.printStackTrace();
 				}
+
+				int sts = commonFunctionService.CalculateDayConsideringHolidayAndWeekend(
+						dailyAttendanceList.get(i).getEmpId(), sf.format(defaultDate), sf.format(defaultDate),
+						weeklyList, holidayList, dailyAttendanceList.get(i).getLocationId());
 			}
 			System.out.println(dailyAttendanceList);
 

@@ -25,7 +25,7 @@ public interface HolidayRepo extends JpaRepository<Holiday, Integer> {
 			+ "and holiday_fromdt>=:fromDate and holiday_todt<=:toDate",nativeQuery=true)
 	List<Holiday> getHolidayByEmpIdAndFromDateTodate(@Param("empId")int empId, @Param("fromDate") String fromDate,@Param("toDate") String toDate);
 
-	@Query(value="select * from m_holiday where holiday_fromdt between :fromDate and :toDate",nativeQuery=true)
+	@Query(value="select * from m_holiday where holiday_fromdt between :fromDate and :toDate and m_holiday.cal_yr_id=(select cal_yr_id from dm_cal_year where is_current=1)",nativeQuery=true)
 	List<Holiday> getholidaybetweendate(@Param("fromDate") String fromDate,@Param("toDate") String toDate);
 
 }
