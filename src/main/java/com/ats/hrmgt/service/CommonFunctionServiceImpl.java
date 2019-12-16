@@ -14,8 +14,8 @@ import com.ats.hrmgt.model.WeeklyOff;
 public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 	@Override
-	public Integer CalculateDayConsideringHolidayAndWeekend(List<Integer> empIds, String fromDate, String toDate,
-			List<WeeklyOff> weeklyList, List<Holiday> holidayList, int locationId) {
+	public Integer findDateInWeekEnd(int empIds, String fromDate, String toDate, List<WeeklyOff> weeklyList,
+			int locationId) {
 
 		int sts = 1;
 
@@ -423,23 +423,6 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 				}
 			}
-			if (sts == 1) {
-
-				Date frmdt = yydate.parse(fromDate);
-
-				for (int i = 0; i < holidayList.size(); i++) {
-
-					if (locationId == Integer.parseInt(holidayList.get(i).getLocId())) {
-						if (frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayFromdt())) >= 0
-								&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayTodt())) <= 0) {
-
-							sts = 3;
-							break;
-						}
-					}
-
-				}
-			}
 
 		} catch (Exception e) {
 
@@ -495,6 +478,37 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 		}
 
 		return totalcount;
+	}
+
+	@Override
+	public Integer findDateInHoliday(int empId, String fromDate, String toDate, List<Holiday> holidayList,
+			int locationId) {
+		int sts = 1;
+		try {
+
+			if (sts == 1) {
+				SimpleDateFormat yydate = new SimpleDateFormat("yyyy-MM-dd");
+				Date frmdt = yydate.parse(fromDate);
+
+				for (int i = 0; i < holidayList.size(); i++) {
+
+					if (locationId == Integer.parseInt(holidayList.get(i).getLocId())) {
+						if (frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayFromdt())) >= 0
+								&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayTodt())) <= 0) {
+
+							sts = 2;
+							break;
+						}
+					}
+
+				}
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return sts;
 	}
 
 }

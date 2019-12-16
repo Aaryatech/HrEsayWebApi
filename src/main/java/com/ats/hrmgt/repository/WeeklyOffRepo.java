@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
+ 
 import com.ats.hrmgt.model.WeeklyOff;
 
 public interface WeeklyOffRepo extends JpaRepository<WeeklyOff, Integer> {
@@ -20,9 +20,12 @@ public interface WeeklyOffRepo extends JpaRepository<WeeklyOff, Integer> {
 	@Query("update WeeklyOff set del_status=0  WHERE wo_id=:woId")
 	int deleteWeeklyOff(@Param("woId") int woId);
 
-	WeeklyOff findBywoIdAndDelStatus(int woId,int i);
+	WeeklyOff findBywoIdAndDelStatus(int woId, int i);
 
-	@Query(value=" select w.* from weekly_off w, m_employees e where e.location_id=w.loc_id and e.emp_id=:empId and w.del_status=1",nativeQuery=true)
+	@Query(value = " select w.* from weekly_off w, m_employees e where e.location_id=w.loc_id and e.emp_id=:empId and w.del_status=1", nativeQuery = true)
 	List<WeeklyOff> getWeeklyOffListByEmpId(@Param("empId") int empId);
+
+	@Query(value = " select w.* from weekly_off w  where  w.del_status=1", nativeQuery = true)
+	List<WeeklyOff> getWeeklyOffList();
 
 }

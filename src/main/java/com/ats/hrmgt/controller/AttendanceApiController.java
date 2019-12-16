@@ -21,6 +21,7 @@ import com.ats.hrmgt.model.EmpInfo;
 import com.ats.hrmgt.model.EmpJsonData;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.FileUploadedData;
+import com.ats.hrmgt.model.GetWeeklyOff;
 import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.InfoForUploadAttendance;
@@ -31,11 +32,13 @@ import com.ats.hrmgt.model.MstEmpType;
 import com.ats.hrmgt.model.ShiftMaster;
 import com.ats.hrmgt.model.SummaryDailyAttendance;
 import com.ats.hrmgt.model.VariousList;
+import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeeklyOffShit;
 import com.ats.hrmgt.repository.AccessRightModuleRepository;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmpInfoRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
+import com.ats.hrmgt.repository.GetWeeklyOffRepo;
 import com.ats.hrmgt.repository.HolidayRepo;
 import com.ats.hrmgt.repository.InfoForUploadAttendanceRepository;
 import com.ats.hrmgt.repository.LvTypeRepository;
@@ -43,6 +46,7 @@ import com.ats.hrmgt.repository.LvmSumUpRepository;
 import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
+import com.ats.hrmgt.repository.WeeklyOffRepo;
 import com.ats.hrmgt.repository.WeeklyOffShitRepository;
 import com.ats.hrmgt.service.CommonFunctionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -89,6 +93,9 @@ public class AttendanceApiController {
 
 	@Autowired
 	CommonFunctionService commonFunctionService;
+
+	@Autowired
+	WeeklyOffRepo weeklyOffRepo;
 
 	@RequestMapping(value = { "/initiallyInsertDailyRecord" }, method = RequestMethod.POST)
 	public @ResponseBody Info initiallyInsertDailyRecord(@RequestParam("fromDate") String fromDate,
@@ -231,6 +238,7 @@ public class AttendanceApiController {
 			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
 			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
 			List<Holiday> holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
+			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 
 			// List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.findAll();
 
@@ -419,10 +427,29 @@ public class AttendanceApiController {
 				} catch (Exception e) {
 					// e.printStackTrace();
 				}
+				try {
 
-				int sts = commonFunctionService.CalculateDayConsideringHolidayAndWeekend(
-						dailyAttendanceList.get(i).getEmpId(), sf.format(defaultDate), sf.format(defaultDate),
-						weeklyList, holidayList, dailyAttendanceList.get(i).getLocationId());
+					int weekEndStatus = commonFunctionService.findDateInWeekEnd(dailyAttendanceList.get(i).getEmpId(),
+							sf.format(defaultDate), sf.format(defaultDate), weeklyOfflist,
+							dailyAttendanceList.get(i).getLocationId());
+
+					int holidayStatus = commonFunctionService.findDateInHoliday(dailyAttendanceList.get(i).getEmpId(),
+							sf.format(defaultDate), sf.format(defaultDate), holidayList,
+							dailyAttendanceList.get(i).getLocationId());
+
+					
+					if (weekEndStatus == 2) {
+						dailyAttendanceList.get(i).setAttStatus("Weekly Off");
+					} else if (holidayStatus == 2) {
+						dailyAttendanceList.get(i).setAttStatus("Holiday");
+					} else {
+						dailyAttendanceList.get(i).setAttStatus("Present");
+					}
+
+					// System.out.println("defaultDate" + sf.format(defaultDate) + "sts " + sts);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			System.out.println(dailyAttendanceList);
 
