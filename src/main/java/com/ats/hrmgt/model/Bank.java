@@ -11,8 +11,6 @@ import javax.persistence.Table;
 public class Bank {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-
-	
 	private int bankId;
 	private String name;
 	private String branchName;
@@ -104,7 +102,5 @@ public class Bank {
 				+ delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2
 				+ "]";
 	}	
-	
-
 	
 }

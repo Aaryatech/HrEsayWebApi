@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.model.Allowances;
+import com.ats.hrmgt.model.EmpSalAllowance;
 import com.ats.hrmgt.model.EmpSalaryInfo;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
@@ -17,6 +19,8 @@ import com.ats.hrmgt.model.TblEmpBankInfo;
 import com.ats.hrmgt.model.TblEmpInfo;
 import com.ats.hrmgt.model.TblEmpNominees;
 import com.ats.hrmgt.model.User;
+import com.ats.hrmgt.repository.AllowancesRepo;
+import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
 import com.ats.hrmgt.repository.EmpSalaryInfoRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.TblEmpBankInfoRepo;
@@ -37,6 +41,11 @@ public class EmployeeApiController {
 	@Autowired EmpSalaryInfoRepo empSalRepo;
 	
 	@Autowired UserRepo userRepo;
+	
+	@Autowired AllowancesRepo allowanceRepo;
+	
+	@Autowired EmpSalAllowanceRepo empSalAllowanceRepo;
+	
 		/**********************************Employee*********************************/
 		
 		@RequestMapping(value = {"/getAllEmployee"}, method = RequestMethod.GET)
@@ -187,6 +196,57 @@ public class EmployeeApiController {
 			}
 			
 			return empSave;
+			
+		}
+		
+		
+		@RequestMapping(value = {"/getAllAllowances"}, method = RequestMethod.GET)
+		public List<Allowances> getAllAllowances() {
+			List<Allowances> list = new ArrayList<Allowances>();
+			
+			try {
+				list = allowanceRepo.findBydelStatusAndIsActive(0, 1);
+				
+			}catch (Exception e) {
+				System.err.println("Excep in getAllAllowances : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return list;
+			
+		}
+		
+		
+		
+		@RequestMapping(value = {"/saveEmpSalAllowanceInfo"}, method = RequestMethod.POST)
+		public List<EmpSalAllowance> saveEmpSalAllowanceInfo(@RequestBody List<EmpSalAllowance> allowncList) {
+			List<EmpSalAllowance> empAllowance = new ArrayList<EmpSalAllowance>();
+			System.out.println("allowance--------"+allowncList);
+			try {
+				empAllowance = empSalAllowanceRepo.saveAll(allowncList);
+				
+			}catch (Exception e) {
+				System.err.println("Excep in saveEmployeeIdUser : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return empAllowance;
+			
+		}
+		
+		@RequestMapping(value = {"/saveEmpSalAllowanceIds"}, method = RequestMethod.POST)
+		public EmpSalAllowance saveEmpSalAllowanceIds(@RequestBody EmpSalAllowance allowance) {
+			EmpSalAllowance empAllowanceIds = new EmpSalAllowance();
+			System.out.println("allowance--------"+allowance);
+			try {
+				empAllowanceIds = empSalAllowanceRepo.save(allowance);
+				
+			}catch (Exception e) {
+				System.err.println("Excep in saveEmployeeIdUser : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return empAllowanceIds;
 			
 		}
 }
