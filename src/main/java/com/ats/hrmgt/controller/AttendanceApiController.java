@@ -25,6 +25,7 @@ import com.ats.hrmgt.model.GetWeeklyOff;
 import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.InfoForUploadAttendance;
+import com.ats.hrmgt.model.LeaveApply;
 import com.ats.hrmgt.model.LoginResponse;
 import com.ats.hrmgt.model.LvType;
 import com.ats.hrmgt.model.LvmSumUp;
@@ -41,6 +42,7 @@ import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetWeeklyOffRepo;
 import com.ats.hrmgt.repository.HolidayRepo;
 import com.ats.hrmgt.repository.InfoForUploadAttendanceRepository;
+import com.ats.hrmgt.repository.LeaveApplyRepository;
 import com.ats.hrmgt.repository.LvTypeRepository;
 import com.ats.hrmgt.repository.LvmSumUpRepository;
 import com.ats.hrmgt.repository.MstEmpTypeRepository;
@@ -96,6 +98,11 @@ public class AttendanceApiController {
 
 	@Autowired
 	WeeklyOffRepo weeklyOffRepo;
+
+	@Autowired
+	LeaveApplyRepository leaveApplyRepository;
+
+	int PL_CL_HD_leave_insert_automatic = 0;
 
 	@RequestMapping(value = { "/initiallyInsertDailyRecord" }, method = RequestMethod.POST)
 	public @ResponseBody Info initiallyInsertDailyRecord(@RequestParam("fromDate") String fromDate,
@@ -217,6 +224,15 @@ public class AttendanceApiController {
 
 	}
 
+	List<FileUploadedData> fileUploadedDataList = new ArrayList<>();
+	List<MstEmpType> mstEmpTypeList = new ArrayList<>();
+	List<ShiftMaster> shiftList = new ArrayList<>();
+	List<Holiday> holidayList = new ArrayList<>();
+	List<WeeklyOff> weeklyOfflist = new ArrayList<>();
+	List<WeeklyOffShit> weeklyOffShitList = new ArrayList<>();
+	List<LeaveApply> leavetList = new ArrayList<>();
+	List<LvType> lvTypeList = new ArrayList<>();
+
 	@RequestMapping(value = { "/importAttendanceByFileAndUpdate" }, method = RequestMethod.POST)
 	public @ResponseBody Info getVariousListForUploadAttendace(
 			@RequestBody DataForUpdateAttendance dataForUpdateAttendance) {
@@ -234,12 +250,14 @@ public class AttendanceApiController {
 			int month = dataForUpdateAttendance.getMonth();
 			int year = dataForUpdateAttendance.getYear();
 
-			List<FileUploadedData> fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
-			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
-			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
-			List<Holiday> holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
-			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
-			List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
+			fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
+			mstEmpTypeList = mstEmpTypeRepository.findAll();
+			shiftList = shiftMasterRepository.findAll();
+			holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
+			weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
+			weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
+			leavetList = leaveApplyRepository.getleavetList(fromDate, toDate);
+			lvTypeList = lvTypeRepository.findAll();
 			//
 
 			// List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
@@ -429,9 +447,9 @@ public class AttendanceApiController {
 				}
 				try {
 
-					// weekEnnd : 		1=Weekly off,2: no weekly off
-					// holiday :  		3=holiday	,4: holiday off
-					// leave : 			5=leave		,6: no leave
+					// weekEnnd : 1=Weekly off,2: no weekly off
+					// holiday : 3=holiday ,4: holiday off
+					// leave : 5=leave ,6: no leave
 					// presentStatus : 7=present ,8: absent
 
 					int weekEndStatus = commonFunctionService.findDateInWeekEnd(sf.format(defaultDate),
@@ -441,6 +459,9 @@ public class AttendanceApiController {
 					int holidayStatus = commonFunctionService.findDateInHoliday(sf.format(defaultDate),
 							sf.format(defaultDate), holidayList, dailyAttendanceList.get(i).getLocationId());
 
+					int leaveStatus = commonFunctionService.findDateInLeave(sf.format(defaultDate), leavetList,
+							dailyAttendanceList.get(i).getEmpId());
+
 					int presentStatus = 7;
 
 					if (dailyAttendanceList.get(i).getInTime().equals("0:00")
@@ -449,20 +470,454 @@ public class AttendanceApiController {
 					}
 
 					/*
-					 * int findShiftedWeekEnd = commonFunctionService.findShiftedWeekEnd(
-					 * dailyAttendanceList.get(i).getEmpId(), sf.format(defaultDate),
-					 * weeklyOffShitList, dailyAttendanceList.get(i).getLocationId());
+					 * System.out.println("emp code : " + dailyAttendanceList.get(i).getEmpCode() +
+					 * " Date : " + dailyAttendanceList.get(i).getAttDate() + " weekEndStatus :" +
+					 * weekEndStatus + " holidayStatus :" + holidayStatus + " leaveStatus :" +
+					 * leaveStatus + " presentStatus " + presentStatus);
 					 */
 
-					if (weekEndStatus == 1) {
-						dailyAttendanceList.get(i).setAttStatus("Weekly Off");
-					} else {
-						dailyAttendanceList.get(i).setAttStatus("Present");
+					if ((presentStatus == 7 && weekEndStatus == 1) || (presentStatus == 7 && holidayStatus == 1)) {
+						dailyAttendanceList.get(i).setOtHr(String.valueOf(dailyAttendanceList.get(i).getWorkingHrs()));
 					}
 
+					String atteanceCase = weekEndStatus + "" + holidayStatus + "" + leaveStatus + "" + presentStatus;
+
+					System.out.println("emp code :" + dailyAttendanceList.get(i).getEmpCode() + "defaultDate"
+							+ sf.format(defaultDate) + "sts " + atteanceCase);
+
+					dailyAttendanceList.get(i).setCasetype(atteanceCase);
+
 					// System.out.println("defaultDate" + sf.format(defaultDate) + "sts " + sts);
+
+					/// start cases implementation
+
+					if (atteanceCase.equals("1357") || atteanceCase.equals("1367") || atteanceCase.equals("2357")
+							|| atteanceCase.equals("2367") || atteanceCase.equals("1358") || atteanceCase.equals("1368")
+							|| atteanceCase.equals("2358") || atteanceCase.equals("2368")) {
+						if (atteanceCase.equals("1358") || atteanceCase.equals("1368") || atteanceCase.equals("2358")
+								|| atteanceCase.equals("2368")) {
+							if (atteanceCase.equals("1358") || atteanceCase.equals("2358")) {
+
+								dailyAttendanceList.get(i).setAttStatus("PH");
+
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals("PH")) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+
+								if (atteanceCase.equals("1358") || atteanceCase.equals("2358")) {
+									// need to relook this block
+								}
+							} // $case == "1358" || $case == "2358"
+							else {
+								// need to relook this block
+							}
+						} // $case == "1358" || $case == "1368" || $case == "2358" || $case == "2368"
+						else if (atteanceCase.equals("1357") || atteanceCase.equals("1367")
+								|| atteanceCase.equals("2357") || atteanceCase.equals("2367")) {
+
+							if (mstEmpType.getWhWork().equals("OT")) {
+								if (mstEmpType.getOtApplicable().equals("Yes")) {
+
+									String newStts = AttendanceStatus(employee, dailyAttendanceList.get(i),
+											dailyAttendanceList.get(i).getEmpId(),
+											dailyAttendanceList.get(i).getAttDate(), atteanceCase,
+											dailyAttendanceList.get(i).getWorkingHrs());
+
+									dailyAttendanceList.get(i).setAttStatus(newStts);
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals(newStts)) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
+
+								} // $rs_emp_type->ot_applicable == 'Yes'
+								else {
+									dailyAttendanceList.get(i).setAttStatus("PH");
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals("PH")) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
+
+								}
+								if (atteanceCase.equals("1357") || atteanceCase.equals("2357")) {
+									// need to relook code
+								} // $case == '1357' || $case == '2357'
+
+							} // $rs_emp_type->wh_work == 'OT'
+							else if (mstEmpType.getWhWork().equals("Comp Off")) {
+
+								String newStts = AttendanceStatus(employee, dailyAttendanceList.get(i),
+										dailyAttendanceList.get(i).getEmpId(), dailyAttendanceList.get(i).getAttDate(),
+										atteanceCase, dailyAttendanceList.get(i).getWorkingHrs());
+
+								dailyAttendanceList.get(i).setAttStatus(newStts);
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals(newStts)) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+							} // $rs_emp_type->wh_work == 'Comp Off'
+						} // $case == "1357" || $case == "1367" || $case == "2357" || $case == "2367"
+					} // $case == "1357" || $case == "1367" || $case == "2357" || $case == "2367" ||
+						// $case == "1358" || $case == "1368" || $case == "2358" || $case == "2368"
+					else if (atteanceCase.equals("1457") || atteanceCase.equals("1458") || atteanceCase.equals("1467")
+							|| atteanceCase.equals("1468")) {
+
+						if (atteanceCase.equals("1458") || atteanceCase.equals("1468")) {
+
+							if (defaultDate.compareTo(sf.parse(employee.getCmpJoiningDate())) > 0) {
+
+								dailyAttendanceList.get(i).setAttStatus("WO");
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals("WO")) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+
+							} // $att_date >= $forsaterday->cmp_joining_date
+							else {
+								dailyAttendanceList.get(i).setAttStatus("LWP");
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals("LWP")) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+
+							}
+
+							if (atteanceCase.equals("1458")) {
+								// need to relook code
+							} // $case == '1458'
+						} // $case == "1458" || $case == "1468"
+						else if (atteanceCase.equals("1457") || atteanceCase.equals("1467")) {
+
+							if (mstEmpType.getWhWork().equals("OT")) {
+
+								if (mstEmpType.getOtApplicable().equals("Yes")) {
+
+									String newStts = AttendanceStatus(employee, dailyAttendanceList.get(i),
+											dailyAttendanceList.get(i).getEmpId(),
+											dailyAttendanceList.get(i).getAttDate(), atteanceCase,
+											dailyAttendanceList.get(i).getWorkingHrs());
+
+									dailyAttendanceList.get(i).setAttStatus(newStts);
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals(newStts)) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
+
+								} // $rs_emp_type->ot_applicable == 'Yes'
+								else {
+									dailyAttendanceList.get(i).setAttStatus("WO");
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals("WO")) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
+
+								}
+							} // $rs_emp_type->wh_work == 'OT'
+							else if (mstEmpType.getWhWork().equals("Comp Off")) {
+
+								String newStts = AttendanceStatus(employee, dailyAttendanceList.get(i),
+										dailyAttendanceList.get(i).getEmpId(), dailyAttendanceList.get(i).getAttDate(),
+										atteanceCase, dailyAttendanceList.get(i).getWorkingHrs());
+
+								dailyAttendanceList.get(i).setAttStatus(newStts);
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals(newStts)) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+							} // $rs_emp_type->wh_work == 'Comp Off'
+							else {
+								dailyAttendanceList.get(i).setAttStatus("WO");
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals("WO")) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+							}
+							if (atteanceCase.equals("1457")) {
+								// need to relookk
+							} // $case == '1457'
+						} // $case == "1457" || $case == "1467"
+					} // $case == "1457" || $case == "1458" || $case == "1467" || $case == "1468"
+					else if (atteanceCase.equals("2457") || atteanceCase.equals("2458")) {
+						if (atteanceCase.equals("2457")) {
+							if (mstEmpType.getMinworkApplicable().equals("Yes")) // take new value here for currently it
+																					// is taken as lm_applicable take
+																					// new field here as working hr rule
+																					// applicable or not
+							{
+
+								if (dailyAttendanceList.get(i).getWorkingHrs() >= Float
+										.parseFloat(shiftMaster.getShiftHr())) {
+									// echo
+									if (dailyAttendanceList.get(i).getWorkingHrs() > shiftMaster.getShiftOtHour()) {
+										if (mstEmpType.getOtApplicable().contains("Yes")) {
+
+											dailyAttendanceList.get(i).setAttStatus("OT");
+											for (int j = 0; j < lvTypeList.size(); j++) {
+												if (lvTypeList.get(j).getNameSd().equals("OT")) {
+													dailyAttendanceList.get(i)
+															.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+													break;
+												}
+											}
+
+										} // $rs_emp_type->ot_applicable == 'Yes'
+										else {
+											dailyAttendanceList.get(i).setAttStatus("P");
+											for (int j = 0; j < lvTypeList.size(); j++) {
+												if (lvTypeList.get(j).getNameSd().equals("P")) {
+													dailyAttendanceList.get(i)
+															.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+													break;
+												}
+											}
+
+										}
+									} // $working_hrs > $rs_shift_timming->shift_hr
+									else {
+
+										dailyAttendanceList.get(i).setAttStatus("P");
+										for (int j = 0; j < lvTypeList.size(); j++) {
+											if (lvTypeList.get(j).getNameSd().equals("P")) {
+												dailyAttendanceList.get(i)
+														.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+												break;
+											}
+										}
+									}
+
+								} // $res_leavecancel
+							} // $working_hrs >= $resultp->working_hrs
+							else if (dailyAttendanceList.get(i).getWorkingHrs() >= Float
+									.parseFloat(shiftMaster.getShiftHalfdayHr())
+									&& dailyAttendanceList.get(i).getWorkingHrs() < Float
+											.parseFloat(shiftMaster.getShiftHr())) {
+								// HD
+								if (mstEmpType.getHalfDay().equals("Yes")) {
+									// need to check code
+								} // $res3_hd
+								else {
+
+									// need to check code
+								}
+
+							} // $rs_emp_type->half_day == 'Yes'
+							else {
+
+								dailyAttendanceList.get(i).setAttStatus("P");
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals("P")) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+							}
+							// need to check code
+						} // $working_hrs >= $resulthd->working_hrs && $working_hrs <
+							// $resultp->working_hrs
+						else if (dailyAttendanceList.get(i).getWorkingHrs() <= Float
+								.parseFloat(shiftMaster.getShiftHalfdayHr())) {
+
+						} // $working_hrs <= $resulthd->working_hrs
+					} // $rs_emp_type->minwork_applicable == 'Yes'
+					else {
+						if (dailyAttendanceList.get(i).getWorkingHrs() > shiftMaster.getShiftOtHour()) {
+
+							dailyAttendanceList.get(i).setAttStatus("OT");
+							for (int j = 0; j < lvTypeList.size(); j++) {
+								if (lvTypeList.get(j).getNameSd().equals("OT")) {
+									dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+									break;
+								}
+							}
+						} // $working_hrs > $rs_shift_timming->shift_hr
+						else {
+
+							dailyAttendanceList.get(i).setEarlyGoingMark(0);
+							dailyAttendanceList.get(i).setLateMark("0");
+							dailyAttendanceList.get(i).setAttStatus("P");
+							for (int j = 0; j < lvTypeList.size(); j++) {
+								if (lvTypeList.get(j).getNameSd().equals("P")) {
+									dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+									break;
+								}
+							}
+						}
+						// need to check code
+					}
+					// $case == '2457'
+					if (atteanceCase.equals("2458")) {
+						// need to check code
+					} // $case == '2458'
+					if (atteanceCase.equals("2467") || atteanceCase.equals("2468")) {
+						if (atteanceCase.equals("2467")) {
+
+							if (mstEmpType.getMinworkApplicable().equals("Yes")) // take new value here for currently it
+																					// is taken as lm_applicable take
+																					// new field here as working hr rule
+																					// applicable or not
+							{
+
+								if (dailyAttendanceList.get(i).getWorkingHrs() >= Float
+										.parseFloat(shiftMaster.getShiftHr())) {
+									if (dailyAttendanceList.get(i).getWorkingHrs() > shiftMaster.getShiftOtHour()) {
+										// echo "<br>OT";
+										if (mstEmpType.getOtApplicable().contains("Yes")) {
+											dailyAttendanceList.get(i).setAttStatus("OT");
+											for (int j = 0; j < lvTypeList.size(); j++) {
+												if (lvTypeList.get(j).getNameSd().equals("OT")) {
+													dailyAttendanceList.get(i)
+															.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+													break;
+												}
+											}
+										} // $rs_emp_type->ot_applicable == 'Yes'
+										else {
+											dailyAttendanceList.get(i).setAttStatus("P");
+											for (int j = 0; j < lvTypeList.size(); j++) {
+												if (lvTypeList.get(j).getNameSd().equals("P")) {
+													dailyAttendanceList.get(i)
+															.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+													break;
+												}
+											}
+
+										}
+									} // $working_hrs > $rs_shift_timming->shift_hr
+									else {
+										dailyAttendanceList.get(i).setAttStatus("P");
+										for (int j = 0; j < lvTypeList.size(); j++) {
+											if (lvTypeList.get(j).getNameSd().equals("P")) {
+												dailyAttendanceList.get(i)
+														.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+												break;
+											}
+										}
+									}
+								} // $working_hrs >= $resultp->working_hrs
+								else if (dailyAttendanceList.get(i).getWorkingHrs() >= Float
+										.parseFloat(shiftMaster.getShiftHalfdayHr())
+										&& dailyAttendanceList.get(i).getWorkingHrs() < Float
+												.parseFloat(shiftMaster.getShiftHr())) {
+									// echo "<present and >hd111";
+									// HD
+									if (mstEmpType.getHalfDay().equals("Yes")) {
+										// echo
+										if (PL_CL_HD_leave_insert_automatic == 1) {
+
+										} // $PL_CL_HD_leave_insert_automatic == "1"
+										else {
+											dailyAttendanceList.get(i).setAttStatus("HD");
+											for (int j = 0; j < lvTypeList.size(); j++) {
+												if (lvTypeList.get(j).getNameSd().equals("HD")) {
+													dailyAttendanceList.get(i)
+															.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+													break;
+												}
+											}
+
+										}
+									} // $rs_emp_type->half_day == 'Yes'
+									else {
+										dailyAttendanceList.get(i).setAttStatus("P");
+										for (int j = 0; j < lvTypeList.size(); j++) {
+											if (lvTypeList.get(j).getNameSd().equals("P")) {
+												dailyAttendanceList.get(i)
+														.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+												break;
+											}
+										}
+
+									}
+								} // $working_hrs >= $resulthd->working_hrs && $working_hrs <
+									// $resultp->working_hrs
+								else if (dailyAttendanceList.get(i).getWorkingHrs() < Float
+										.parseFloat(shiftMaster.getShiftHalfdayHr())) {
+
+									dailyAttendanceList.get(i).setEarlyGoingMark(0);
+									dailyAttendanceList.get(i).setLateMark("0");
+									dailyAttendanceList.get(i).setAttStatus("LWP");
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals("LWP")) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
+
+								} // $working_hrs < $resulthd->working_hrs
+							} // $rs_emp_type->minwork_applicable == 'Yes'
+							else {
+								if (dailyAttendanceList.get(i).getWorkingHrs() > shiftMaster.getShiftOtHour()) {
+									dailyAttendanceList.get(i).setAttStatus("OT");
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals("OT")) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
+
+								} // $working_hrs > $rs_shift_timming->shift_hr
+								else {
+
+									dailyAttendanceList.get(i).setAttStatus("P");
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals("P")) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
+
+								}
+							}
+						} // $case == '2467'
+						else if (atteanceCase.equals("2468")) {
+
+							if (defaultDate.compareTo(sf.parse(employee.getCmpJoiningDate())) >= 0) {
+
+								dailyAttendanceList.get(i).setAttStatus("LWP");
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals("LWP")) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+
+							} // $att_date >= $forsaterday->cmp_joining_date
+							else {
+								dailyAttendanceList.get(i).setAttStatus("NA");
+								for (int j = 0; j < lvTypeList.size(); j++) {
+									if (lvTypeList.get(j).getNameSd().equals("NA")) {
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										break;
+									}
+								}
+
+							}
+						} // $case == '2468'
+					}
+					// end cases implementation
+
 				} catch (Exception e) {
-					e.printStackTrace();
+					// e.printStackTrace();
 				}
 			}
 			System.out.println(dailyAttendanceList);
@@ -470,13 +925,140 @@ public class AttendanceApiController {
 			info.setError(false);
 			info.setMsg("success");
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 
 			info.setError(true);
 			info.setMsg("failed");
 			e.printStackTrace();
 		}
 		return info;
+	}
+
+	String AttendanceStatus(EmpJsonData employee, DailyAttendance dailyAttendance, int empId, String date,
+			String atteanceCase, float hour) {
+
+		String ret = new String();
+
+		try {
+			LvType lvTypetp = new LvType();
+			LvType lvTypehd = new LvType();
+			MstEmpType mstEmpType = new MstEmpType();
+
+			for (int i = 0; i < lvTypeList.size(); i++) {
+				if (lvTypeList.get(i).getNameSd().equals("P")) {
+					lvTypetp = lvTypeList.get(i);
+				}
+				if (lvTypeList.get(i).getNameSd().equals("HD")) {
+					lvTypehd = lvTypeList.get(i);
+				}
+			}
+			for (int i = 0; i < mstEmpTypeList.size(); i++) {
+				if (mstEmpTypeList.get(i).getEmpTypeId() == employee.getEmpType()) {
+					mstEmpType = mstEmpTypeList.get(i);
+					break;
+				}
+			}
+
+			if (atteanceCase.equals("1357") || atteanceCase.equals("1367") || atteanceCase.equals("2357")
+					|| atteanceCase.equals("2367")) {
+
+				if (mstEmpType.getWhWork().equals("OT")) {
+					if (dailyAttendance.getWorkingHrs() >= lvTypetp.getWorkingHrs()) {
+						if (atteanceCase.equals("1357") || atteanceCase.equals("1367")) {
+							ret = "PH-WO-P";
+						} // $case == "1357" || $case == "1367"
+						else {
+							ret = "PH-OT";
+						}
+					} // $working_hrs >= $resultp['working_hrs']
+					else if (dailyAttendance.getWorkingHrs() >= lvTypehd.getWorkingHrs()
+							&& dailyAttendance.getWorkingHrs() < lvTypetp.getWorkingHrs()) {
+						if (atteanceCase.equals("1357") || atteanceCase.equals("1367")) {
+							ret = "PH-WO-HD";
+						} // $case == "1357" || $case == "1367"
+						else {
+							ret = "PH-HD";
+						}
+					} // $working_hrs >= $resulthd->working_hrs && $working_hrs <
+						// $resultp['working_hrs']
+					else if (dailyAttendance.getWorkingHrs() < lvTypehd.getWorkingHrs()) {
+						ret = "PH";
+					} // $working_hrs < $resulthd['working_hrs']
+					ret = "PH-OT";
+				} // $res_getemptype->wh_work == 'OT'
+				else if (mstEmpType.getWhWork().equals("Comp Off")) {
+					if (dailyAttendance.getWorkingHrs() >= lvTypetp.getWorkingHrs()) {
+						ret = "PH-CO";
+					} // $working_hrs >= $resultp['working_hrs']
+					else if (dailyAttendance.getWorkingHrs() >= lvTypehd.getWorkingHrs()
+							&& dailyAttendance.getWorkingHrs() < lvTypetp.getWorkingHrs()) {
+						ret = "PH-COHD";
+					} // $working_hrs >= $resulthd['working_hrs'] && $working_hrs <
+						// $resultp['working_hrs']
+					else if (dailyAttendance.getWorkingHrs() < lvTypehd.getWorkingHrs()) {
+						ret = "PH";
+					} // $working_hrs < $resulthd['working_hrs']
+					ret = "PH-CO";
+				} // $res_getemptype->wh_work == 'Comp Off'
+				ret = "PHE";
+			} // $case == '1357' || $case == '1367' || $case == '2357' || $case == '2367'
+			else if (atteanceCase.equals("1358") || atteanceCase.equals("1368") || atteanceCase.equals("2358")
+					|| atteanceCase.equals("2368")) {
+				if (atteanceCase.equals("1358") || atteanceCase.equals("1368")) {
+					ret = "PH-WO";
+				} // $case == "1358" || $case == "1368"
+				else {
+					ret = "PH";
+				}
+			} // $case == '1358' || $case == '1368' || $case == '2358' || $case == '2368'
+			else if (atteanceCase.equals("1457") || atteanceCase.equals("1467")) {
+				// $query_getemptype = "select te.emp_type,tm.wh_work from tbl_employees te
+				// inner join tbl_mst_emp_types tm on te.emp_type=tm.emp_type_id where emp_id='"
+				// . $emp_id . "'";
+				// $res_getemptype = $this->db->query($query_getemptype)->row();
+				if (mstEmpType.getWhWork().equals("OT")) {
+					if (dailyAttendance.getWorkingHrs() >= lvTypetp.getWorkingHrs()) {
+						ret = "WO-OT";
+					} // $working_hrs >= $resultp['working_hrs']
+					else if (dailyAttendance.getWorkingHrs() >= lvTypehd.getWorkingHrs()
+							&& dailyAttendance.getWorkingHrs() < lvTypetp.getWorkingHrs()) {
+						ret = "WO-HD";
+					} // $working_hrs >= $resulthd['working_hrs'] && $working_hrs <
+						// $resultp['working_hrs']
+					else if (dailyAttendance.getWorkingHrs() < lvTypehd.getWorkingHrs()) {
+						ret = "WO";
+					} // $working_hrs < $resulthd['working_hrs']
+					ret = "WO-OT";
+				} // $res_getemptype->wh_work == 'OT'
+				else if (mstEmpType.getWhWork().equals("Comp Off")) {
+					if (dailyAttendance.getWorkingHrs() >= lvTypetp.getWorkingHrs()) {
+						ret = "WO-CO";
+					} // $working_hrs >= $resultp['working_hrs']
+					else if (dailyAttendance.getWorkingHrs() >= lvTypehd.getWorkingHrs()
+							&& dailyAttendance.getWorkingHrs() < lvTypetp.getWorkingHrs()) {
+						ret = "WO-COHD";
+					} // $working_hrs >= $resulthd['working_hrs'] && $working_hrs <
+						// $resultp['working_hrs']
+					else if (dailyAttendance.getWorkingHrs() < lvTypehd.getWorkingHrs()) {
+						ret = "WO";
+					} // $working_hrs < $resulthd['working_hrs']
+					ret = "WO";
+				} // $res_getemptype->wh_work == 'Comp Off'
+				ret = "WOE";
+			} // $case == '1457' || $case == '1467'
+			else if (atteanceCase.equals("1458") || atteanceCase.equals("1468")) {
+				ret = "WO";
+			} // $case == '1458' || $case == '1468'
+			else if (atteanceCase.equals("2468")) {
+				ret = "LWP";
+			} // $case == '2468'
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ret;
 	}
 
 }

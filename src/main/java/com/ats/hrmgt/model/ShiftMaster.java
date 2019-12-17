@@ -38,7 +38,7 @@ public class ShiftMaster {
 	private int maxLateTimeAllowed; 
 	
 	@Column(name="shift_hr")
-	private String shift_hr; 
+	private String shiftHr; 
 	 
 	@Column(name="shift_halfday_hr")
 	private String shiftHalfdayHr ;
@@ -127,13 +127,13 @@ public class ShiftMaster {
 	public void setMaxLateTimeAllowed(int maxLateTimeAllowed) {
 		this.maxLateTimeAllowed = maxLateTimeAllowed;
 	}
-
-	public String getShift_hr() {
-		return shift_hr;
+ 
+	public String getShiftHr() {
+		return shiftHr;
 	}
 
-	public void setShift_hr(String shift_hr) {
-		this.shift_hr = shift_hr;
+	public void setShiftHr(String shiftHr) {
+		this.shiftHr = shiftHr;
 	}
 
 	public String getShiftHalfdayHr() {
@@ -204,7 +204,7 @@ public class ShiftMaster {
 	public String toString() {
 		return "ShiftMaster [id=" + id + ", shiftname=" + shiftname + ", fromtime=" + fromtime + ", totime=" + totime
 				+ ", changeable=" + changeable + ", changewith=" + changewith + ", companyId=" + companyId
-				+ ", maxLateTimeAllowed=" + maxLateTimeAllowed + ", shift_hr=" + shift_hr + ", shiftHalfdayHr="
+				+ ", maxLateTimeAllowed=" + maxLateTimeAllowed + ", shiftHr=" + shiftHr + ", shiftHalfdayHr="
 				+ shiftHalfdayHr + ", earlyGoingMin=" + earlyGoingMin + ", otCalculatedTime=" + otCalculatedTime
 				+ ", otCalculatedAfterHr=" + otCalculatedAfterHr + ", shiftOtHour=" + shiftOtHour + ", departmentId="
 				+ departmentId + ", selfGroupId=" + selfGroupId + ", status=" + status + "]";

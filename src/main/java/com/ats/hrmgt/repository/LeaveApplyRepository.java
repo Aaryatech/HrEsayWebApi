@@ -45,6 +45,10 @@ public interface LeaveApplyRepository extends JpaRepository<LeaveApply, Integer>
 			+ "leave_fromdt and leave_todt))  and ex_int1 in (1,2,3) and emp_id=:empId and lv_type_id!=:leaveTypeId",nativeQuery=true)
 	List<LeaveApply> checkContinueDateLeave(@Param("fromDate") String fromDate,@Param("toDate") String toDate,@Param("empId") int empId,@Param("leaveTypeId") int leaveTypeId);
 
+	@Query(value="select * from leave_apply where ((leave_fromdt between :fromDate and :toDate) or "
+			+ "(leave_todt between :fromDate and :toDate) ) and ex_int1=3",nativeQuery=true)
+	List<LeaveApply> getleavetList(@Param("fromDate") String fromDate,@Param("toDate") String toDate);
+
 	
 
 
