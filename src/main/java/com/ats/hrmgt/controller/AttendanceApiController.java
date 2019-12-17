@@ -239,8 +239,8 @@ public class AttendanceApiController {
 			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
 			List<Holiday> holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
 			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
-
-			// List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.findAll();
+			List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
+			//
 
 			// List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
 			/*
@@ -429,19 +429,33 @@ public class AttendanceApiController {
 				}
 				try {
 
-					int weekEndStatus = commonFunctionService.findDateInWeekEnd(dailyAttendanceList.get(i).getEmpId(),
-							sf.format(defaultDate), sf.format(defaultDate), weeklyOfflist,
+					// weekEnnd : 		1=Weekly off,2: no weekly off
+					// holiday :  		3=holiday	,4: holiday off
+					// leave : 			5=leave		,6: no leave
+					// presentStatus : 7=present ,8: absent
+
+					int weekEndStatus = commonFunctionService.findDateInWeekEnd(sf.format(defaultDate),
+							sf.format(defaultDate), weeklyOfflist, weeklyOffShitList,
 							dailyAttendanceList.get(i).getLocationId());
 
-					int holidayStatus = commonFunctionService.findDateInHoliday(dailyAttendanceList.get(i).getEmpId(),
-							sf.format(defaultDate), sf.format(defaultDate), holidayList,
-							dailyAttendanceList.get(i).getLocationId());
+					int holidayStatus = commonFunctionService.findDateInHoliday(sf.format(defaultDate),
+							sf.format(defaultDate), holidayList, dailyAttendanceList.get(i).getLocationId());
 
-					
-					if (weekEndStatus == 2) {
+					int presentStatus = 7;
+
+					if (dailyAttendanceList.get(i).getInTime().equals("0:00")
+							|| dailyAttendanceList.get(i).getOutTime().equals("0:00")) {
+						presentStatus = 8;
+					}
+
+					/*
+					 * int findShiftedWeekEnd = commonFunctionService.findShiftedWeekEnd(
+					 * dailyAttendanceList.get(i).getEmpId(), sf.format(defaultDate),
+					 * weeklyOffShitList, dailyAttendanceList.get(i).getLocationId());
+					 */
+
+					if (weekEndStatus == 1) {
 						dailyAttendanceList.get(i).setAttStatus("Weekly Off");
-					} else if (holidayStatus == 2) {
-						dailyAttendanceList.get(i).setAttStatus("Holiday");
 					} else {
 						dailyAttendanceList.get(i).setAttStatus("Present");
 					}
