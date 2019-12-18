@@ -84,4 +84,10 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	@Modifying
 	@Query(value="UPDATE m_employees SET del_status=0 WHERE emp_id=:empId",nativeQuery=true)
 	public int deleteEmployee(@Param("empId") int empId);
+	
+
+@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET current_shiftid =:shiftId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int assignShift(@Param("empIdList") List<Integer> empIdList, @Param("shiftId") String shiftId);
 }
