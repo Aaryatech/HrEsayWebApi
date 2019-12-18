@@ -501,20 +501,46 @@ public class AttendanceApiController {
 									|| atteanceCase.equals("2358") || atteanceCase.equals("2368")) {
 								if (atteanceCase.equals("1358") || atteanceCase.equals("2358")) {
 
-									dailyAttendanceList.get(i).setAttStatus("PH");
+									/*dailyAttendanceList.get(i).setAttStatus("PH");
 
 									for (int j = 0; j < lvTypeList.size(); j++) {
 										if (lvTypeList.get(j).getNameSd().equals("PH")) {
 											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
 											break;
 										}
+									}*/
+									
+									String newStts = AttendanceStatus(employee, dailyAttendanceList.get(i),
+											dailyAttendanceList.get(i).getEmpId(),
+											dailyAttendanceList.get(i).getAttDate(), atteanceCase,
+											dailyAttendanceList.get(i).getWorkingHrs(), shiftMaster);
+
+									dailyAttendanceList.get(i).setAttStatus(newStts);
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals(newStts)) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
 									}
+									
 									if (atteanceCase.equals("1358") || atteanceCase.equals("2358")) {
 
+										//in php code old code here is leave application
 									} // $case == '1358'
 								} // $case == "1358" || $case == "2358"
 								else {
+									String newStts = AttendanceStatus(employee, dailyAttendanceList.get(i),
+											dailyAttendanceList.get(i).getEmpId(),
+											dailyAttendanceList.get(i).getAttDate(), atteanceCase,
+											dailyAttendanceList.get(i).getWorkingHrs(), shiftMaster);
 
+									dailyAttendanceList.get(i).setAttStatus(newStts);
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals(newStts)) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
 								}
 							} // $case == "1358" || $case == "1368" || $case == "2358" || $case == "2368"
 							else if (atteanceCase.equals("1357") || atteanceCase.equals("1367")
@@ -791,17 +817,15 @@ public class AttendanceApiController {
 								}
 							} // $case == '2457'
 							else if (atteanceCase.equals("2458")) {
-								
+
 								dailyAttendanceList.get(i).setAttStatus("PL");
 								for (int j = 0; j < lvTypeList.size(); j++) {
 									if (lvTypeList.get(j).getNameSd().equals("PL")) {
-										dailyAttendanceList.get(i)
-												.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
 										break;
 									}
 								}
-								
-								 
+
 							} // $case == '2458'
 						} // $case == "2457" || $case == "2458"
 						else if (atteanceCase.equals("2467") || atteanceCase.equals("2468")) {
@@ -955,7 +979,8 @@ public class AttendanceApiController {
 				}
 			}
 			System.out.println(dailyAttendanceList);
-			//List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
+			// List<DailyAttendance> dailyAttendanceSaveRes =
+			// dailyAttendanceRepository.saveAll(dailyAttendanceList);
 			info.setError(false);
 			info.setMsg("success");
 
@@ -1020,7 +1045,7 @@ public class AttendanceApiController {
 					else if (dailyAttendance.getWorkingHrs() < Float.parseFloat(shiftMaster.getShiftHalfdayHr())) {
 						ret = "PH";
 					} // $working_hrs < $resulthd['working_hrs']
-					else{
+					else {
 						ret = "PH-OT";
 					}
 				} // $res_getemptype->wh_work == 'OT'
@@ -1036,11 +1061,11 @@ public class AttendanceApiController {
 					else if (dailyAttendance.getWorkingHrs() < Float.parseFloat(shiftMaster.getShiftHalfdayHr())) {
 						ret = "PH";
 					} // $working_hrs < $resulthd['working_hrs']
-					else{
+					else {
 						ret = "PH-CO";
 					}
 				} // $res_getemptype->wh_work == 'Comp Off'
-				else{
+				else {
 					ret = "PHE";
 				}
 			} // $case == '1357' || $case == '1367' || $case == '2357' || $case == '2367'
@@ -1070,7 +1095,7 @@ public class AttendanceApiController {
 					else if (dailyAttendance.getWorkingHrs() < Float.parseFloat(shiftMaster.getShiftHalfdayHr())) {
 						ret = "WO";
 					} // $working_hrs < $resulthd['working_hrs']
-					else{
+					else {
 						ret = "WO-OT";
 					}
 				} // $res_getemptype->wh_work == 'OT'
@@ -1086,11 +1111,11 @@ public class AttendanceApiController {
 					else if (dailyAttendance.getWorkingHrs() < Float.parseFloat(shiftMaster.getShiftHalfdayHr())) {
 						ret = "WO";
 					} // $working_hrs < $resulthd['working_hrs']
-					else{
+					else {
 						ret = "WO";
 					}
 				} // $res_getemptype->wh_work == 'Comp Off'
-				else{
+				else {
 					ret = "WOE";
 				}
 			} // $case == '1457' || $case == '1467'
