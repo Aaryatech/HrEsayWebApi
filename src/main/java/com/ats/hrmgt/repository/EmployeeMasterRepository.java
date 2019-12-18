@@ -76,6 +76,8 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 
 	public List<EmployeeMaster> findByCmpCodeAndDelStatusOrderByEmpIdDesc(int companyId, int del);
 	
+	public List<EmployeeMaster> findByDelStatusAndCmpCodeOrderByEmpIdDesc(int del, int companyId);
+	
 	public EmployeeMaster findByEmpIdAndDelStatus(int empId, int del);
 
 	@Transactional

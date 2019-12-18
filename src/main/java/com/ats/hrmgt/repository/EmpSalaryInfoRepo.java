@@ -5,5 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ats.hrmgt.model.EmpSalaryInfo;
 
 public interface EmpSalaryInfoRepo extends JpaRepository<EmpSalaryInfo, Integer> {
-
+	
+	EmpSalaryInfo findByEmpId(int empId);
+	
 }

@@ -6,4 +6,5 @@ import com.ats.hrmgt.model.TblEmpNominees;
 
 public interface TblEmpNomineesRepo extends JpaRepository<TblEmpNominees, Integer> {
 
+	TblEmpNominees findByEmpId(int empId);
 }

@@ -9,15 +9,19 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.ats.hrmgt.model.EmpSalAllowance;
+import com.ats.hrmgt.model.EmployeDoc;
 
-public interface EmpSalAllowanceRepo extends JpaRepository<EmpSalAllowance, Integer> {
 
-	List<EmpSalAllowance> findByEmpId(int empId);
+public interface EmployeeDocsRepository extends JpaRepository<EmployeDoc, Integer>
+{
+
+	List<EmployeDoc> findByDelStatus(int i);
+
+	EmployeDoc findByDocIdAndDelStatus(int docId, int i);
 
 	@Transactional
 	@Modifying
-	@Query(value="DELETE FROM emp_sal_allowance WHERE emp_sal_allowance.emp_id = :empId",nativeQuery=true)
-	int deleteEmpAllowances(@Param("empId") int empId);
+	@Query("update EmployeDoc set del_status=0  WHERE doc_id=:docId")
+	int deleteEmpDoc(@Param("docId") int docId);
 
 }

@@ -21,7 +21,7 @@ public class EmployeeMaster {
 	private String empCode ;
 	
 	@Column(name="cmp_code")
-	private String cmpCode;
+	private int cmpCode;
 	
 	@Column(name="emp_type")
 	private int empType;
@@ -168,11 +168,11 @@ public class EmployeeMaster {
 		this.empCode = empCode;
 	}
 
-	public String getCmpCode() {
+	public int getCmpCode() {
 		return cmpCode;
 	}
 
-	public void setCmpCode(String cmpCode) {
+	public void setCmpCode(int cmpCode) {
 		this.cmpCode = cmpCode;
 	}
 
