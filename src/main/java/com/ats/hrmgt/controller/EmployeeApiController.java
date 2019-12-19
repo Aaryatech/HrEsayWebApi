@@ -397,4 +397,21 @@ public class EmployeeApiController {
 			return save;
 
 		}
+		
+		@RequestMapping(value = { "/getEmployeeDocs" }, method = RequestMethod.POST)
+		public @ResponseBody List<EmployeDoc> getEmployeeDocs(@RequestParam int empId) {
+
+			List<EmployeDoc> docs = new ArrayList<>();
+			try {
+
+				docs = employeeDocsRepository.findByEmpIdAndDelStatus(empId, 1);
+
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+
+			return docs;
+		}
+		
 }

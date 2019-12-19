@@ -56,7 +56,7 @@ public class TblEmpInfo {
 	private String bloodGroup;
 	
 	@Column(name="uniform_size")
-	private String uniform_size;	
+	private String uniformSize;	
 	
 	@Column(name="photo")
 	private String photo;
@@ -86,7 +86,7 @@ public class TblEmpInfo {
 	private String emerName;
 	
 	@Column(name="emer_contact_no_2")
-	private int emerContactNo2;
+	private String emerContactNo2;
 	
 	@Column(name="photo_signature")
 	private String photoSignature;
@@ -213,12 +213,12 @@ public class TblEmpInfo {
 		this.bloodGroup = bloodGroup;
 	}
 
-	public String getUniform_size() {
-		return uniform_size;
+	public String getUniformSize() {
+		return uniformSize;
 	}
 
-	public void setUniform_size(String uniform_size) {
-		this.uniform_size = uniform_size;
+	public void setUniformSize(String uniformSize) {
+		this.uniformSize = uniformSize;
 	}
 
 	public String getPhoto() {
@@ -293,11 +293,11 @@ public class TblEmpInfo {
 		this.emerName = emerName;
 	}
 
-	public int getEmerContactNo2() {
+	public String getEmerContactNo2() {
 		return emerContactNo2;
 	}
 
-	public void setEmerContactNo2(int emerContactNo2) {
+	public void setEmerContactNo2(String emerContactNo2) {
 		this.emerContactNo2 = emerContactNo2;
 	}
 
@@ -372,7 +372,7 @@ public class TblEmpInfo {
 				+ dob + ", gender=" + gender + ", maritalStatus=" + maritalStatus + ", address=" + address
 				+ ", permanentAddress=" + permanentAddress + ", empQualification=" + empQualification
 				+ ", emerContactNo1=" + emerContactNo1 + ", emerContactAddr=" + emerContactAddr + ", bloodGroup="
-				+ bloodGroup + ", uniform_size=" + uniform_size + ", photo=" + photo + ", photoPan=" + photoPan
+				+ bloodGroup + ", uniformSize=" + uniformSize + ", photo=" + photo + ", photoPan=" + photoPan
 				+ ", photoAdhar=" + photoAdhar + ", photoVoterid=" + photoVoterid + ", photoLightbill=" + photoLightbill
 				+ ", photoRationcard=" + photoRationcard + ", photoBankpassbook=" + photoBankpassbook + ", email="
 				+ email + ", emerName=" + emerName + ", emerContactNo2=" + emerContactNo2 + ", photoSignature="
