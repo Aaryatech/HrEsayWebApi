@@ -20,7 +20,7 @@ public class TblEmpBankInfo {
 	private int empId;
 	
 	@Column(name="acc_no")
-	private long accNo;
+	private String accNo;
 	
 	@Column(name="bank_id")
 	private int bankId;
@@ -41,11 +41,11 @@ public class TblEmpBankInfo {
 		this.empId = empId;
 	}
 
-	public long getAccNo() {
+	public String getAccNo() {
 		return accNo;
 	}
 
-	public void setAccNo(long accNo) {
+	public void setAccNo(String accNo) {
 		this.accNo = accNo;
 	}
 
