@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 @Entity
 @Table(name = "tbl_emp_nominees")
@@ -44,7 +46,7 @@ public class TblEmpNominees {
 	private double percentage2;
 	
 	@Column(name="dob2")
-	private String dob2;
+	private Date dob2;
 	
 	@Column(name="name3")
 	private String name3;
@@ -56,7 +58,7 @@ public class TblEmpNominees {
 	private double percentage3;
 	
 	@Column(name="dob3")
-	private String dob3;
+	private Date dob3;
 	
 	@Column(name="name4")
 	private String name4;
@@ -68,7 +70,7 @@ public class TblEmpNominees {
 	private double percentage4;
 	
 	@Column(name="dob4")
-	private String dob4;
+	private Date dob4;
 	
 	@Column(name="name5")
 	private String name5;
@@ -80,7 +82,7 @@ public class TblEmpNominees {
 	private double percentage5;
 	
 	@Column(name="dob5")
-	private String dob5;
+	private Date dob5;
 	
 	@Column(name="name6")
 	private String name6;
@@ -92,7 +94,7 @@ public class TblEmpNominees {
 	private double percentage6;
 	
 	@Column(name="dob6")
-	private String dob6;
+	private Date dob6;
 	
 	@Column(name="occupation1")
 	private String occupation1;
@@ -154,7 +156,7 @@ public class TblEmpNominees {
 	public void setPercentage(double percentage) {
 		this.percentage = percentage;
 	}
-	
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
 	public Date getDob() {
 		return dob;
 	}
@@ -186,12 +188,12 @@ public class TblEmpNominees {
 	public void setPercentage2(double percentage2) {
 		this.percentage2 = percentage2;
 	}
-	
-	public String getDob2() {
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getDob2() {
 		return dob2;
 	}
 
-	public void setDob2(String dob2) {
+	public void setDob2(Date dob2) {
 		this.dob2 = dob2;
 	}
 
@@ -218,12 +220,12 @@ public class TblEmpNominees {
 	public void setPercentage3(double percentage3) {
 		this.percentage3 = percentage3;
 	}
-	
-	public String getDob3() {
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getDob3() {
 		return dob3;
 	}
 
-	public void setDob3(String dob3) {
+	public void setDob3(Date dob3) {
 		this.dob3 = dob3;
 	}
 
@@ -250,12 +252,12 @@ public class TblEmpNominees {
 	public void setPercentage4(double percentage4) {
 		this.percentage4 = percentage4;
 	}
-
-	public String getDob4() {
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getDob4() {
 		return dob4;
 	}
 
-	public void setDob4(String dob4) {
+	public void setDob4(Date dob4) {
 		this.dob4 = dob4;
 	}
 
@@ -282,12 +284,12 @@ public class TblEmpNominees {
 	public void setPercentage5(double percentage5) {
 		this.percentage5 = percentage5;
 	}
-	
-	public String getDob5() {
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getDob5() {
 		return dob5;
 	}
 
-	public void setDob5(String dob5) {
+	public void setDob5(Date dob5) {
 		this.dob5 = dob5;
 	}
 
@@ -314,12 +316,12 @@ public class TblEmpNominees {
 	public void setPercentage6(double percentage6) {
 		this.percentage6 = percentage6;
 	}
-	
-	public String getDob6() {
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getDob6() {
 		return dob6;
 	}
 
-	public void setDob6(String dob6) {
+	public void setDob6(Date dob6) {
 		this.dob6 = dob6;
 	}
 
