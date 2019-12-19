@@ -15,16 +15,25 @@ public interface GetClaimStructureAllotmentRepo extends JpaRepository<GetClaimSt
 	
 
 	
-	@Query(value = "   SELECT\n" + "        e.emp_id,\n" + "        e.emp_code,\n" + "        e.emp_fname,\n"
-			+ "        e.emp_mname,\n" + "        e.emp_sname    ,\n" + "        d.emp_dept_name,\n"
-			+ "        c.emp_cat_name ,\n" + "        l.claim_struct_name  as clms_name  \n" + "    FROM\n" + "        emp_info e     \n"
-			+ "    LEFT JOIN\n" + "        claim_structure_allotment lsa \n" + "            ON e.emp_id=lsa.emp_id \n"
-			+ "             \n" + "    LEFT JOIN\n" + "        m_emp_department d \n"
-			+ "            ON e.emp_dept_id=d.emp_dept_id       \n" + "    LEFT JOIN\n" + "        m_emp_category c    \n"
-			+ "            ON e.emp_cat_id =c.emp_cat_id \n" + "    LEFT JOIN\n" + "        claim_structure_header l \n"
-			+ "            ON    lsa.clms_id =l.clm_struct_head_id \n" + "            AND l.del_status=1  \n" + "    WHERE\n"
-			+ "        e.del_status=1 \n" + "        AND e.is_active=1  \n" + "        AND e.company_id=:companyId\n"
-			+ "        AND e.loc_id IN(\n" + "            :locIdList\n" + "        )", nativeQuery = true)
+	@Query(value = "  SELECT\n" + 
+			"    e.emp_id,\n" + 
+			"    e.emp_code,\n" + 
+			"    e.first_name AS emp_fname,\n" + 
+			"    e.middle_name AS emp_mname,\n" + 
+			"    e.surname AS emp_sname,\n" + 
+			"    d.name emp_dept_name,\n" + 
+			"    '-' AS emp_cat_name,\n" + 
+			"    l.claim_struct_name AS clms_name\n" + 
+			"FROM\n" + 
+			"    m_employees e\n" + 
+			"LEFT JOIN claim_structure_allotment lsa ON\n" + 
+			"    e.emp_id = lsa.emp_id\n" + 
+			"LEFT JOIN m_department d ON\n" + 
+			"    e.depart_id = d.depart_id\n" + 
+			"LEFT JOIN claim_structure_header l ON\n" + 
+			"    lsa.clms_id = l.clm_struct_head_id AND l.del_status = 1\n" + 
+			"WHERE\n" + 
+			"    e.del_status = 1   AND e.cmp_code =:companyId AND e.location_id IN(:locIdList)", nativeQuery = true)
 
 	List<GetClaimStructureAllotment> getStructureAllotment(@Param("companyId") int companyId,
 			@Param("locIdList") List<Integer> locIdList );
