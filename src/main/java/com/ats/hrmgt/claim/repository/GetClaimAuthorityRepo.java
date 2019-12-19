@@ -116,10 +116,10 @@ public interface GetClaimAuthorityRepo extends JpaRepository<GetClaimAuthority, 
 			"        m_employees ei \n" + 
 			"    WHERE\n" + 
 			"        auth.del_status=1 \n" + 
-			"        AND auth.company_id=1 \n" + 
+			"        AND auth.company_id=:companyId \n" + 
 			"        AND  ei.emp_id=auth.emp_id \n" + 
 			"        AND ei.location_id IN(\n" + 
-			"           1,2\n" + 
+			"           :locIdList \n" + 
 			"        ) \n" + 
 			"        AND ei.del_status=1"
 			+ " ", nativeQuery = true)

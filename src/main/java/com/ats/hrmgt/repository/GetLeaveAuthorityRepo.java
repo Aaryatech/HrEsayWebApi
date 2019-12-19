@@ -127,7 +127,7 @@ public interface GetLeaveAuthorityRepo extends JpaRepository<GetLeaveAuthority, 
 
 	List<GetLeaveAuthority> getLeaveAuth();
 
-	@Query(value = " SELECT concat (emp_sname,' ',emp_fname) as name FROM emp_info WHERE emp_info.emp_id in (:reportIds) ", nativeQuery = true)
+	@Query(value = " SELECT concat (surname,' ',first_name) as name FROM m_employees WHERE m_employees.emp_id in (:reportIds) ", nativeQuery = true)
 	List<String> getEmpReportingName(@Param("reportIds") String[] reportIds);
 
 	/*

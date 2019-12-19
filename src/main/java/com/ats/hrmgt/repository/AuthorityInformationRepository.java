@@ -9,37 +9,80 @@ import com.ats.hrmgt.model.AuthorityInformation;
 public interface AuthorityInformationRepository extends JpaRepository<AuthorityInformation, Integer>{
 
 	
-	@Query(value = "select\n" + 
-			"        e.emp_id,\n" + 
-			"        coalesce((select\n" + 
-			"            concat(m_employees.surname,\n" + 
-			"            ' ',\n" + 
-			"            m_employees.first_name)  \n" + 
-			"        from\n" + 
+	@Query(value = "SELECT\n" + 
+			"    e.emp_id,\n" + 
+			"    COALESCE(\n" + 
+			"        (\n" + 
+			"        SELECT\n" + 
+			"            CONCAT(\n" + 
+			"                m_employees.surname,\n" + 
+			"                ' ',\n" + 
+			"                m_employees.first_name\n" + 
+			"            )\n" + 
+			"        FROM\n" + 
 			"            leave_authority,\n" + 
-			"            m_employees \n" + 
-			"        where\n" + 
-			"            leave_authority.emp_id=e.emp_id \n" + 
-			"            and m_employees.emp_id=leave_authority.ini_auth_emp_id),\n" + 
-			"        0) as leave_initial_auth,\n" + 
-			"        coalesce((select\n" + 
-			"            concat(m_employees.surname,\n" + 
-			"            ' ',\n" + 
-			"            m_employees.first_name)  \n" + 
-			"        from\n" + 
+			"            m_employees\n" + 
+			"        WHERE\n" + 
+			"            leave_authority.emp_id = e.emp_id AND m_employees.emp_id = leave_authority.ini_auth_emp_id\n" + 
+			"    ),\n" + 
+			"    0\n" + 
+			"    ) AS leave_initial_auth,\n" + 
+			"    COALESCE(\n" + 
+			"        (\n" + 
+			"        SELECT\n" + 
+			"            CONCAT(\n" + 
+			"                m_employees.surname,\n" + 
+			"                ' ',\n" + 
+			"                m_employees.first_name\n" + 
+			"            )\n" + 
+			"        FROM\n" + 
 			"            leave_authority,\n" + 
-			"            m_employees \n" + 
-			"        where\n" + 
-			"            leave_authority.emp_id=e.emp_id \n" + 
-			"            and m_employees.emp_id=leave_authority.fin_auth_emp_id),\n" + 
-			"        0) as leave_final_auth,\n" + 
-			"       0 as claim_initial_auth,\n" + 
-			"       0 as claim_final_auth \n" + 
-			"    from\n" + 
-			"        m_employees e  \n" + 
-			"    where\n" + 
-			"        e.emp_id=:empId", nativeQuery = true)
+			"            m_employees\n" + 
+			"        WHERE\n" + 
+			"            leave_authority.emp_id = e.emp_id AND m_employees.emp_id = leave_authority.fin_auth_emp_id\n" + 
+			"    ),\n" + 
+			"    0\n" + 
+			"    ) AS leave_final_auth,\n" + 
+			"    COALESCE(\n" + 
+			"        (\n" + 
+			"        SELECT\n" + 
+			"            CONCAT(\n" + 
+			"                m_employees.surname,\n" + 
+			"                ' ',\n" + 
+			"                m_employees.first_name\n" + 
+			"            )\n" + 
+			"        FROM\n" + 
+			"            claim_authority,\n" + 
+			"            m_employees\n" + 
+			"        WHERE\n" + 
+			"            claim_authority.emp_id = e.emp_id AND m_employees.emp_id = claim_authority.ca_ini_auth_emp_id\n" + 
+			"    ),\n" + 
+			"    0\n" + 
+			"    ) AS claim_initial_auth,\n" + 
+			"    COALESCE(\n" + 
+			"        (\n" + 
+			"        SELECT\n" + 
+			"            CONCAT(\n" + 
+			"                m_employees.surname,\n" + 
+			"                ' ',\n" + 
+			"                m_employees.first_name\n" + 
+			"            )\n" + 
+			"        FROM\n" + 
+			"            claim_authority,\n" + 
+			"            m_employees\n" + 
+			"        WHERE\n" + 
+			"            claim_authority.emp_id = e.emp_id AND m_employees.emp_id = claim_authority.ca_fin_auth_emp_id\n" + 
+			"    ),\n" + 
+			"    0\n" + 
+			"    ) AS claim_final_auth\n" + 
+			"FROM\n" + 
+			"    m_employees e\n" + 
+			"WHERE\n" + 
+			"    e.emp_id = :empId", nativeQuery = true)
 	AuthorityInformation getAuthorityInfoByEmpId(@Param("empId") int empId);
+	
+	
+ 
 
 	
 	

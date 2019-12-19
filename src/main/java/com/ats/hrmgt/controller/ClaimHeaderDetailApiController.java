@@ -2,6 +2,7 @@ package com.ats.hrmgt.controller;
 
 import java.util.ArrayList;
 
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -22,18 +23,20 @@ import com.ats.hrmgt.claim.repository.ClaimHeaderRepo;
 import com.ats.hrmgt.common.EmailUtility;
 import com.ats.hrmgt.common.Firebase;
 import com.ats.hrmgt.model.EmployeeInfo;
+import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.model.claim.ClaimApply;
 import com.ats.hrmgt.model.claim.ClaimApplyHeader;
 import com.ats.hrmgt.repository.EmployeeInfoRepository;
+import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetAuthorityIdsRepo;
 import com.ats.hrmgt.repository.SettingRepo;
 
 @RestController
 public class ClaimHeaderDetailApiController {
 	@Autowired
-	EmployeeInfoRepository employeeInfoRepository;
+	EmployeeMasterRepository employeeInfoRepository;
 
 	
 	@Autowired
@@ -47,6 +50,8 @@ public class ClaimHeaderDetailApiController {
 	
 	@Autowired
 	SettingRepo settingRepo;
+	
+	
  
 	
 	@RequestMapping(value = { "/saveClaimHeaderAndDetail" }, method = RequestMethod.POST)
@@ -72,10 +77,10 @@ public class ClaimHeaderDetailApiController {
 			
 			int empId = claimHead.getEmpId();
 		
-			EmployeeInfo empInfo1 = new EmployeeInfo();
+			EmployeeMaster empInfo1 = new EmployeeMaster();
 
 			empInfo1 = employeeInfoRepository.findByEmpIdAndDelStatus(empId, 1);
-			String name = empInfo1.getEmpFname() + " " + empInfo1.getEmpSname();
+			String name = empInfo1.getFirstName() + " " + empInfo1.getSurname();
 			
 			
 			
@@ -127,7 +132,7 @@ public class ClaimHeaderDetailApiController {
 				String claimMsg =name + " registered Claim for Rs. "
 						+ claimHead.getClaimAmount() + " Duration: " + claimDate + " Please Check";
 			 
-				EmployeeInfo empInfo = new EmployeeInfo();
+				EmployeeMaster empInfo = new EmployeeMaster();
 
 				empInfo = employeeInfoRepository.findByEmpIdAndDelStatus(empId, 1);
 	 
@@ -140,7 +145,7 @@ public class ClaimHeaderDetailApiController {
 				
 				 
 				
-				Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmpEmail(),
+				Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmailId(),
 						" HRMS Claim Application Status", "",claimMsg );
 
 				} catch (Exception e) {
@@ -155,7 +160,7 @@ public class ClaimHeaderDetailApiController {
 				String claimMsg =name + " registered Claim for Rs. "
 						+ claimHead.getClaimAmount() + " Duration: " + claimDate + " Please Check";
 			 
-				EmployeeInfo empInfo = new EmployeeInfo();
+				EmployeeMaster empInfo = new EmployeeMaster();
 
 				empInfo = employeeInfoRepository.findByEmpIdAndDelStatus(empId, 1);
 	 
@@ -168,7 +173,7 @@ public class ClaimHeaderDetailApiController {
 				
 				 
 				
-				Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmpEmail(),
+				Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmailId(),
 						" HRMS Claim Application Status", "",claimMsg );
 
 				} catch (Exception e) {
@@ -179,7 +184,7 @@ public class ClaimHeaderDetailApiController {
 				//Sending to manager
 				
 				
-				empInfo = new EmployeeInfo();
+				empInfo = new EmployeeMaster();
 
 				empInfo = employeeInfoRepository.findByEmpIdAndDelStatus(managerId, 1);
 	 
@@ -192,7 +197,7 @@ public class ClaimHeaderDetailApiController {
 				
 				 
 				
-				Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmpEmail(),
+				Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmailId(),
 						" HRMS Claim Application Status", "",claimMsg );
 
 				} catch (Exception e) {
