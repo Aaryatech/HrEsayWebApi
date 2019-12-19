@@ -1,11 +1,15 @@
 package com.ats.hrmgt.model;
 
+import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "tbl_emp_info")
@@ -29,7 +33,7 @@ public class TblEmpInfo {
 	private String middleNameRelation;
 	
 	@Column(name="dob")
-	private String dob;
+	private Date dob;
 	
 	@Column(name="gender")
 	private String gender;
@@ -140,12 +144,13 @@ public class TblEmpInfo {
 	public void setMiddleNameRelation(String middleNameRelation) {
 		this.middleNameRelation = middleNameRelation;
 	}
-
-	public String getDob() {
+	
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+	public Date getDob() {
 		return dob;
 	}
 
-	public void setDob(String dob) {
+	public void setDob(Date dob) {
 		this.dob = dob;
 	}
 
