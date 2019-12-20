@@ -1,0 +1,234 @@
+package com.ats.hrmgt.model.advance;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="tbl_advance")
+public class Advance {
+	
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
+	
+	private int cmpId; 
+	
+	private int empId ;
+ 	
+	private String voucherNo ;
+ 	
+	private String advDate;
+ 	
+	private double advAmount ;
+ 	
+	private double advRemainingAmount;
+ 	
+	private String advRemarks;
+ 	
+	private String dedMonth ;
+ 	
+ 	private int isDed ;
+ 	
+ 	private int isUsed;
+ 	
+ 	private String loginName ;
+ 	
+ 	private String loginTime;
+ 	
+ 	private int skipId ;
+ 	
+ 	private String skipLoginName ;
+ 	
+ 	private String skipLoginTime ;
+ 	
+ 	
+ 	private String skipRemarks ;
+
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+	public int getCmpId() {
+		return cmpId;
+	}
+
+
+	public void setCmpId(int cmpId) {
+		this.cmpId = cmpId;
+	}
+
+
+	public int getEmpId() {
+		return empId;
+	}
+
+
+	public void setEmpId(int empId) {
+		this.empId = empId;
+	}
+
+
+	public String getVoucherNo() {
+		return voucherNo;
+	}
+
+
+	public void setVoucherNo(String voucherNo) {
+		this.voucherNo = voucherNo;
+	}
+
+
+	public String getAdvDate() {
+		return advDate;
+	}
+
+
+	public void setAdvDate(String advDate) {
+		this.advDate = advDate;
+	}
+
+
+	public double getAdvAmount() {
+		return advAmount;
+	}
+
+
+	public void setAdvAmount(double advAmount) {
+		this.advAmount = advAmount;
+	}
+
+
+	public double getAdvRemainingAmount() {
+		return advRemainingAmount;
+	}
+
+
+	public void setAdvRemainingAmount(double advRemainingAmount) {
+		this.advRemainingAmount = advRemainingAmount;
+	}
+
+
+	public String getAdvRemarks() {
+		return advRemarks;
+	}
+
+
+	public void setAdvRemarks(String advRemarks) {
+		this.advRemarks = advRemarks;
+	}
+
+
+	public String getDedMonth() {
+		return dedMonth;
+	}
+
+
+	public void setDedMonth(String dedMonth) {
+		this.dedMonth = dedMonth;
+	}
+
+
+	public int getIsDed() {
+		return isDed;
+	}
+
+
+	public void setIsDed(int isDed) {
+		this.isDed = isDed;
+	}
+
+
+	public int getIsUsed() {
+		return isUsed;
+	}
+
+
+	public void setIsUsed(int isUsed) {
+		this.isUsed = isUsed;
+	}
+
+
+	public String getLoginName() {
+		return loginName;
+	}
+
+
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
+
+
+	public String getLoginTime() {
+		return loginTime;
+	}
+
+
+	public void setLoginTime(String loginTime) {
+		this.loginTime = loginTime;
+	}
+
+
+	public int getSkipId() {
+		return skipId;
+	}
+
+
+	public void setSkipId(int skipId) {
+		this.skipId = skipId;
+	}
+
+
+	public String getSkipLoginName() {
+		return skipLoginName;
+	}
+
+
+	public void setSkipLoginName(String skipLoginName) {
+		this.skipLoginName = skipLoginName;
+	}
+
+
+	public String getSkipLoginTime() {
+		return skipLoginTime;
+	}
+
+
+	public void setSkipLoginTime(String skipLoginTime) {
+		this.skipLoginTime = skipLoginTime;
+	}
+
+
+	public String getSkipRemarks() {
+		return skipRemarks;
+	}
+
+
+	public void setSkipRemarks(String skipRemarks) {
+		this.skipRemarks = skipRemarks;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Advance [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", voucherNo=" + voucherNo + ", advDate="
+				+ advDate + ", advAmount=" + advAmount + ", advRemainingAmount=" + advRemainingAmount + ", advRemarks="
+				+ advRemarks + ", dedMonth=" + dedMonth + ", isDed=" + isDed + ", isUsed=" + isUsed + ", loginName="
+				+ loginName + ", loginTime=" + loginTime + ", skipId=" + skipId + ", skipLoginName=" + skipLoginName
+				+ ", skipLoginTime=" + skipLoginTime + ", skipRemarks=" + skipRemarks + "]";
+	}
+ 	
+ 	
+	
+
+}

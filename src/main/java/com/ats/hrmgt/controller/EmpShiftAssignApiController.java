@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,11 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.model.LeaveType;
+import com.ats.hrmgt.model.MstEmpType;
 import com.ats.hrmgt.model.SalaryTypesMaster;
 import com.ats.hrmgt.model.ShiftMaster;
 import com.ats.hrmgt.repository.EmpSalaryInfoRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
+import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.SalaryTypesMasterRepo;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
 
@@ -145,7 +149,96 @@ public class EmpShiftAssignApiController {
 
 	}
 	
+	
+	//**************************MstEmpType*******************************************
+	@Autowired
+	MstEmpTypeRepository mstEmpTypeRepository;
+	
+	
+	@RequestMapping(value = { "/saveMstEmpType" }, method = RequestMethod.POST)
+	public @ResponseBody MstEmpType saveLeaveType(@RequestBody MstEmpType leaveType) {
 
+		MstEmpType save = new MstEmpType();
+		try {
+
+			save = mstEmpTypeRepository.saveAndFlush(leaveType);
+			if (save == null) {
+
+				save = new MstEmpType();
+ 
+			}  
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+	
+	@RequestMapping(value = { "/getMstEmpTypeList" }, method = RequestMethod.POST)
+	public @ResponseBody List<MstEmpType> getLeaveTypeListIsStructure(@RequestParam("companyId") int companyId) {
+
+		List<MstEmpType> list = new ArrayList<MstEmpType>();
+		try {
+
+			list = mstEmpTypeRepository.findByDelStatusAndCompanyId(1,companyId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@RequestMapping(value = { "/getMstEmpTypeById" }, method = RequestMethod.POST)
+	public @ResponseBody  MstEmpType  getLeaveTypeList(@RequestParam("empTypeId") int empTypeId) {
+
+		MstEmpType list = new MstEmpType();
+		try {
+
+			list = mstEmpTypeRepository.findByDelStatusAndEmpTypeId(1,empTypeId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@RequestMapping(value = { "/deleteLMstEmpType" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteLMstEmpType(@RequestParam("empTypeId") int empTypeId) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = mstEmpTypeRepository.deleteMstType(empTypeId);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
+		}
+
+		return info;
+
+	}
+	
+	
 
 
 }

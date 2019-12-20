@@ -72,6 +72,19 @@ public class MstEmpType {
 	
 	@Column(name="status")
 	private int status;
+	
+	@Column(name="del_status")
+	private int delStatus;
+	
+	
+
+	public int getDelStatus() {
+		return delStatus;
+	}
+
+	public void setDelStatus(int delStatus) {
+		this.delStatus = delStatus;
+	}
 
 	public int getEmpTypeId() {
 		return empTypeId;
@@ -235,15 +248,17 @@ public class MstEmpType {
 
 	@Override
 	public String toString() {
-		return "MstWeeklyOff [empTypeId=" + empTypeId + ", name=" + name + ", category=" + category + ", attType="
+		return "MstEmpType [empTypeId=" + empTypeId + ", name=" + name + ", category=" + category + ", attType="
 				+ attType + ", lmApplicable=" + lmApplicable + ", halfDay=" + halfDay + ", whWork=" + whWork
 				+ ", minWorkHr=" + minWorkHr + ", minworkApplicable=" + minworkApplicable + ", otApplicable="
 				+ otApplicable + ", otTime=" + otTime + ", details=" + details + ", otType=" + otType + ", companyId="
 				+ companyId + ", weeklyHolidayLateAllowed=" + weeklyHolidayLateAllowed
 				+ ", weeklyHolidayLateAllowedMin=" + weeklyHolidayLateAllowedMin + ", earlyGoingAllowed="
 				+ earlyGoingAllowed + ", earlyGoingMin=" + earlyGoingMin + ", maxLateTimeAllowed=" + maxLateTimeAllowed
-				+ ", status=" + status + "]";
+				+ ", status=" + status + ", delStatus=" + delStatus + "]";
 	}
+
+	 
 	
 	
 	
