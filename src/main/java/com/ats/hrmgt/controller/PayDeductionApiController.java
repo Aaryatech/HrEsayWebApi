@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.PayDeduction;
+import com.ats.hrmgt.model.PayDeductionDetails;
+import com.ats.hrmgt.repository.PayDeductionDetailsRepo;
 import com.ats.hrmgt.repository.PayDeductionRepo;
 
 @RestController
@@ -19,6 +21,8 @@ public class PayDeductionApiController {
 
 	@Autowired
 	PayDeductionRepo payDeductRepo;
+	
+	@Autowired PayDeductionDetailsRepo detailRepo;
 
 	@RequestMapping(value = { "/getAllPayDeduction" }, method = RequestMethod.GET)
 	public List<PayDeduction> getAllPayDecuvtion() {
@@ -84,4 +88,20 @@ public class PayDeductionApiController {
 		return savePayDeduct;
 
 	}
+	
+	/***************************************PayDeductionDetails*************************************/
+	@RequestMapping(value = { "/savePayDeductnDetail" }, method = RequestMethod.POST)
+	public PayDeductionDetails saveDeductnPaymentType(@RequestBody PayDeductionDetails pay) {
+		PayDeductionDetails payDeductDetail = new PayDeductionDetails();
+		try {
+			payDeductDetail = detailRepo.save(pay);
+		} catch (Exception e) {
+			System.err.println("Excep in /savePayDeductnDetail : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return payDeductDetail;
+
+	}
+	
 }
