@@ -230,15 +230,6 @@ public class AttendanceApiController {
 
 	}
 
-	List<FileUploadedData> fileUploadedDataList = new ArrayList<>();
-	List<MstEmpType> mstEmpTypeList = new ArrayList<>();
-	List<ShiftMaster> shiftList = new ArrayList<>();
-	List<Holiday> holidayList = new ArrayList<>();
-	List<WeeklyOff> weeklyOfflist = new ArrayList<>();
-	List<WeeklyOffShit> weeklyOffShitList = new ArrayList<>();
-	List<LeaveApply> leavetList = new ArrayList<>();
-	List<LvType> lvTypeList = new ArrayList<>();
-
 	@RequestMapping(value = { "/importAttendanceByFileAndUpdate" }, method = RequestMethod.POST)
 	public @ResponseBody Info getVariousListForUploadAttendace(
 			@RequestBody DataForUpdateAttendance dataForUpdateAttendance) {
@@ -256,14 +247,14 @@ public class AttendanceApiController {
 			int month = dataForUpdateAttendance.getMonth();
 			int year = dataForUpdateAttendance.getYear();
 
-			fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
-			mstEmpTypeList = mstEmpTypeRepository.findAll();
-			shiftList = shiftMasterRepository.findAll();
-			holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
-			weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
-			weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
-			leavetList = leaveApplyRepository.getleavetList(fromDate, toDate);
-			lvTypeList = lvTypeRepository.findAll();
+			List<FileUploadedData> fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
+			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
+			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
+			List<Holiday> holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
+			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
+			List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
+			List<LeaveApply> leavetList = leaveApplyRepository.getleavetList(fromDate, toDate);
+			List<LvType> lvTypeList = lvTypeRepository.findAll();
 			//
 
 			// List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
@@ -326,15 +317,22 @@ public class AttendanceApiController {
 				// assign in time and out time from uploaded csv to record
 				for (int j = 0; j < fileUploadedDataList.size(); j++) {
 
-					Date uploadedDate = dd.parse(fileUploadedDataList.get(j).getLogDate());
+					try {
+						Date uploadedDate = dd.parse(fileUploadedDataList.get(j).getLogDate());
 
-					if (dailyAttendanceList.get(i).getEmpCode().equals(fileUploadedDataList.get(j).getEmpCode())
-							&& defaultDate.compareTo(uploadedDate) == 0) {
+						if (dailyAttendanceList.get(i).getEmpCode().equals(fileUploadedDataList.get(j).getEmpCode())
+								&& defaultDate.compareTo(uploadedDate) == 0) {
 
-						dailyAttendanceList.get(i).setInTime(fileUploadedDataList.get(j).getInTime());
-						dailyAttendanceList.get(i).setOutTime(fileUploadedDataList.get(j).getOutTime());
-						break;
+							dailyAttendanceList.get(i).setInTime(fileUploadedDataList.get(j).getInTime());
+							dailyAttendanceList.get(i).setOutTime(fileUploadedDataList.get(j).getOutTime());
+							dailyAttendanceList.get(i).setByFileUpdated(1);
+							dailyAttendanceList.get(i).setRowId(j + 1);
+							System.out.println(j + 1);
+							break;
 
+						}
+					} catch (Exception e) {
+						// e.printStackTrace();
 					}
 
 				}
@@ -856,10 +854,10 @@ public class AttendanceApiController {
 				} catch (Exception e) {
 					// e.printStackTrace();
 				}
+
 			}
-			System.out.println(dailyAttendanceList);
-			// List<DailyAttendance> dailyAttendanceSaveRes =
-			// dailyAttendanceRepository.saveAll(dailyAttendanceList);
+			// System.out.println(dailyAttendanceList);
+			List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
 			info.setError(false);
 			info.setMsg("success");
 
@@ -880,23 +878,6 @@ public class AttendanceApiController {
 		String ret = new String();
 
 		try {
-			/*
-			 * LvType lvTypetp = new LvType(); LvType lvTypehd = new LvType();
-			 */
-			// MstEmpType mstEmpType = new MstEmpType();
-
-			/*
-			 * for (int i = 0; i < lvTypeList.size(); i++) { if
-			 * (lvTypeList.get(i).getNameSd().equals("P")) { lvTypetp = lvTypeList.get(i); }
-			 * if (lvTypeList.get(i).getNameSd().equals("HD")) { lvTypehd =
-			 * lvTypeList.get(i); } }
-			 */
-
-			/*
-			 * for (int i = 0; i < mstEmpTypeList.size(); i++) { if
-			 * (mstEmpTypeList.get(i).getEmpTypeId() == employee.getEmpType()) { mstEmpType
-			 * = mstEmpTypeList.get(i); break; } }
-			 */
 
 			if (atteanceCase.equals("1357") || atteanceCase.equals("1367") || atteanceCase.equals("2357")
 					|| atteanceCase.equals("2367")) {
