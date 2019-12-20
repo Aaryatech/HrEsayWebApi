@@ -19,6 +19,7 @@ import com.ats.hrmgt.claim.repository.GetClaimApplyAuthRepo;
 import com.ats.hrmgt.claim.repository.GetClaimAuthorityRepo;
 import com.ats.hrmgt.claim.repository.GetEmployeeAuthorityWiseRepo;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.model.SalaryTypesMaster;
 import com.ats.hrmgt.model.claim.ClaimAuthority;
 import com.ats.hrmgt.model.claim.ClaimProof;
 import com.ats.hrmgt.model.claim.ClaimProofRepo;
@@ -29,6 +30,7 @@ import com.ats.hrmgt.model.claim.GetClaimAuthority;
 import com.ats.hrmgt.model.claim.GetEmployeeAuthorityWise;
 import com.ats.hrmgt.repository.GetAuthorityIdsRepo;
 import com.ats.hrmgt.repository.GetLeaveAuthorityRepo;
+import com.ats.hrmgt.repository.SalaryTypesMasterRepo;
  
 
 @RestController
@@ -58,7 +60,8 @@ public class ClaimApiController {
 	
 	@Autowired
 	GetLeaveAuthorityRepo getLeaveAuthorityRepo;
-
+	
+	
 	/*
 	 * @Autowired EmployeeInfoRepository employeeInfoRepository;
 	 * 

@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.model.SalaryTypesMaster;
 import com.ats.hrmgt.model.ShiftMaster;
+import com.ats.hrmgt.repository.EmpSalaryInfoRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
+import com.ats.hrmgt.repository.SalaryTypesMasterRepo;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
 
 @RestController
@@ -86,5 +89,63 @@ public class EmpShiftAssignApiController {
 		return info;
 
 	}
+	
+	@Autowired
+	SalaryTypesMasterRepo salaryTypesMasterRepo;
+	
+	
+	@RequestMapping(value = { "/getSalryTypesMst" }, method = RequestMethod.GET)
+	public @ResponseBody List<SalaryTypesMaster> getSalryTypesMst() {
+
+		List<SalaryTypesMaster> list = new ArrayList<SalaryTypesMaster>();
+		try {
+
+			list = salaryTypesMasterRepo.findAllByDelStatus(1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@Autowired
+	EmpSalaryInfoRepo empSalaryInfoRepo;
+	
+	@RequestMapping(value = { "/salStructAssignmentUpdate" }, method = RequestMethod.POST)
+	public @ResponseBody Info salStructAssignmentUpdate(@RequestParam("empIdList") List<Integer> empIdList,
+			@RequestParam("structId") String structId) {
+
+		Info info = new Info();
+		try {
+ 
+			int res = 0;
+			res = empSalaryInfoRepo.assignsalStruct(empIdList, structId);
+
+			if (res > 0) {
+				info.setError(false);
+				info.setMsg("success");
+
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+
+			}
+		} catch (Exception e) {
+
+			System.err.println("Exce in deleteService  " + e.getMessage());
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("excep");
+		}
+
+		return info;
+
+	}
+	
+
+
 
 }

@@ -17,9 +17,14 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    loc.loc_name,\n" + 
 			"    con.org_name,\n" + 
 			"    sht.shiftname,\n" + 
-			"    emptyp.name AS emp_type_name\n" + 
+			"    emptyp.name AS emp_type_name,\n" + 
+			"    saltype.sal_type_name\n" + 
+			"    \n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
+			"inner JOIN tbl_emp_salary_info  salinfo ON\n" + 
+			"    emp.emp_id = salinfo.emp_id\n" + 
+			"    \n" + 
 			"LEFT JOIN m_designation dg ON\n" + 
 			"    emp.designation_id = dg.desig_id\n" + 
 			"LEFT JOIN m_department dep ON\n" + 
@@ -32,6 +37,11 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    emp.emp_type = emptyp.emp_type_id\n" + 
 			"LEFT JOIN tbl_shift_timming sht ON\n" + 
 			"    emp.current_shiftid = sht.id\n" + 
+			"\n" + 
+			"LEFT JOIN mst_salary_types saltype  ON\n" + 
+			"    salinfo.salary_type_id = saltype.sal_type_id\n" + 
+			"    \n" + 
+			"    \n" + 
 			"WHERE\n" + 
 			"    emp.del_status = 1 AND emp.is_emp = 1", nativeQuery = true)
 
