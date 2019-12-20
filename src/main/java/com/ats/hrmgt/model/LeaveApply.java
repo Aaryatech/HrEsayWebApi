@@ -75,6 +75,18 @@ public class LeaveApply {
 	@Column(name="ex_var3")
 	private String exVar3;
 	
+	@Column(name="status")
+	private int status;
+	
+	@Column(name="leave_cancle_remark")
+	private String leaveCancleRemark;
+	
+	@Column(name="lvt_application_id_parent")
+	private int lvtApplicationIdParent;
+	
+	@Column(name="rec_status")
+	private String recStatus;
+	
 	@Transient
 	private boolean error;
 
@@ -255,6 +267,38 @@ public class LeaveApply {
 		this.exVar3 = exVar3;
 	}
 
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public String getLeaveCancleRemark() {
+		return leaveCancleRemark;
+	}
+
+	public void setLeaveCancleRemark(String leaveCancleRemark) {
+		this.leaveCancleRemark = leaveCancleRemark;
+	}
+
+	public int getLvtApplicationIdParent() {
+		return lvtApplicationIdParent;
+	}
+
+	public void setLvtApplicationIdParent(int lvtApplicationIdParent) {
+		this.lvtApplicationIdParent = lvtApplicationIdParent;
+	}
+
+	public String getRecStatus() {
+		return recStatus;
+	}
+
+	public void setRecStatus(String recStatus) {
+		this.recStatus = recStatus;
+	}
+
 	@Override
 	public String toString() {
 		return "LeaveApply [leaveId=" + leaveId + ", calYrId=" + calYrId + ", empId=" + empId + ", lvTypeId=" + lvTypeId
@@ -263,7 +307,9 @@ public class LeaveApply {
 				+ finalStatus + ", circulatedTo=" + circulatedTo + ", delStatus=" + delStatus + ", isActive=" + isActive
 				+ ", makerUserId=" + makerUserId + ", makerEnterDatetime=" + makerEnterDatetime + ", exInt1=" + exInt1
 				+ ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2
-				+ ", exVar3=" + exVar3 + "]";
+				+ ", exVar3=" + exVar3 + ", status=" + status + ", leaveCancleRemark=" + leaveCancleRemark
+				+ ", lvtApplicationIdParent=" + lvtApplicationIdParent + ", recStatus=" + recStatus + ", error=" + error
+				+ "]";
 	}
 	
 	

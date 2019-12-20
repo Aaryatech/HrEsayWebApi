@@ -8,7 +8,9 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Service;
 
 import com.ats.hrmgt.model.Holiday;
+import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveApply;
+import com.ats.hrmgt.model.LeaveStsAndLeaveId;
 import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeeklyOffShit;
 
@@ -557,9 +559,11 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 	}
 
 	@Override
-	public Integer findDateInLeave(String fromDate, List<LeaveApply> leavetList, int empId) {
+	public LeaveStsAndLeaveId findDateInLeave(String fromDate, List<LeaveApply> leavetList, int empId) {
 		int sts = 6;
+		LeaveStsAndLeaveId stsInfo = new LeaveStsAndLeaveId();
 		try {
+			stsInfo.setSts(sts);
 			SimpleDateFormat yydate = new SimpleDateFormat("yyyy-MM-dd");
 			Date frmdt = yydate.parse(fromDate);
 
@@ -568,8 +572,12 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 				if (empId == leavetList.get(i).getEmpId()
 						&& frmdt.compareTo(yydate.parse(leavetList.get(i).getLeaveFromdt())) >= 0
 						&& frmdt.compareTo(yydate.parse(leavetList.get(i).getLeaveTodt())) <= 0) {
-
 					sts = 5;
+					stsInfo.setSts(sts);
+					stsInfo.setDuration(Integer.parseInt(leavetList.get(i).getLeaveDuration()));
+					stsInfo.setLeaveId(leavetList.get(i).getLeaveId());
+					stsInfo.setLeaveTyId(leavetList.get(i).getLvTypeId());
+					stsInfo.setNoOfLeave(leavetList.get(i).getLeaveNumDays());
 					break;
 
 				}
@@ -579,7 +587,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 			e.printStackTrace();
 		}
-		return sts;
+		return stsInfo;
 	}
 
 }
