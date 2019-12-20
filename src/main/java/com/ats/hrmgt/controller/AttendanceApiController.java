@@ -133,7 +133,7 @@ public class AttendanceApiController {
 			List<SummaryDailyAttendance> summaryDailyAttendanceList = new ArrayList<>();
 
 			SummaryDailyAttendance summaryDailyAttendance = new SummaryDailyAttendance();
-
+			List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
 			for (int i = 0; i < empList.size(); i++) {
 
 				summaryDailyAttendance = new SummaryDailyAttendance();
@@ -170,7 +170,7 @@ public class AttendanceApiController {
 
 				fmdt = df.parse(fromDate);
 				// System.out.println(empList.get(i).getEmpId() + " - " + fmdt);
-				List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
+				
 				for (Date j = fmdt; j.compareTo(todt) <= 0;) {
 
 					// System.out.println(j);
@@ -193,10 +193,10 @@ public class AttendanceApiController {
 					j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
 				}
-				List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
+				
 
 			}
-
+			List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
 			List<SummaryDailyAttendance> summaryDailyAttendanceSaveRes = summaryDailyAttendanceRepository
 					.saveAll(summaryDailyAttendanceList);
 			info.setError(false);
