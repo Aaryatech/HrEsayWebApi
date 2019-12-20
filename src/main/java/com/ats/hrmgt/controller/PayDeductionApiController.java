@@ -24,7 +24,7 @@ public class PayDeductionApiController {
 	public List<PayDeduction> getAllPayDecuvtion() {
 		List<PayDeduction> list = new ArrayList<PayDeduction>();
 		try {
-			list = payDeductRepo.findByDelStatus(1);
+			list = payDeductRepo.findByDelStatusOrderByDedTypeIdDesc(1);
 		} catch (Exception e) {
 			System.err.println("Excep in getAllPayDecuvtion : " + e.getMessage());
 			e.printStackTrace();
@@ -37,7 +37,7 @@ public class PayDeductionApiController {
 	public PayDeduction getPayDeductionById(@RequestParam int typeId) {
 		PayDeduction pay = new PayDeduction();
 		try {
-			pay = payDeductRepo.findBydedTypeIdAndDelStatus(typeId, 1);
+			pay = payDeductRepo.findByDedTypeIdAndDelStatus(typeId, 1);
 		} catch (Exception e) {
 			System.err.println("Excep in getPayDeductionById : " + e.getMessage());
 			e.printStackTrace();

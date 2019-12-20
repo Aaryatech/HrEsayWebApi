@@ -14,9 +14,9 @@ import com.ats.hrmgt.model.PayDeduction;
 @Repository
 public interface PayDeductionRepo extends JpaRepository<PayDeduction, Integer> {
 
-	public List<PayDeduction> findByDelStatus(int del);
+	public List<PayDeduction> findByDelStatusOrderByDedTypeIdDesc(int del);
 	
-	public PayDeduction findBydedTypeIdAndDelStatus(int typeId,int del);
+	public PayDeduction findByDedTypeIdAndDelStatus(int typeId,int del);
 	
 	@Transactional
 	@Modifying
