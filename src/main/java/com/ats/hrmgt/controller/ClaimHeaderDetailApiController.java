@@ -24,6 +24,7 @@ import com.ats.hrmgt.common.EmailUtility;
 import com.ats.hrmgt.common.Firebase;
 import com.ats.hrmgt.model.EmployeeInfo;
 import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.GetAuthorityIds;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.model.claim.ClaimApply;
@@ -72,141 +73,81 @@ public class ClaimHeaderDetailApiController {
 			List<ClaimApply> claimDetailsList = claimApplyRepo.saveAll(claimHead.getDetailList());
 			claimHeader.setDetailList(claimDetailsList);
 
-			errorMessage.setError(false);
 			
-			
-			int empId = claimHead.getEmpId();
-		
-			EmployeeMaster empInfo1 = new EmployeeMaster();
+			if (claimDetailsList == null) {
 
-			empInfo1 = employeeInfoRepository.findByEmpIdAndDelStatus(empId, 1);
-			String name = empInfo1.getFirstName() + " " + empInfo1.getSurname();
-			
-			
-			
-		 
- 			 int managerId=0;
- 			 
- 			 
- 			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-			SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy");
+				claimHeader = new ClaimApplyHeader();
+				errorMessage.setError(true);
 
-			String claimDate = "";
-			String claimDate1 = "";
-			String claimDate2 = "";
+			} else {
+				errorMessage.setError(false);
+				int empId = claimHeader.getEmpId();
 
-			try {
+				EmployeeMaster empInfo1 = new EmployeeMaster();
 
-				Date d1 = sdf1.parse(claimHead.getCafromDt());
+				empInfo1 = employeeInfoRepository.findByEmpIdAndDelStatus(empId, 1);
+				String name = empInfo1.getFirstName() + " " + empInfo1.getSurname();
 
-				claimDate1 = sdf2.format(d1.getTime());
+				GetAuthorityIds claimApply = new GetAuthorityIds();
+				claimApply = getAuthorityIdsRepo.getClaimAuthIdsDict(empId);
 
-				Date d2 = sdf1.parse(claimHead.getCaToDt());
+				String empIds = claimApply.getRepToEmpIds();
+				String[] values = empIds.split(",");
+				System.err.println("emp ids for notification are::" + empIds);
+				List<String> al = new ArrayList<String>(Arrays.asList(values));
 
-				claimDate2 = sdf2.format(d2.getTime());
-				
-				claimDate = claimDate1 + "To" + claimDate2;
+				Set<String> set = new HashSet<>(al);
+				al.clear();
+				al.addAll(set);
+				System.err.println("emp ids for notification are:--------------:" + al.toString());
 
+				for (int i = 0; i < al.size(); i++) {
 
-			} catch (Exception e) {
+					EmployeeMaster empInfo = new EmployeeMaster();
 
-				e.printStackTrace();
-			}
-			
-			if(empId==managerId) {
-				
-				//Sending to HR
-				
-				Setting setting = new Setting();
-				setting = settingRepo.findByKey("hremail");
-				String hrEmail = (setting.getValue());
-				System.out.println(hrEmail);
-				Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", hrEmail,"HRMS Claim Application",
-						  ""," " + name + " has applied for Claim for Rs. "
-								+ claimHead.getClaimAmount() + " Duration: " + claimDate + ", Please check ");
+					empInfo = employeeInfoRepository.findByEmpIdAndDelStatus(Integer.parseInt(al.get(i)), 1);
 
-				
-				
-				//Sending to emp
-				
-				String claimMsg =name + " registered Claim for Rs. "
-						+ claimHead.getClaimAmount() + " Duration: " + claimDate + " Please Check";
-			 
-				EmployeeMaster empInfo = new EmployeeMaster();
+					SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+					SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy");
 
-				empInfo = employeeInfoRepository.findByEmpIdAndDelStatus(empId, 1);
-	 
-				try {
+					String claimDateFrom = "";
+					String claimDateTo = "";
 
-				Firebase.sendPushNotification(
-				empInfo.getExVar1(), "HRMS Claim Application", " " + name + " has applied for Claim for Rs. "
-				+ claimHead.getClaimAmount() + " Duration: " + claimDate + ", Please check ",
-				21);
-				
-				 
-				
-				Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmailId(),
-						" HRMS Claim Application Status", "",claimMsg );
+					try {
 
-				} catch (Exception e) {
-				e.printStackTrace();
-				}
- 
-			}
-			
-			else {
-				
-				//Sending to emp
-				String claimMsg =name + " registered Claim for Rs. "
-						+ claimHead.getClaimAmount() + " Duration: " + claimDate + " Please Check";
-			 
-				EmployeeMaster empInfo = new EmployeeMaster();
+						Date d1 = sdf1.parse(claimHeader.getCafromDt());
 
-				empInfo = employeeInfoRepository.findByEmpIdAndDelStatus(empId, 1);
-	 
-				try {
+						claimDateFrom = sdf2.format(d1.getTime());
+						
+						Date d2 = sdf1.parse(claimHeader.getCaToDt());
 
-				Firebase.sendPushNotification(
-				empInfo.getExVar1(), "HRMS Claim Application", " " + name + " has applied for Claim for Rs. "
-				+ claimHead.getClaimAmount() + " Duration: " + claimDate + ", Please check ",
-				21);
-				
-				 
-				
-				Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmailId(),
-						" HRMS Claim Application Status", "",claimMsg );
+ 						claimDateTo = sdf2.format(d1.getTime());
 
-				} catch (Exception e) {
-				e.printStackTrace();
-				}
+					} catch (Exception e) {
+						claimDateFrom = claimHeader.getCafromDt();
+						claimDateTo=claimHeader.getCaToDt();
+						e.printStackTrace();
+					}
 
-				 
-				//Sending to manager
-				
-				
-				empInfo = new EmployeeMaster();
+					try {
 
-				empInfo = employeeInfoRepository.findByEmpIdAndDelStatus(managerId, 1);
-	 
-				try {
+						Firebase.sendPushNotification(
+								empInfo.getExVar1(), "HRMS", " " + name + " has applied for Claim for Rs. "
+										+ claimHeader.getClaimAmount() + " From " + claimDateFrom + "To"+claimDateTo+", Please check for Approval",
+								21);
+						
+						Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123",
+								empInfo.getEmailId(), " HRMS Claim Application Status", "",  name + " has applied for Claim for Rs. "
+										+ claimHeader.getClaimAmount() + " From " + claimDateFrom + "To"+claimDateTo+", Please check for Approval");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
-				Firebase.sendPushNotification(
-				empInfo.getExVar1(), "HRMS Claim Application", " " + name + " has applied for Claim for Rs. "
-				+ claimHead.getClaimAmount() + " Duration: " + claimDate + ", Please check ",
-				21);
-				
-				 
-				
-				Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", empInfo.getEmailId(),
-						" HRMS Claim Application Status", "",claimMsg );
-
-				} catch (Exception e) {
-				e.printStackTrace();
 				}
 
 			}
 			
-		
+		  
  
 		} catch (Exception e) {
 
@@ -218,10 +159,7 @@ public class ClaimHeaderDetailApiController {
 		return claimHeader;
 
 }
-	
-	
-	
-	
+	 
 	@RequestMapping(value = { "/updateClaimTrailId" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateTrailId(@RequestParam("claimId") int claimId,
 			@RequestParam("trailId") int trailId) {

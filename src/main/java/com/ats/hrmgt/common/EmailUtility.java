@@ -40,7 +40,7 @@ public class EmailUtility {
 		final String password ="*DNGrm?dt!6W^zJmaK5znVJJ9C";*/
 		
 		final String username = "akshaykasar72@gmail.com";
-		final String password ="mh151772@123";
+		final String password ="Mh151772";
 
 		System.out.println("username" + username);
 		System.out.println("password" + password);
