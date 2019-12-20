@@ -457,24 +457,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 		return sts;
 	}
-
-	public int difffun(String date1, String date2) {
-
-		SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-		int result = 0;
-
-		try {
-			Date date3 = myFormat.parse(date1);
-			Date date4 = myFormat.parse(date2);
-			long diff = date4.getTime() - date3.getTime();
-			result = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-		} catch (Exception e) {
-
-		}
-
-		return result + 1;
-	}
+ 
 
 	public int diffrence(Date date1, Date date2, Date holfrstdt, Date holseconddt, int day) {
 

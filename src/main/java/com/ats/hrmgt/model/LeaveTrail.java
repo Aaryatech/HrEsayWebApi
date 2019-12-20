@@ -16,7 +16,7 @@ public class LeaveTrail {
 	@Column(name="trail_pkey")
 	private int trailPkey ;
 	
-	@Column(name=" 	leave_id")
+	@Column(name="leave_id")
 	private int leaveId ;
 	
 	@Column(name="emp_id")

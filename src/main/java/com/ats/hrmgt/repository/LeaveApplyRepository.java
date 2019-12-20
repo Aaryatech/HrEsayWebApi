@@ -51,8 +51,21 @@ public interface LeaveApplyRepository extends JpaRepository<LeaveApply, Integer>
 
 	@Transactional
 	@Modifying
-	@Query("update LeaveApply set leave_num_days=:updateNoOfDays,leave_cancle_remark=:reason  WHERE leave_id=:leaveId")
+	@Query("update LeaveApply set leave_num_days=leave_num_days-:updateNoOfDays,leave_cancle_remark=:reason  WHERE leave_id=:leaveId")
 	int updateNoOfDaysInLeave(@Param("leaveId")int leaveId,@Param("updateNoOfDays") float updateNoOfDays,@Param("reason") String reason);
+
+	@Query(value="select * from leave_apply where leave_fromdt between :fromDate and :toDate and ex_int1=7 and lvt_application_id_parent!=0",nativeQuery=true)
+	List<LeaveApply> leaveListAddeBySystem(@Param("fromDate") String fromDate,@Param("toDate") String toDate);
+
+	@Transactional
+	@Modifying
+	@Query("update LeaveApply set leave_num_days=leave_num_days+:updateNoOfDays,leave_cancle_remark=:reason  WHERE leave_id=:leaveId")
+	int reverseupdateNoOfDaysInLeave(@Param("leaveId")int leaveId,@Param("updateNoOfDays") float updateNoOfDays,@Param("reason") String reason);
+	
+	@Transactional
+	@Modifying
+	@Query("delete from LeaveApply where leave_id=:leaveId")
+	int deleteByLeaveId(@Param("leaveId")int leaveId);
 
 	
 

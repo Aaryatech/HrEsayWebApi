@@ -170,7 +170,7 @@ public class AttendanceApiController {
 
 				fmdt = df.parse(fromDate);
 				// System.out.println(empList.get(i).getEmpId() + " - " + fmdt);
-				
+
 				for (Date j = fmdt; j.compareTo(todt) <= 0;) {
 
 					// System.out.println(j);
@@ -193,7 +193,6 @@ public class AttendanceApiController {
 					j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
 				}
-				
 
 			}
 			List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
@@ -247,6 +246,26 @@ public class AttendanceApiController {
 			int month = dataForUpdateAttendance.getMonth();
 			int year = dataForUpdateAttendance.getYear();
 
+			List<LeaveApply> leaveListAddeBySystem = leaveApplyRepository.leaveListAddeBySystem(fromDate, toDate);
+			for (int j = 0; j < leaveListAddeBySystem.size(); j++) {
+
+				float updateNoOfDays = 0;
+
+				if (Integer.parseInt(leaveListAddeBySystem.get(j).getLeaveDuration()) != 1) {
+					// cancel halfDay leave
+					updateNoOfDays = (float) 0.5;
+
+				} else {
+					// cancel full leave
+					updateNoOfDays = 1;
+				}
+
+				int updateNoOfDaysInLeave = leaveApplyRepository.reverseupdateNoOfDaysInLeave(
+						leaveListAddeBySystem.get(j).getLvtApplicationIdParent(), updateNoOfDays, "");
+				int deleteRocord = leaveApplyRepository.deleteByLeaveId(leaveListAddeBySystem.get(j).getLeaveId());
+				int deleteRocordTrail = leaveTrailRepository.deleteByLeaveId(leaveListAddeBySystem.get(j).getLeaveId());
+			}
+
 			List<FileUploadedData> fileUploadedDataList = dataForUpdateAttendance.getFileUploadedDataList();
 			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
 			List<ShiftMaster> shiftList = shiftMasterRepository.findAll();
@@ -254,7 +273,13 @@ public class AttendanceApiController {
 			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 			List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
 			List<LeaveApply> leavetList = leaveApplyRepository.getleavetList(fromDate, toDate);
+
 			List<LvType> lvTypeList = lvTypeRepository.findAll();
+			/*
+			 * List<SummaryDailyAttendance> summaryDailyAttendanceList =
+			 * summaryDailyAttendanceRepository .summaryDailyAttendanceList(month, year);
+			 */
+
 			//
 
 			// List<MstWeeklyOff> mstWeeklyOffList = mstWeeklyOffRepository.findAll();
@@ -262,8 +287,7 @@ public class AttendanceApiController {
 			 * List<LvType> lvTypeList = lvTypeRepository.findAll(); List<Holiday>
 			 * 
 			 * List<LvmSumUp> lvmSumUpList = lvmSumUpRepository.findAll();
-			 * List<SummaryDailyAttendance> summaryDailyAttendanceList =
-			 * summaryDailyAttendanceRepository .summaryDailyAttendanceList(month, year);
+			 * 
 			 */
 
 			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceList(fromDate, toDate);
@@ -282,6 +306,8 @@ public class AttendanceApiController {
 				ObjectMapper mapper = new ObjectMapper();
 				EmpJsonData employee = mapper.readValue(dailyAttendanceList.get(i).getEmpJson(), EmpJsonData.class);
 				dailyAttendanceList.get(i).setEmpType(employee.getEmpType());
+
+				// delete leave Added By System in this month
 
 				// get emptype record and break;
 
@@ -327,7 +353,7 @@ public class AttendanceApiController {
 							dailyAttendanceList.get(i).setOutTime(fileUploadedDataList.get(j).getOutTime());
 							dailyAttendanceList.get(i).setByFileUpdated(1);
 							dailyAttendanceList.get(i).setRowId(j + 1);
-							System.out.println(j + 1);
+
 							break;
 
 						}
@@ -585,11 +611,11 @@ public class AttendanceApiController {
 
 										if (stsInfo.getDuration() != 1) {
 											// cancel halfDay leave
-											updateNoOfDays = (float) (stsInfo.getNoOfLeave() - 0.5);
+											updateNoOfDays = (float) 0.5;
 
 										} else {
 											// cancel full leave
-											updateNoOfDays = stsInfo.getNoOfLeave() - 1;
+											updateNoOfDays = 1;
 										}
 
 										Date date = new Date();
@@ -851,13 +877,17 @@ public class AttendanceApiController {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+
 				} catch (Exception e) {
 					// e.printStackTrace();
 				}
 
 			}
-			// System.out.println(dailyAttendanceList);
-			List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
+
+			System.out.println("dailyAttendanceList " + dailyAttendanceList);
+
+			// List<DailyAttendance> dailyAttendanceSaveRes =
+			// dailyAttendanceRepository.saveAll(dailyAttendanceList);
 			info.setError(false);
 			info.setMsg("success");
 
@@ -989,6 +1019,24 @@ public class AttendanceApiController {
 		}
 
 		return ret;
+	}
+
+	public int difffun(String date1, String date2) {
+
+		SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+		int result = 0;
+
+		try {
+			Date date3 = myFormat.parse(date1);
+			Date date4 = myFormat.parse(date2);
+			long diff = date4.getTime() - date3.getTime();
+			result = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+		} catch (Exception e) {
+
+		}
+
+		return result + 1;
 	}
 
 }
