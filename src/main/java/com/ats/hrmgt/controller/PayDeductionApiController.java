@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.PayDeduction;
+import com.ats.hrmgt.model.PayDeductionDetailList;
 import com.ats.hrmgt.model.PayDeductionDetails;
+import com.ats.hrmgt.repository.PayDeductionDetailListRepo;
 import com.ats.hrmgt.repository.PayDeductionDetailsRepo;
 import com.ats.hrmgt.repository.PayDeductionRepo;
 
@@ -23,6 +25,8 @@ public class PayDeductionApiController {
 	PayDeductionRepo payDeductRepo;
 	
 	@Autowired PayDeductionDetailsRepo detailRepo;
+	
+	@Autowired PayDeductionDetailListRepo deductDetailRepo;
 
 	@RequestMapping(value = { "/getAllPayDeduction" }, method = RequestMethod.GET)
 	public List<PayDeduction> getAllPayDecuvtion() {
@@ -104,4 +108,54 @@ public class PayDeductionApiController {
 
 	}
 	
+	
+	@RequestMapping(value = { "/getAllEmpPayDeductDetail" }, method = RequestMethod.GET)
+	public List<PayDeductionDetailList> getAllEmpPayDeductDetail() {
+		List<PayDeductionDetailList> list = new ArrayList<PayDeductionDetailList>();
+		try {
+			list = deductDetailRepo.getEmpPayDeductDetail();
+		} catch (Exception e) {
+			System.err.println("Excep in getAllEmpPayDeductDetail : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+	
+	@RequestMapping(value = { "/getEmpPayDeductionById" }, method = RequestMethod.POST)
+	public PayDeductionDetailList getEmpPayDeductionById(@RequestParam int dedId) {
+		PayDeductionDetailList deduct = new PayDeductionDetailList();
+		try {
+			deduct = deductDetailRepo.getEmpPayDeductionById(dedId);
+		} catch (Exception e) {
+			System.err.println("Excep in getEmpPayDeductionById : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return deduct;
+	}
+	
+	@RequestMapping(value = { "/deletePayDeductionDetailById" }, method = RequestMethod.POST)
+	public Info deletePayDeductionDetailById(@RequestParam int dedId) {
+
+		Info info = new Info();
+		try {
+
+			int res = detailRepo.deletePayDeductnDetailById(dedId);
+
+			if (res > 0) {
+				info.setError(false);
+				info.setMsg("Sucess");
+			} else {
+				info.setError(true);
+				info.setMsg("Fail");
+			}
+
+		} catch (Exception e) {
+			System.err.println("Excep in deletePayDeductionDetailById : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return info;
+	}
 }
