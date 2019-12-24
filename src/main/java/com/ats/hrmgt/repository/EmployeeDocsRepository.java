@@ -21,8 +21,8 @@ public interface EmployeeDocsRepository extends JpaRepository<EmployeDoc, Intege
 
 	@Transactional
 	@Modifying
-	@Query("update EmployeDoc set del_status=0  WHERE doc_id=:docId")
-	int deleteEmpDoc(@Param("docId") int docId);
+	@Query(value="UPDATE emp_docs SET del_status=1 WHERE emp_id=:empId",nativeQuery=true)
+	int deleteEmpDoc(@Param("empId") int empId);
 
 	List<EmployeDoc> findByEmpIdAndDelStatus(int empId, int del);
 

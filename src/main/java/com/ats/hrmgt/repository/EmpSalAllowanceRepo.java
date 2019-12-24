@@ -13,11 +13,13 @@ import com.ats.hrmgt.model.EmpSalAllowance;
 
 public interface EmpSalAllowanceRepo extends JpaRepository<EmpSalAllowance, Integer> {
 
-	List<EmpSalAllowance> findByEmpId(int empId);
+	List<EmpSalAllowance> findByEmpIdAndDelStatus(int empId, int del);
 
 	@Transactional
 	@Modifying
-	@Query(value="DELETE FROM emp_sal_allowance WHERE emp_sal_allowance.emp_id = :empId",nativeQuery=true)
+	@Query(value="UPDATE `emp_sal_allowance` SET del_status=0 WHERE emp_id=:empId",nativeQuery=true)
 	int deleteEmpAllowances(@Param("empId") int empId);
+
+	
 
 }

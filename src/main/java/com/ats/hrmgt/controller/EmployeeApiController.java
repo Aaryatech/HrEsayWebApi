@@ -93,6 +93,13 @@ public class EmployeeApiController {
 				int res = empRepo.deleteEmployee(empId);
 				
 				if (res > 0) {
+					int a = empInfoRepo.deleteEmployeeInfo(empId);
+					int b = bankInfoRepo.deleteEmpBankInfo(empId);
+					int c = nomineeRepo.deleteEmpNominee(empId);
+					int d = empSalRepo.deleteEmpSalInfo(empId);
+					int e = empSalAllowanceRepo.deleteEmpAllowances(empId);
+					int f = employeeDocsRepository.deleteEmpDoc(empId);
+					
 					info.setError(false);
 					info.setMsg("Sucess");
 				}else{
@@ -154,7 +161,7 @@ public class EmployeeApiController {
 			return emp;
 			
 		}
-		
+		/******************************************************************************/
 		
 		@RequestMapping(value = {"/saveEmployeeIdBank"}, method = RequestMethod.POST)
 		public TblEmpBankInfo saveEmployee(@RequestBody TblEmpBankInfo empBank) {
@@ -177,7 +184,7 @@ public class EmployeeApiController {
 			
 			TblEmpBankInfo empBank = new TblEmpBankInfo();			
 			try {
-				empBank = bankInfoRepo.findByEmpId(empId);
+				empBank = bankInfoRepo.findByEmpIdAndDelStatus(empId,1);
 				
 			}catch (Exception e) {
 				System.err.println("Excep in getEmployeeBankInfo : "+e.getMessage());
@@ -187,7 +194,7 @@ public class EmployeeApiController {
 			return empBank;
 			
 		}
-		
+		/***********************************************************************************/
 		@RequestMapping(value = {"/saveEmployeeIdNominee"}, method = RequestMethod.POST)
 		public TblEmpNominees saveEmployeeIdNominee(@RequestBody TblEmpNominees empNominee) {
 			TblEmpNominees empSave = new TblEmpNominees();
@@ -209,7 +216,7 @@ public class EmployeeApiController {
 			TblEmpNominees nominee = new TblEmpNominees();
 			System.out.println("empNominee--------"+nominee);
 			try {
-				nominee = nomineeRepo.findByEmpId(empId);
+				nominee = nomineeRepo.findByEmpIdAndDelStatus(empId, 1);
 				
 			}catch (Exception e) {
 				System.err.println("Excep in getEmployeeNominee : "+e.getMessage());
@@ -220,7 +227,7 @@ public class EmployeeApiController {
 			
 		}
 		
-		
+		/***************************************************************************/
 		
 		@RequestMapping(value = {"/saveEmployeeIdSalary"}, method = RequestMethod.POST)
 		public EmpSalaryInfo saveEmployeeIdNominee(@RequestBody EmpSalaryInfo empSal) {
@@ -243,7 +250,7 @@ public class EmployeeApiController {
 			EmpSalaryInfo empSal = new EmpSalaryInfo();
 			
 			try {
-				empSal = empSalRepo.findByEmpId(empId);
+				empSal = empSalRepo.findByEmpIdAndDelStatus(empId,1);
 				
 			}catch (Exception e) {
 				System.err.println("Excep in saveEmployeeIdSalary : "+e.getMessage());
@@ -254,9 +261,9 @@ public class EmployeeApiController {
 			
 		}
 		
-		
+		/***************************************************************************/
 		@RequestMapping(value = {"/saveEmployeeIdUser"}, method = RequestMethod.POST)
-		public User saveEmployeeIdNominee(@RequestBody User user) {
+		public User saveEmployeeIdUser(@RequestBody User user) {
 			User empSave = new User();
 			System.out.println("user--------"+user);
 			try {
@@ -271,7 +278,7 @@ public class EmployeeApiController {
 			
 		}
 		
-		
+		/***************************************************************************/
 		@RequestMapping(value = {"/getAllAllowances"}, method = RequestMethod.GET)
 		public List<Allowances> getAllAllowances() {
 			List<Allowances> list = new ArrayList<Allowances>();
@@ -288,7 +295,7 @@ public class EmployeeApiController {
 			
 		}
 		
-		
+		/***************************************************************************/
 		
 		@RequestMapping(value = {"/saveEmpSalAllowanceInfo"}, method = RequestMethod.POST)
 		public List<EmpSalAllowance> saveEmpSalAllowanceInfo(@RequestBody List<EmpSalAllowance> allowncList) {
@@ -353,7 +360,7 @@ public class EmployeeApiController {
 			List<EmpSalAllowance> empAllowance = new ArrayList<EmpSalAllowance>();
 			
 			try {
-				empAllowance = empSalAllowanceRepo.findByEmpId(empId);
+				empAllowance = empSalAllowanceRepo.findByEmpIdAndDelStatus(empId, 1);
 				
 			}catch (Exception e) {
 				System.err.println("Excep in getEmployeeSalAllowances : "+e.getMessage());
@@ -364,7 +371,7 @@ public class EmployeeApiController {
 			
 		}
 		
-		
+		/**************************************************************************/
 		@RequestMapping(value = {"/getAllEmpDocTypes"}, method = RequestMethod.POST)
 		public List<EmpDoctype> getAllEmpDocTypes(@RequestParam int companyId) {
 			List<EmpDoctype> empDocTypes = new ArrayList<EmpDoctype>();
@@ -397,7 +404,7 @@ public class EmployeeApiController {
 			return save;
 
 		}
-		
+		/****************************************************************************/
 		@RequestMapping(value = { "/getEmployeeDocs" }, method = RequestMethod.POST)
 		public @ResponseBody List<EmployeDoc> getEmployeeDocs(@RequestParam int empId) {
 
