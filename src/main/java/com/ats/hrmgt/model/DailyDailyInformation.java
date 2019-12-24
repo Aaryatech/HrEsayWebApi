@@ -38,6 +38,9 @@ public class DailyDailyInformation {
 	@Column(name="late_min")
 	private int lateMin;
 
+	@Column(name="sal_basis")
+	private String salBasis;
+	
 	public String getUuid() {
 		return uuid;
 	}
@@ -110,11 +113,19 @@ public class DailyDailyInformation {
 		this.lateMin = lateMin;
 	}
 
+	public String getSalBasis() {
+		return salBasis;
+	}
+
+	public void setSalBasis(String salBasis) {
+		this.salBasis = salBasis;
+	}
+
 	@Override
 	public String toString() {
 		return "DailyDailyInformation [uuid=" + uuid + ", empId=" + empId + ", daycount=" + daycount + ", lvSumupId="
 				+ lvSumupId + ", nameSd=" + nameSd + ", workingMin=" + workingMin + ", otMin=" + otMin + ", lateMark="
-				+ lateMark + ", lateMin=" + lateMin + "]";
+				+ lateMark + ", lateMin=" + lateMin + ", salBasis=" + salBasis + "]";
 	} 
 	
 	

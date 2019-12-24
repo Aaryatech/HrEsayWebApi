@@ -923,86 +923,138 @@ public class AttendanceApiController {
 
 			for (int i = 0; i < summaryDailyAttendanceList.size(); i++) {
 
-				int workingDays = 0;
-				int payableDays = 0;
+				float workingDays = difffun(fromDate, toDate);
+				float presentDays = 0;
+				float holidayPresentHalf = 0;
+				float paidLeave = 0;
+				float unPaidLeave = 0;
+				float weeklyOff = 0;
+				float paidHoliday = 0;
+
 				int lateMin = 0;
 				int lateMark = 0;
 				int totalWorkingHr = 0;
 				int totalOtHr = 0;
 
+				String isDaily = "daily";
+
 				for (int j = 0; j < dailyDailyInformationList.size(); j++) {
 
 					if (dailyDailyInformationList.get(j).getEmpId() == summaryDailyAttendanceList.get(i).getEmpId()) {
+
+						isDaily = dailyDailyInformationList.get(j).getSalBasis();
+
 						lateMin = lateMin + dailyDailyInformationList.get(j).getLateMin();
 						lateMark = lateMark + dailyDailyInformationList.get(j).getLateMark();
 						totalWorkingHr = totalWorkingHr + dailyDailyInformationList.get(j).getWorkingMin();
 						totalOtHr = totalOtHr + dailyDailyInformationList.get(j).getOtMin();
-					}
 
-					if (dailyDailyInformationList.get(j).getEmpId() == summaryDailyAttendanceList.get(i).getEmpId()
-							&& dailyDailyInformationList.get(j).getLvSumupId() == 5) {
-						summaryDailyAttendanceList.get(i)
-								.setPresentDays(dailyDailyInformationList.get(j).getDaycount());
-					}
-					if (dailyDailyInformationList.get(j).getEmpId() == summaryDailyAttendanceList.get(i).getEmpId()
-							&& (dailyDailyInformationList.get(j).getLvSumupId() == 20
-									|| dailyDailyInformationList.get(j).getLvSumupId() == 21)) {
-						summaryDailyAttendanceList.get(i)
-								.setPresentDays(summaryDailyAttendanceList.get(i).getPresentDays()
-										+ (dailyDailyInformationList.get(j).getDaycount() / 2));
-						summaryDailyAttendanceList.get(i)
-								.setHolidayPresentHalf(summaryDailyAttendanceList.get(i).getHolidayPresentHalf()
-										+ (dailyDailyInformationList.get(j).getDaycount() / 2));
-					}
-					if (dailyDailyInformationList.get(j).getEmpId() == summaryDailyAttendanceList.get(i).getEmpId()
-							&& dailyDailyInformationList.get(j).getLvSumupId() == 20) {
-						summaryDailyAttendanceList.get(i).setPaidLeave(summaryDailyAttendanceList.get(i).getPaidLeave()
-								+ (dailyDailyInformationList.get(j).getDaycount() / 2));
-					}
-					if (dailyDailyInformationList.get(j).getEmpId() == summaryDailyAttendanceList.get(i).getEmpId()
-							&& (dailyDailyInformationList.get(j).getLvSumupId() == 12
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 5) { // 5=p,ot
+
+							presentDays = presentDays + dailyDailyInformationList.get(j).getDaycount();
+						}
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 20) { // 20=HDPHDL,
+
+							presentDays = (float) (presentDays
+									+ (dailyDailyInformationList.get(j).getDaycount() * 0.5));
+							holidayPresentHalf = (float) (holidayPresentHalf
+									+ (dailyDailyInformationList.get(j).getDaycount() * 0.5));
+							paidLeave = (float) (paidLeave + (dailyDailyInformationList.get(j).getDaycount() * 0.5));
+						}
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 21) { // 21=HD
+
+							presentDays = (float) (presentDays
+									+ (dailyDailyInformationList.get(j).getDaycount() * 0.5));
+							unPaidLeave = (float) (unPaidLeave
+									+ (dailyDailyInformationList.get(j).getDaycount() * 0.5));
+
+						}
+
+						if (dailyDailyInformationList.get(j).getSalBasis().equals("daily")) {
+							if (dailyDailyInformationList.get(j).getLvSumupId() == 12
 									|| dailyDailyInformationList.get(j).getLvSumupId() == 14
 									|| dailyDailyInformationList.get(j).getLvSumupId() == 16
-									|| dailyDailyInformationList.get(j).getLvSumupId() == 17
 									|| dailyDailyInformationList.get(j).getLvSumupId() == 18
-									|| dailyDailyInformationList.get(j).getLvSumupId() == 19)) {
-						summaryDailyAttendanceList.get(i).setWeeklyOff(summaryDailyAttendanceList.get(i).getWeeklyOff()
-								+ dailyDailyInformationList.get(j).getDaycount());
-					}
-					if (dailyDailyInformationList.get(j).getEmpId() == summaryDailyAttendanceList.get(i).getEmpId()
-							&& (dailyDailyInformationList.get(j).getLvSumupId() == 6
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 19) {
+
+								weeklyOff = weeklyOff + dailyDailyInformationList.get(j).getDaycount();
+
+							}
+							if (dailyDailyInformationList.get(j).getLvSumupId() == 6
 									|| dailyDailyInformationList.get(j).getLvSumupId() == 13
 									|| dailyDailyInformationList.get(j).getLvSumupId() == 15
 									|| dailyDailyInformationList.get(j).getLvSumupId() == 17
 									|| dailyDailyInformationList.get(j).getLvSumupId() == 18
-									|| dailyDailyInformationList.get(j).getLvSumupId() == 19)) {
-						summaryDailyAttendanceList.get(i)
-								.setPaidHoliday(summaryDailyAttendanceList.get(i).getPaidHoliday()
-										+ dailyDailyInformationList.get(j).getDaycount());
-					}
-					if (dailyDailyInformationList.get(j).getEmpId() == summaryDailyAttendanceList.get(i).getEmpId()
-							&& dailyDailyInformationList.get(j).getLvSumupId() == 7) {
-						summaryDailyAttendanceList.get(i).setPaidLeave(dailyDailyInformationList.get(j).getDaycount());
-					}
-					if (dailyDailyInformationList.get(j).getEmpId() == summaryDailyAttendanceList.get(i).getEmpId()
-							&& dailyDailyInformationList.get(j).getLvSumupId() == 11) {
-						summaryDailyAttendanceList.get(i)
-								.setUnpaidLeave(dailyDailyInformationList.get(j).getDaycount());
-					}
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 19) {
 
+								paidHoliday = paidHoliday + dailyDailyInformationList.get(j).getDaycount();
+
+							}
+						} else {
+							if (dailyDailyInformationList.get(j).getLvSumupId() == 12
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 14
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 16
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 17
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 18
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 19) {
+								weeklyOff = weeklyOff + dailyDailyInformationList.get(j).getDaycount();
+
+							}
+							if (dailyDailyInformationList.get(j).getLvSumupId() == 6
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 13
+									|| dailyDailyInformationList.get(j).getLvSumupId() == 15) {
+
+								paidHoliday = paidHoliday + dailyDailyInformationList.get(j).getDaycount();
+
+							}
+						}
+
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 7) {
+
+							paidLeave = paidLeave + dailyDailyInformationList.get(j).getDaycount();
+						}
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 11) {
+							unPaidLeave = unPaidLeave + dailyDailyInformationList.get(j).getDaycount();
+
+						}
+					}
 				}
 				summaryDailyAttendanceList.get(i).setTotlateMins(lateMin);
 				summaryDailyAttendanceList.get(i).setTotlateDays(lateMark);
 				summaryDailyAttendanceList.get(i).setTotworkingHrs(totalWorkingHr);
 				summaryDailyAttendanceList.get(i).setTotOthr(totalOtHr);
+				summaryDailyAttendanceList.get(i).setPresentDays(presentDays);
+				summaryDailyAttendanceList.get(i).setHolidayPresentHalf(holidayPresentHalf);
+				summaryDailyAttendanceList.get(i).setPaidLeave(paidLeave);
+				summaryDailyAttendanceList.get(i).setWeeklyOff(weeklyOff);
+				summaryDailyAttendanceList.get(i).setPaidHoliday(paidHoliday);
+				summaryDailyAttendanceList.get(i).setUnpaidLeave(unPaidLeave);
+
+				workingDays = workingDays - summaryDailyAttendanceList.get(i).getWeeklyOff()
+						- summaryDailyAttendanceList.get(i).getPaidHoliday();
+				summaryDailyAttendanceList.get(i).setWorkingDays(workingDays);
+
+				if (isDaily.equals("daily")) {
+					summaryDailyAttendanceList.get(i)
+							.setPayableDays(summaryDailyAttendanceList.get(i).getPresentDays()
+									+ summaryDailyAttendanceList.get(i).getPaidHoliday()
+									+ summaryDailyAttendanceList.get(i).getPaidLeave());
+				} else {
+					summaryDailyAttendanceList.get(i)
+							.setPayableDays(summaryDailyAttendanceList.get(i).getPresentDays()
+									+ summaryDailyAttendanceList.get(i).getPaidHoliday()
+									+ summaryDailyAttendanceList.get(i).getPaidLeave()
+									+ summaryDailyAttendanceList.get(i).getWeeklyOff());
+				}
+				summaryDailyAttendanceList.get(i).setCalculationDone(1);
 			}
 
-			System.out.println("summaryDailyAttendanceList " + summaryDailyAttendanceList);
+			// System.out.println("summaryDailyAttendanceList " +
+			// summaryDailyAttendanceList);
 
-			/*
-			 * List<SummaryDailyAttendance> summaryDailyAttendanceSaveRes =
-			 * summaryDailyAttendanceRepository .saveAll(summaryDailyAttendanceList);
-			 */
+			List<SummaryDailyAttendance> summaryDailyAttendanceSaveRes = summaryDailyAttendanceRepository
+					.saveAll(summaryDailyAttendanceList);
+
 			info.setError(false);
 			info.setMsg("success");
 
