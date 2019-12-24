@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.model.AttendanceSheetData;
 import com.ats.hrmgt.model.DailyAttendance;
 import com.ats.hrmgt.model.DailyDailyInformation;
 import com.ats.hrmgt.model.DataForUpdateAttendance;
@@ -1204,6 +1205,47 @@ public class AttendanceApiController {
 		}
 
 		return result + 1;
+	}
+
+	@RequestMapping(value = { "/getAttendanceSheet" }, method = RequestMethod.POST)
+	public @ResponseBody AttendanceSheetData getAttendanceSheet(@RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate) {
+
+		AttendanceSheetData info = new AttendanceSheetData();
+		try {
+
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			Date fmdt = df.parse(fromDate);
+			Date todt = df.parse(toDate);
+
+			/*System.out.println(fmdt + " " + todt);
+
+			Calendar temp = Calendar.getInstance();
+			temp.setTime(fmdt);
+			int year = temp.get(Calendar.YEAR);
+			int month = temp.get(Calendar.MONTH) + 1;*/
+
+			/*List<EmpInfo> empList = empInfoRepository.getEmpListAll(fromDate, toDate);
+ 
+			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceListAll(fromDate, toDate);*/
+			
+			List<String> dates = new ArrayList<>();
+			SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
+			
+			
+			for (Date j = fmdt; j.compareTo(todt) <= 0;) { 
+				dates.add(sf.format(j)); 
+				j.setTime(j.getTime() + 1000 * 60 * 60 * 24); 
+			}
+			 
+			info.setDates(dates);
+		} catch (Exception e) {
+			 
+			e.printStackTrace();
+		}
+
+		return info;
+
 	}
 
 }
