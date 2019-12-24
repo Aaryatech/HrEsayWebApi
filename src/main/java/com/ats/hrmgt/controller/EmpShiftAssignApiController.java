@@ -44,6 +44,19 @@ public class EmpShiftAssignApiController {
 		return list;
 	}
 
+	@RequestMapping(value = { "/getAllEmployeeDetailByEmpId" }, method = RequestMethod.POST)
+	public GetEmployeeDetails getAllEmployeeDetailByEmpId(@RequestParam("empId") int empId) {
+		 GetEmployeeDetails  list = new GetEmployeeDetails();
+		try {
+			list = getEmployeeDetailsRepo.getEmpDetailList(empId);
+		} catch (Exception e) {
+			System.err.println("Excep in getAllEmployeeDetailByEmpId : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
 	@Autowired
 	ShiftMasterRepository shiftMasterRepository;
 
@@ -69,7 +82,7 @@ public class EmpShiftAssignApiController {
 
 		Info info = new Info();
 		try {
- 
+
 			int res = 0;
 			res = employeeMasterRepository.assignShift(empIdList, shiftId);
 
@@ -93,11 +106,10 @@ public class EmpShiftAssignApiController {
 		return info;
 
 	}
-	
+
 	@Autowired
 	SalaryTypesMasterRepo salaryTypesMasterRepo;
-	
-	
+
 	@RequestMapping(value = { "/getSalryTypesMst" }, method = RequestMethod.GET)
 	public @ResponseBody List<SalaryTypesMaster> getSalryTypesMst() {
 
@@ -114,17 +126,17 @@ public class EmpShiftAssignApiController {
 		return list;
 
 	}
-	
+
 	@Autowired
 	EmpSalaryInfoRepo empSalaryInfoRepo;
-	
+
 	@RequestMapping(value = { "/salStructAssignmentUpdate" }, method = RequestMethod.POST)
 	public @ResponseBody Info salStructAssignmentUpdate(@RequestParam("empIdList") List<Integer> empIdList,
 			@RequestParam("structId") String structId) {
 
 		Info info = new Info();
 		try {
- 
+
 			int res = 0;
 			res = empSalaryInfoRepo.assignsalStruct(empIdList, structId);
 
@@ -148,13 +160,11 @@ public class EmpShiftAssignApiController {
 		return info;
 
 	}
-	
-	
-	//**************************MstEmpType*******************************************
+
+	// **************************MstEmpType*******************************************
 	@Autowired
 	MstEmpTypeRepository mstEmpTypeRepository;
-	
-	
+
 	@RequestMapping(value = { "/saveMstEmpType" }, method = RequestMethod.POST)
 	public @ResponseBody MstEmpType saveLeaveType(@RequestBody MstEmpType leaveType) {
 
@@ -165,8 +175,8 @@ public class EmpShiftAssignApiController {
 			if (save == null) {
 
 				save = new MstEmpType();
- 
-			}  
+
+			}
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -175,14 +185,14 @@ public class EmpShiftAssignApiController {
 		return save;
 
 	}
-	
+
 	@RequestMapping(value = { "/getMstEmpTypeList" }, method = RequestMethod.POST)
 	public @ResponseBody List<MstEmpType> getLeaveTypeListIsStructure(@RequestParam("companyId") int companyId) {
 
 		List<MstEmpType> list = new ArrayList<MstEmpType>();
 		try {
 
-			list = mstEmpTypeRepository.findByDelStatusAndCompanyId(1,companyId);
+			list = mstEmpTypeRepository.findByDelStatusAndCompanyId(1, companyId);
 
 		} catch (Exception e) {
 
@@ -192,14 +202,14 @@ public class EmpShiftAssignApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getMstEmpTypeById" }, method = RequestMethod.POST)
-	public @ResponseBody  MstEmpType  getLeaveTypeList(@RequestParam("empTypeId") int empTypeId) {
+	public @ResponseBody MstEmpType getLeaveTypeList(@RequestParam("empTypeId") int empTypeId) {
 
 		MstEmpType list = new MstEmpType();
 		try {
 
-			list = mstEmpTypeRepository.findByDelStatusAndEmpTypeId(1,empTypeId);
+			list = mstEmpTypeRepository.findByDelStatusAndEmpTypeId(1, empTypeId);
 
 		} catch (Exception e) {
 
@@ -209,7 +219,7 @@ public class EmpShiftAssignApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/deleteLMstEmpType" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteLMstEmpType(@RequestParam("empTypeId") int empTypeId) {
 
@@ -237,8 +247,5 @@ public class EmpShiftAssignApiController {
 		return info;
 
 	}
-	
-	
-
 
 }
