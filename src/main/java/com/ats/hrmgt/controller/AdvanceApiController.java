@@ -20,12 +20,10 @@ import com.ats.hrmgt.model.advance.GetAdvance;
 
 @RestController
 public class AdvanceApiController {
-	
-	
-	
+
 	@Autowired
 	AdvanceRepo advanceRepo;
-	
+
 	@RequestMapping(value = { "/saveMstEmpAdvance" }, method = RequestMethod.POST)
 	public @ResponseBody Advance saveMstEmpAdvance(@RequestBody Advance leaveType) {
 
@@ -36,8 +34,8 @@ public class AdvanceApiController {
 			if (save == null) {
 
 				save = new Advance();
- 
-			}  
+
+			}
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -46,9 +44,10 @@ public class AdvanceApiController {
 		return save;
 
 	}
-	
+
 	@Autowired
 	GetAdvanceRepo getAdvanceRepo;
+
 	@RequestMapping(value = { "/getPendingAdvance" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetAdvance> getPendingAdvance(@RequestParam("companyId") int companyId) {
 
@@ -65,16 +64,28 @@ public class AdvanceApiController {
 		return list;
 
 	}
-	
-	
+
 	@RequestMapping(value = { "/getAdvanceHistory" }, method = RequestMethod.POST)
-	public @ResponseBody List<GetAdvance> getAdvanceHistory(@RequestParam("companyId") int companyId) {
+	public @ResponseBody List<GetAdvance> getAdvanceHistory(@RequestParam("empId") int empId,
+			@RequestParam("calYrId") String calYrId, @RequestParam("companyId") int companyId ) {
 
 		List<GetAdvance> list = new ArrayList<GetAdvance>();
 		try {
 
-			list = getAdvanceRepo.getSubModule(companyId);
+			if (empId == 0 && !calYrId.equals("0")) {
+				list = getAdvanceRepo.getSpecYearAdv(companyId, calYrId);
 
+			} else if (empId != 0 && calYrId.equals("0")) {
+				list = getAdvanceRepo.getSpecEmpAdv(companyId, empId);
+
+			} else if (empId != 0 && !calYrId.equals("0")) {
+				list = getAdvanceRepo.getSpecAdv(companyId, empId, calYrId);
+
+			} else {
+				list = getAdvanceRepo.getAllAdv(companyId);
+			}
+
+ 
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -83,7 +94,7 @@ public class AdvanceApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getAdvanceById" }, method = RequestMethod.POST)
 	public @ResponseBody Advance getAdvanceById(@RequestParam("advId") int advId) {
 
@@ -100,7 +111,7 @@ public class AdvanceApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/deleteAdvance" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteLMstEmpType(@RequestParam("advId") int advId) {
 
@@ -128,8 +139,37 @@ public class AdvanceApiController {
 		return info;
 
 	}
+
 	
 	
+	@RequestMapping(value = { "/updateSkipAdvance" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateSkipAdvance(@RequestParam("dateTimeUpdate") String dateTimeUpdate,@RequestParam("userId") int userId,@RequestParam("skipStr") String skipStr,@RequestParam("count") int count,@RequestParam("advId") int advId) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = advanceRepo.skipAdvance(advId,userId,count,skipStr,dateTimeUpdate);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
+		}
+
+		return info;
+
+	}
+
 	@RequestMapping(value = { "/checkCustPhone" }, method = RequestMethod.POST)
 	public @ResponseBody Info checkEmployeeEmail(@RequestParam String voucherNo) {
 
@@ -137,8 +177,8 @@ public class AdvanceApiController {
 		List<Advance> emp = new ArrayList<Advance>();
 		try {
 
-			emp = advanceRepo.findByVoucherNoAndDelStatus(voucherNo,1);
- 			if (emp.size()>0) {
+			emp = advanceRepo.findByVoucherNoAndDelStatus(voucherNo, 1);
+			if (emp.size() > 0) {
 				info.setError(true);
 			} else {
 				info.setError(false);
@@ -152,6 +192,5 @@ public class AdvanceApiController {
 		return info;
 
 	}
-	
 
 }
