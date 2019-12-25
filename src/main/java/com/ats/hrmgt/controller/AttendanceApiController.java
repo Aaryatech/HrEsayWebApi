@@ -940,7 +940,8 @@ public class AttendanceApiController {
 
 			for (int i = 0; i < summaryDailyAttendanceList.size(); i++) {
 
-				float workingDays = difffun(fromDate, toDate);
+				int totalDaysInmonth=difffun(fromDate, toDate);
+				float workingDays =0;
 				float presentDays = 0;
 				float holidayPresentHalf = 0;
 				float paidLeave = 0;
@@ -1049,7 +1050,8 @@ public class AttendanceApiController {
 				summaryDailyAttendanceList.get(i).setPaidHoliday(paidHoliday);
 				summaryDailyAttendanceList.get(i).setUnpaidLeave(unPaidLeave);
 
-				workingDays = workingDays - summaryDailyAttendanceList.get(i).getWeeklyOff()
+				summaryDailyAttendanceList.get(i).setTotalDaysInmonth(totalDaysInmonth);
+				workingDays = totalDaysInmonth - summaryDailyAttendanceList.get(i).getWeeklyOff()
 						- summaryDailyAttendanceList.get(i).getPaidHoliday();
 				summaryDailyAttendanceList.get(i).setWorkingDays(workingDays);
 
