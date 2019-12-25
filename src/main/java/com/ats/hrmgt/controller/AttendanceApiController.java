@@ -25,6 +25,8 @@ import com.ats.hrmgt.model.EmpInfoWithDateInfoList;
 import com.ats.hrmgt.model.EmpJsonData;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.FileUploadedData;
+import com.ats.hrmgt.model.GetDailyDailyRecord;
+import com.ats.hrmgt.model.GetDailyDailyRecordRepository;
 import com.ats.hrmgt.model.GetWeeklyOff;
 import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.Info;
@@ -37,6 +39,7 @@ import com.ats.hrmgt.model.LvType;
 import com.ats.hrmgt.model.LvmSumUp;
 import com.ats.hrmgt.model.MstEmpType;
 import com.ats.hrmgt.model.ShiftMaster;
+import com.ats.hrmgt.model.SummaryAttendance;
 import com.ats.hrmgt.model.SummaryDailyAttendance;
 import com.ats.hrmgt.model.VariousList;
 import com.ats.hrmgt.model.WeeklyOff;
@@ -55,6 +58,7 @@ import com.ats.hrmgt.repository.LvTypeRepository;
 import com.ats.hrmgt.repository.LvmSumUpRepository;
 import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
+import com.ats.hrmgt.repository.SummaryAttendanceRepository;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
 import com.ats.hrmgt.repository.WeeklyOffRepo;
 import com.ats.hrmgt.repository.WeeklyOffShitRepository;
@@ -115,6 +119,12 @@ public class AttendanceApiController {
 
 	@Autowired
 	DailyDailyInformationRepository dailyDailyInformationRepository;
+
+	@Autowired
+	SummaryAttendanceRepository summaryAttendanceRepository;
+
+	@Autowired
+	GetDailyDailyRecordRepository getDailyDailyRecordRepository;
 
 	int PL_CL_HD_leave_insert_automatic = 0;
 
@@ -434,7 +444,7 @@ public class AttendanceApiController {
 					if (inDt.compareTo(outDt) > 0) {
 						outDt.setTime(outDt.getTime() + 1000 * 60 * 60 * 24);
 					}
-					
+
 					long durationBetweenInOut = outDt.getTime() - inDt.getTime();
 					long diffHoursBetweenInOut = durationBetweenInOut / (60 * 60 * 1000);
 					long diffMinutesBetweenInOut = (durationBetweenInOut / (60 * 1000) % 60)
@@ -964,8 +974,10 @@ public class AttendanceApiController {
 
 							presentDays = (float) (presentDays
 									+ (dailyDailyInformationList.get(j).getDaycount() * 0.5));
-							holidayPresentHalf = (float) (holidayPresentHalf
-									+ (dailyDailyInformationList.get(j).getDaycount() * 0.5));
+							/*
+							 * holidayPresentHalf = (float) (holidayPresentHalf +
+							 * (dailyDailyInformationList.get(j).getDaycount() * 0.5));
+							 */
 							paidLeave = (float) (paidLeave + (dailyDailyInformationList.get(j).getDaycount() * 0.5));
 						}
 						if (dailyDailyInformationList.get(j).getLvSumupId() == 21) { // 21=HD
@@ -1031,7 +1043,7 @@ public class AttendanceApiController {
 				summaryDailyAttendanceList.get(i).setTotworkingHrs(totalWorkingHr);
 				summaryDailyAttendanceList.get(i).setTotOthr(totalOtHr);
 				summaryDailyAttendanceList.get(i).setPresentDays(presentDays);
-				summaryDailyAttendanceList.get(i).setHolidayPresentHalf(holidayPresentHalf);
+				summaryDailyAttendanceList.get(i).setHdpresentHdleave(holidayPresentHalf);
 				summaryDailyAttendanceList.get(i).setPaidLeave(paidLeave);
 				summaryDailyAttendanceList.get(i).setWeeklyOff(weeklyOff);
 				summaryDailyAttendanceList.get(i).setPaidHoliday(paidHoliday);
@@ -1252,6 +1264,7 @@ public class AttendanceApiController {
 
 				EmpInfoWithDateInfoList infomation = new EmpInfoWithDateInfoList();
 				infomation.setEmpCode(empList.get(i).getEmpCode());
+				infomation.setEmpId(empList.get(i).getEmpId());
 				List<DailyDailyInfomationForChart> dateInfo = new ArrayList<>();
 
 				for (int j = 0; j < dates.size(); j++) {
@@ -1304,6 +1317,61 @@ public class AttendanceApiController {
 		}
 
 		return info;
+
+	}
+
+	@RequestMapping(value = { "/getMonthlySummryAttendace" }, method = RequestMethod.POST)
+	public @ResponseBody List<SummaryAttendance> getMonthlySummryAttendace(@RequestParam("month") int month,
+			@RequestParam("year") int year) {
+
+		List<SummaryAttendance> summaryDailyAttendanceList = new ArrayList<>();
+		try {
+
+			summaryDailyAttendanceList = summaryAttendanceRepository.summaryDailyAttendanceListAll(month, year);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return summaryDailyAttendanceList;
+
+	}
+
+	@RequestMapping(value = { "/getDailyDailyRecord" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetDailyDailyRecord> getDailyDailyRecord(@RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate, @RequestParam("empId") int empId) {
+
+		List<GetDailyDailyRecord> summaryDailyAttendanceList = new ArrayList<>();
+		try {
+
+			summaryDailyAttendanceList = getDailyDailyRecordRepository.summaryDailyAttendanceListAll(fromDate, toDate,
+					empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return summaryDailyAttendanceList;
+
+	}
+
+	@RequestMapping(value = { "/getMonthlySummryAttendaceByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody SummaryAttendance getMonthlySummryAttendaceByEmpId(@RequestParam("month") int month,
+			@RequestParam("year") int year, @RequestParam("empId") int empId) {
+
+		SummaryAttendance summaryAttendance = new SummaryAttendance();
+		try {
+
+			summaryAttendance = summaryAttendanceRepository.summaryDailyAttendanceListAll(month, year, empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return summaryAttendance;
 
 	}
 
