@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "tbl_loan_main")
 public class LoanMain {
@@ -62,6 +64,11 @@ public class LoanMain {
 	private String skipRemarks;
 
 	private int delStatus;
+	
+	private int exInt1;
+	private int exInt2;
+	private String exVar1;
+	private String exVar2;
 
 	public int getDelStatus() {
 		return delStatus;
@@ -127,6 +134,8 @@ public class LoanMain {
 		this.loanTenure = loanTenure;
 	}
 
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+
 	public Date getLoanRepayStart() {
 		return loanRepayStart;
 	}
@@ -134,6 +143,7 @@ public class LoanMain {
 	public void setLoanRepayStart(Date loanRepayStart) {
 		this.loanRepayStart = loanRepayStart;
 	}
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
 
 	public Date getLoanRepayEnd() {
 		return loanRepayEnd;
@@ -263,6 +273,40 @@ public class LoanMain {
 		this.skipRemarks = skipRemarks;
 	}
 
+	
+	
+	public int getExInt1() {
+		return exInt1;
+	}
+
+	public void setExInt1(int exInt1) {
+		this.exInt1 = exInt1;
+	}
+
+	public int getExInt2() {
+		return exInt2;
+	}
+
+	public void setExInt2(int exInt2) {
+		this.exInt2 = exInt2;
+	}
+
+	public String getExVar1() {
+		return exVar1;
+	}
+
+	public void setExVar1(String exVar1) {
+		this.exVar1 = exVar1;
+	}
+
+	public String getExVar2() {
+		return exVar2;
+	}
+
+	public void setExVar2(String exVar2) {
+		this.exVar2 = exVar2;
+	}
+
 	@Override
 	public String toString() {
 		return "LoanMain [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", loanApplNo=" + loanApplNo
@@ -272,7 +316,10 @@ public class LoanMain {
 				+ ", currentOutstanding=" + currentOutstanding + ", loanStatus=" + loanStatus + ", loginName="
 				+ loginName + ", loginTime=" + loginTime + ", allData=" + allData + ", remark=" + remark + ", skipId="
 				+ skipId + ", loanAddDate=" + loanAddDate + ", skipLoginName=" + skipLoginName + ", skipLoginTime="
-				+ skipLoginTime + ", skipRemarks=" + skipRemarks + ", delStatus=" + delStatus + "]";
+				+ skipLoginTime + ", skipRemarks=" + skipRemarks + ", delStatus=" + delStatus + ", exInt1=" + exInt1
+				+ ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
 	}
+
+	 
 
 }
