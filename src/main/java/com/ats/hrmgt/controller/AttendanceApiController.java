@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.AttendanceSheetData;
 import com.ats.hrmgt.model.DailyAttendance;
+import com.ats.hrmgt.model.DailyDailyInfomationForChart;
 import com.ats.hrmgt.model.DailyDailyInformation;
 import com.ats.hrmgt.model.DataForUpdateAttendance;
 import com.ats.hrmgt.model.EmpInfo;
+import com.ats.hrmgt.model.EmpInfoWithDateInfoList;
 import com.ats.hrmgt.model.EmpJsonData;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.FileUploadedData;
@@ -429,6 +431,10 @@ public class AttendanceApiController {
 					Date inDt = yyDtTm.parse(inDttime);// Set start date
 					Date outDt = yyDtTm.parse(outDttime);
 
+					if (inDt.compareTo(outDt) > 0) {
+						outDt.setTime(outDt.getTime() + 1000 * 60 * 60 * 24);
+					}
+					
 					long durationBetweenInOut = outDt.getTime() - inDt.getTime();
 					long diffHoursBetweenInOut = durationBetweenInOut / (60 * 60 * 1000);
 					long diffMinutesBetweenInOut = (durationBetweenInOut / (60 * 1000) % 60)
@@ -1123,7 +1129,7 @@ public class AttendanceApiController {
 					}
 				} // $res_getemptype->wh_work == 'Comp Off'
 				else {
-					ret = "PHE";
+					ret = "PH";
 				}
 			} // $case == '1357' || $case == '1367' || $case == '2357' || $case == '2367'
 			else if (atteanceCase.equals("1358") || atteanceCase.equals("1368") || atteanceCase.equals("2358")
@@ -1173,7 +1179,7 @@ public class AttendanceApiController {
 					}
 				} // $res_getemptype->wh_work == 'Comp Off'
 				else {
-					ret = "WOE";
+					ret = "WO";
 				}
 			} // $case == '1457' || $case == '1467'
 			else if (atteanceCase.equals("1458") || atteanceCase.equals("1468")) {
@@ -1218,29 +1224,82 @@ public class AttendanceApiController {
 			Date fmdt = df.parse(fromDate);
 			Date todt = df.parse(toDate);
 
-			/*System.out.println(fmdt + " " + todt);
+			/*
+			 * System.out.println(fmdt + " " + todt);
+			 * 
+			 * Calendar temp = Calendar.getInstance(); temp.setTime(fmdt); int year =
+			 * temp.get(Calendar.YEAR); int month = temp.get(Calendar.MONTH) + 1;
+			 */
 
-			Calendar temp = Calendar.getInstance();
-			temp.setTime(fmdt);
-			int year = temp.get(Calendar.YEAR);
-			int month = temp.get(Calendar.MONTH) + 1;*/
+			List<EmpInfo> empList = empInfoRepository.getEmpListAll(fromDate, toDate);
 
-			/*List<EmpInfo> empList = empInfoRepository.getEmpListAll(fromDate, toDate);
- 
-			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceListAll(fromDate, toDate);*/
-			
+			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceListAll(fromDate,
+					toDate);
+
 			List<String> dates = new ArrayList<>();
 			SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
-			
-			
-			for (Date j = fmdt; j.compareTo(todt) <= 0;) { 
-				dates.add(sf.format(j)); 
-				j.setTime(j.getTime() + 1000 * 60 * 60 * 24); 
+
+			for (Date j = fmdt; j.compareTo(todt) <= 0;) {
+				dates.add(sf.format(j));
+
+				/* System.out.println(sf.parse(sf.format(j))); */
+				j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 			}
-			 
+
+			List<EmpInfoWithDateInfoList> infomationList = new ArrayList<>();
+
+			for (int i = 0; i < empList.size(); i++) {
+
+				EmpInfoWithDateInfoList infomation = new EmpInfoWithDateInfoList();
+				infomation.setEmpCode(empList.get(i).getEmpCode());
+				List<DailyDailyInfomationForChart> dateInfo = new ArrayList<>();
+
+				for (int j = 0; j < dates.size(); j++) {
+
+					Date dt = sf.parse(dates.get(j));
+					int find = 0;
+
+					for (int k = 0; k < dailyAttendanceList.size(); k++) {
+
+						Date attsdt = df.parse(dailyAttendanceList.get(k).getAttDate());
+						if (dailyAttendanceList.get(k).getEmpId() == empList.get(i).getEmpId()
+								&& attsdt.compareTo(dt) == 0) {
+
+							DailyDailyInfomationForChart dilydly = new DailyDailyInfomationForChart();
+							dilydly.setStatus(dailyAttendanceList.get(k).getAttStatus());
+							dilydly.setDate(dates.get(j));
+							dilydly.setInTime(dailyAttendanceList.get(k).getInTime());
+							dilydly.setOutTime(dailyAttendanceList.get(k).getOutTime());
+							dilydly.setOtMin(dailyAttendanceList.get(k).getOtHr());
+							dilydly.setLateMin(String.valueOf(dailyAttendanceList.get(k).getLateMin()));
+							int hrs = (int) (dailyAttendanceList.get(k).getWorkingHrs() / 60);
+							int min = (int) (dailyAttendanceList.get(k).getWorkingHrs() % 60);
+							dilydly.setWorkingMin(hrs + "." + min);
+							dateInfo.add(dilydly);
+
+							find = 1;
+							break;
+						}
+
+					}
+
+					if (find == 0) {
+
+						DailyDailyInfomationForChart dilydly = new DailyDailyInfomationForChart();
+						dilydly.setStatus("NA");
+						dateInfo.add(dilydly);
+					}
+
+				}
+				infomation.setSttsList(dateInfo);
+				infomationList.add(infomation);
+			}
+
 			info.setDates(dates);
+			info.setInfomationList(infomationList);
+
 		} catch (Exception e) {
-			 
+
 			e.printStackTrace();
 		}
 

@@ -5,7 +5,9 @@ import java.util.List;
 public class AttendanceSheetData {
 	
 	private List<String> dates;
-
+	private List<EmpInfoWithDateInfoList> infomationList;
+	
+	
 	public List<String> getDates() {
 		return dates;
 	}
@@ -14,9 +16,17 @@ public class AttendanceSheetData {
 		this.dates = dates;
 	}
 
+	public List<EmpInfoWithDateInfoList> getInfomationList() {
+		return infomationList;
+	}
+
+	public void setInfomationList(List<EmpInfoWithDateInfoList> infomationList) {
+		this.infomationList = infomationList;
+	}
+
 	@Override
 	public String toString() {
-		return "AttendanceSheetData [dates=" + dates + "]";
+		return "AttendanceSheetData [dates=" + dates + ", infomationList=" + infomationList + "]";
 	}
 	
 
