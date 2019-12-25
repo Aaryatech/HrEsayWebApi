@@ -80,6 +80,8 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	
 	public EmployeeMaster findByEmpIdAndDelStatus(int empId, int del);
 
+	public EmployeeMaster findByEmpCodeAndDelStatus(int empCode, int del);
+	
 	@Transactional
 	@Modifying
 	@Query(value="UPDATE m_employees SET del_status=0 WHERE emp_id=:empId",nativeQuery=true)

@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.claim.repository.EmployeeRelatedTblsRepo;
 import com.ats.hrmgt.model.Allowances;
 import com.ats.hrmgt.model.EmpDoctype;
 import com.ats.hrmgt.model.EmpSalAllowance;
 import com.ats.hrmgt.model.EmpSalaryInfo;
 import com.ats.hrmgt.model.EmployeDoc;
 import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.EmployeeRelatedTbls;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.TblEmpBankInfo;
 import com.ats.hrmgt.model.TblEmpInfo;
@@ -130,6 +132,42 @@ public class EmployeeApiController {
 			return empSave;
 			
 		}
+		
+		
+		
+		@RequestMapping(value = {"/saveEmployeeList"}, method = RequestMethod.POST)
+		public List<EmployeeMaster> saveEmployeeList(@RequestBody List<EmployeeMaster> empList) {
+			 List<EmployeeMaster> empSaveResp = new ArrayList<EmployeeMaster>();
+			 
+			try {
+				empSaveResp = empRepo.saveAll(empList);
+			}catch (Exception e) {
+				System.err.println("Excep in saveEmployeeList : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return empSaveResp;
+			
+		}
+		@Autowired EmployeeRelatedTblsRepo empRelatedRepo;
+		@RequestMapping(value = {"/getEmpRelatedInfo"}, method = RequestMethod.POST)
+		public EmployeeRelatedTbls getEmpRelatedInfo(@RequestParam String empCode) {
+			EmployeeRelatedTbls resp = new EmployeeRelatedTbls();
+			 
+			try {
+				
+				resp = empRelatedRepo.getAllEmpRelatedInfo(empCode);
+			}catch (Exception e) {
+				System.err.println("Excep in getEmpRelatedInfo : "+e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return resp;
+			
+		}
+		
+		
+		
 		
 		/***********************************************************************/
 		@RequestMapping(value = {"/saveEmployeeIdInfo"}, method = RequestMethod.POST)
