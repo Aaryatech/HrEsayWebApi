@@ -16,7 +16,8 @@ public class EmployeeRelatedTbls {
 	private int salaryInfoId;
 	private String empSalAllowanceId;
 	private String docId;
-	private int user_id;
+	private int userId;
+	private String allowanceId;
 	public int getEmpId() {
 		return empId;
 	}
@@ -53,13 +54,20 @@ public class EmployeeRelatedTbls {
 	public void setSalaryInfoId(int salaryInfoId) {
 		this.salaryInfoId = salaryInfoId;
 	}
-	public int getUser_id() {
-		return user_id;
-	}
-	public void setUser_id(int user_id) {
-		this.user_id = user_id;
-	}
 	
+	
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	public String getAllowanceId() {
+		return allowanceId;
+	}
+	public void setAllowanceId(String allowanceId) {
+		this.allowanceId = allowanceId;
+	}
 	public String getEmpSalAllowanceId() {
 		return empSalAllowanceId;
 	}
@@ -76,9 +84,9 @@ public class EmployeeRelatedTbls {
 	public String toString() {
 		return "EmployeeRelatedTbls [empId=" + empId + ", empCode=" + empCode + ", empInfoId=" + empInfoId
 				+ ", nomineeId=" + nomineeId + ", bankInfoId=" + bankInfoId + ", salaryInfoId=" + salaryInfoId
-				+ ", empSalAllowanceId=" + empSalAllowanceId + ", docId=" + docId + ", user_id=" + user_id + "]";
+				+ ", empSalAllowanceId=" + empSalAllowanceId + ", docId=" + docId + ", userId=" + userId
+				+ ", allowanceId=" + allowanceId + "]";
 	}
-	
 	
 	
 }
