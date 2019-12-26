@@ -67,6 +67,13 @@ public interface LeaveApplyRepository extends JpaRepository<LeaveApply, Integer>
 	@Query("delete from LeaveApply where leave_id=:leaveId")
 	int deleteByLeaveId(@Param("leaveId")int leaveId);
 
+	@Query(value="select * from leave_apply where leave_fromdt between :fromDate and :toDate and ex_int1=7 and lvt_application_id_parent!=0 and emp_id=:empId",nativeQuery=true)
+	List<LeaveApply> leaveListAddeBySystem(@Param("fromDate") String fromDate,@Param("toDate") String toDate, @Param("empId") int empId);
+
+	@Query(value="select * from leave_apply where ((leave_fromdt between :fromDate and :toDate) or "
+			+ " (leave_todt between :fromDate and :toDate) ) and ex_int1=3 and emp_id=:empId",nativeQuery=true)
+	List<LeaveApply> getleavetList(@Param("fromDate") String fromDate,@Param("toDate") String toDate, @Param("empId") int empId);
+
 	
 
 

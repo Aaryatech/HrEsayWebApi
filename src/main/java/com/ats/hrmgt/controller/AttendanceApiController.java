@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.model.AttendanceSheetData;
 import com.ats.hrmgt.model.DailyAttendance;
 import com.ats.hrmgt.model.DailyDailyInfomationForChart;
@@ -264,7 +265,24 @@ public class AttendanceApiController {
 			int month = dataForUpdateAttendance.getMonth();
 			int year = dataForUpdateAttendance.getYear();
 
-			List<LeaveApply> leaveListAddeBySystem = leaveApplyRepository.leaveListAddeBySystem(fromDate, toDate);
+			List<LeaveApply> leaveListAddeBySystem = new ArrayList<>();
+			List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
+			List<LeaveApply> leavetList = new ArrayList<>();
+
+			if (dataForUpdateAttendance.getEmpId() != 0) {
+
+				leaveListAddeBySystem = leaveApplyRepository.leaveListAddeBySystem(fromDate, toDate,
+						dataForUpdateAttendance.getEmpId());
+				dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceList(fromDate, toDate,
+						dataForUpdateAttendance.getEmpId());
+				leavetList = leaveApplyRepository.getleavetList(fromDate, toDate, dataForUpdateAttendance.getEmpId());
+
+			} else {
+				leaveListAddeBySystem = leaveApplyRepository.leaveListAddeBySystem(fromDate, toDate);
+				dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceList(fromDate, toDate);
+				leavetList = leaveApplyRepository.getleavetList(fromDate, toDate);
+			}
+
 			for (int j = 0; j < leaveListAddeBySystem.size(); j++) {
 
 				float updateNoOfDays = 0;
@@ -290,9 +308,9 @@ public class AttendanceApiController {
 			List<Holiday> holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate);
 			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 			List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
-			List<LeaveApply> leavetList = leaveApplyRepository.getleavetList(fromDate, toDate);
-
 			List<LvType> lvTypeList = lvTypeRepository.findAll();
+			
+			System.out.println(fileUploadedDataList);
 			/*
 			 * List<SummaryDailyAttendance> summaryDailyAttendanceList =
 			 * summaryDailyAttendanceRepository .summaryDailyAttendanceList(month, year);
@@ -308,7 +326,6 @@ public class AttendanceApiController {
 			 * 
 			 */
 
-			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceList(fromDate, toDate);
 			MstEmpType mstEmpType = new MstEmpType();
 			ShiftMaster shiftMaster = new ShiftMaster();
 			List<ShiftMaster> possibleShiftList = new ArrayList<>();
@@ -491,6 +508,10 @@ public class AttendanceApiController {
 						}
 					} else {
 						dailyAttendanceList.get(i).setLateMin(0);
+						dailyAttendanceList.get(i).setLateMark("0");
+					}
+					
+					if(Float.parseFloat(shiftMaster.getShiftHr())>dailyAttendanceList.get(i).getWorkingHrs()) {
 						dailyAttendanceList.get(i).setLateMark("0");
 					}
 
@@ -926,22 +947,34 @@ public class AttendanceApiController {
 	@RequestMapping(value = { "/finalUpdateDailySumaryRecord" }, method = RequestMethod.POST)
 	public @ResponseBody Info finalUpdateDailySumaryRecord(@RequestParam("fromDate") String fromDate,
 			@RequestParam("toDate") String toDate, @RequestParam("userId") int userId, @RequestParam("month") int month,
-			@RequestParam("year") int year) {
+			@RequestParam("year") int year, @RequestParam("empId") int empId) {
 
 		Info info = new Info();
 
 		try {
 
-			List<DailyDailyInformation> dailyDailyInformationList = dailyDailyInformationRepository
-					.dailyDailyInformationList(fromDate, toDate);
+			List<DailyDailyInformation> dailyDailyInformationList = new ArrayList<>();
 
-			List<SummaryDailyAttendance> summaryDailyAttendanceList = summaryDailyAttendanceRepository
-					.summaryDailyAttendanceList(month, year);
+			List<SummaryDailyAttendance> summaryDailyAttendanceList = new ArrayList<>();
+
+			if (empId != 0) {
+
+				dailyDailyInformationList = dailyDailyInformationRepository.dailyDailyInformationList(fromDate, toDate,
+						empId);
+				summaryDailyAttendanceList = summaryDailyAttendanceRepository.summaryDailyAttendanceList(month, year,
+						empId);
+
+			} else {
+
+				dailyDailyInformationList = dailyDailyInformationRepository.dailyDailyInformationList(fromDate, toDate);
+				summaryDailyAttendanceList = summaryDailyAttendanceRepository.summaryDailyAttendanceListAll(month,
+						year);
+			}
 
 			for (int i = 0; i < summaryDailyAttendanceList.size(); i++) {
 
-				int totalDaysInmonth=difffun(fromDate, toDate);
-				float workingDays =0;
+				int totalDaysInmonth = difffun(fromDate, toDate);
+				float workingDays = 0;
 				float presentDays = 0;
 				float holidayPresentHalf = 0;
 				float paidLeave = 0;
@@ -1359,6 +1392,23 @@ public class AttendanceApiController {
 
 	}
 
+	@RequestMapping(value = { "/getDailyDailyRecordByDailyId" }, method = RequestMethod.POST)
+	public @ResponseBody GetDailyDailyRecord getDailyDailyRecordByDailyId(@RequestParam("dailyId") int dailyId) {
+
+		GetDailyDailyRecord getDailyDailyRecord = new GetDailyDailyRecord();
+		try {
+
+			getDailyDailyRecord = getDailyDailyRecordRepository.getDailyDailyRecordByDailyId(dailyId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return getDailyDailyRecord;
+
+	}
+
 	@RequestMapping(value = { "/getMonthlySummryAttendaceByEmpId" }, method = RequestMethod.POST)
 	public @ResponseBody SummaryAttendance getMonthlySummryAttendaceByEmpId(@RequestParam("month") int month,
 			@RequestParam("year") int year, @RequestParam("empId") int empId) {
@@ -1376,5 +1426,68 @@ public class AttendanceApiController {
 		return summaryAttendance;
 
 	}
+
+	@RequestMapping(value = { "/updateAttendaceRecordSingle" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateAttendaceRecordSingle(@RequestParam("dailyId") int dailyId,
+			@RequestParam("selectStatus") int selectStatus, @RequestParam("byStatus") int byStatus,
+			@RequestParam("lateMark") String lateMark, @RequestParam("otHours") String otHours,
+			@RequestParam("outTime") String outTime, @RequestParam("inTime") String inTime,
+			@RequestParam("selectStatusText") String selectStatusText, @RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate, @RequestParam("userId") int userId, @RequestParam("month") int month,
+			@RequestParam("year") int year) {
+
+		Info info = new Info();
+		try {
+
+			DailyAttendance dailyRecordById = dailyAttendanceRepository.getdailyRecordById(dailyId);
+
+			if (byStatus == 1) {
+
+				if (selectStatus != 0) {
+					dailyRecordById.setLvSumupId(selectStatus);
+					dailyRecordById.setAttStatus(selectStatusText);
+				}
+				dailyRecordById.setLateMark(lateMark);
+				String[] othrsarry = otHours.split(":");
+				int othrs = (Integer.parseInt(othrsarry[0]) * 60) + Integer.parseInt(othrsarry[1]);
+				dailyRecordById.setOtHr(String.valueOf(othrs));
+				DailyAttendance updateRes = dailyAttendanceRepository.save(dailyRecordById);
+
+				info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year, dailyRecordById.getEmpId());
+				// System.out.println(othrsarry[0] + " " + othrsarry[1]);
+			} else {
+				 
+				 
+				List<FileUploadedData> fileUploadedDataList = new ArrayList<>();
+				FileUploadedData fileUploadedData = new FileUploadedData();
+				fileUploadedData.setEmpCode(dailyRecordById.getEmpCode());
+				fileUploadedData.setEmpName(dailyRecordById.getEmpName());
+				fileUploadedData.setLogDate(DateConvertor.convertToDMY(dailyRecordById.getAttDate()));
+				fileUploadedData.setInTime(inTime);
+				fileUploadedData.setOutTime(outTime); 
+				fileUploadedDataList.add(fileUploadedData);
+				 
+				DataForUpdateAttendance dataForUpdateAttendance = new DataForUpdateAttendance();
+				dataForUpdateAttendance.setFromDate(dailyRecordById.getAttDate());
+				dataForUpdateAttendance.setToDate(dailyRecordById.getAttDate());
+				dataForUpdateAttendance.setMonth(month);
+				dataForUpdateAttendance.setYear(year);
+				dataForUpdateAttendance.setUserId(userId);
+				dataForUpdateAttendance.setFileUploadedDataList(fileUploadedDataList);
+				dataForUpdateAttendance.setEmpId(dailyRecordById.getEmpId());
+				info = getVariousListForUploadAttendace(dataForUpdateAttendance); 
+				info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year, dailyRecordById.getEmpId());
+				
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+ 
 
 }
