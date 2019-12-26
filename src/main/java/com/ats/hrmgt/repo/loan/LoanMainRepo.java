@@ -3,7 +3,10 @@ package com.ats.hrmgt.repo.loan;
  
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -53,10 +56,23 @@ public interface LoanMainRepo  extends JpaRepository<LoanMain, Integer>{
 			"FROM\n" + 
 			"     tbl_loan_main\n" + 
 			" WHERE\n" + 
-			"    tbl_loan_main.del_status = 1  AND  tbl_loan_main.cmp_id =:companyId AND tbl_loan_main.emp_id=:empId ",nativeQuery=true)
+			"    tbl_loan_main.del_status = 1  AND  tbl_loan_main.cmp_id =:companyId AND tbl_loan_main.emp_id=:empId AND tbl_loan_main.loan_status='Active' ",nativeQuery=true)
 	List<LoanMain> getLoanHistoryDetail(@Param("companyId") int companyId,@Param("empId") int empId);
 
+	LoanMain findById(int i);
+	 
+	@Transactional
+	@Modifying
+	@Query("update LoanMain set login_name =:userId,login_time=:dateTimeUpdate ,current_totpaid=:currentTotpaid ,current_outstanding=:currentOut,loan_repay_end=:closeDate,loan_status=:status WHERE id=:loanId")
+	int forecloseLoan(@Param("loanId")  int loanId,@Param("userId")  int userId,@Param("closeDate")  String closeDate,@Param("currentTotpaid")  String currentTotpaid,@Param("currentOut")  String currentOut,
+			@Param("dateTimeUpdate")  String dateTimeUpdate,	@Param("status")  String status);
+
+
 	
+	@Transactional
+	@Modifying
+	@Query("update LoanMain set  skip_id =:count,skip_login_name =:userId, skip_login_time=:dateTimeUpdate,skip_remarks =:skipStr  WHERE id=:advId")
+	int skipLoan(@Param("advId")  int advId,@Param("userId") int userId,@Param("count") int count,@Param("skipStr") String skipStr,@Param("dateTimeUpdate") String dateTimeUpdate);
 	
 
 }

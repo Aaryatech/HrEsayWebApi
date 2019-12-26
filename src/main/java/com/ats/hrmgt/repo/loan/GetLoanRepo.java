@@ -59,7 +59,7 @@ public interface GetLoanRepo extends JpaRepository<GetLoan, Integer> {
 			"          \n" + 
 			"        \n" + 
 			"        AND tbl_loan_main.emp_id = m_employees.emp_id \n" + 
-			"        AND tbl_loan_main.cmp_id =:companyId \n" + 
+			"        AND tbl_loan_main.cmp_id =:companyId AND  tbl_loan_main.loan_status='Active' \n" + 
 			"    GROUP BY\n" + 
 			"        tbl_loan_main.emp_id",nativeQuery=true)
 	List<GetLoan> getLoanHistoryEmpwiseComp(@Param("companyId") int companyId);
@@ -110,7 +110,7 @@ public interface GetLoanRepo extends JpaRepository<GetLoan, Integer> {
 			"        \n" + 
 			"         \n" + 
 			"        AND tbl_loan_main.emp_id = m_employees.emp_id \n" + 
-			"        AND tbl_loan_main.cmp_id =:companyId  AND tbl_loan_main.emp_id=:empId \n" + 
+			"        AND tbl_loan_main.cmp_id =:companyId  AND tbl_loan_main.emp_id=:empId AND tbl_loan_main.loan_status='Active' \n" + 
 			"    GROUP BY\n" + 
 			"        tbl_loan_main.emp_id",nativeQuery=true)
 	GetLoan getLoanHistoryEmpwiseSpec(@Param("companyId") int companyId,@Param("empId") int empId);
