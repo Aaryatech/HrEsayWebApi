@@ -310,7 +310,7 @@ public class AttendanceApiController {
 			List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
 			List<LvType> lvTypeList = lvTypeRepository.findAll();
 
-			//System.out.println(fileUploadedDataList);
+			// System.out.println(fileUploadedDataList);
 			/*
 			 * List<SummaryDailyAttendance> summaryDailyAttendanceList =
 			 * summaryDailyAttendanceRepository .summaryDailyAttendanceList(month, year);
@@ -1093,7 +1093,7 @@ public class AttendanceApiController {
 				summaryDailyAttendanceList.get(i).setUnpaidLeave(unPaidLeave);
 				summaryDailyAttendanceList.get(i).setLayOff(layOff);
 				summaryDailyAttendanceList.get(i).setLegalStrike(legalStrike);
-				summaryDailyAttendanceList.get(i).setNcpDays(layOff+legalStrike);
+				summaryDailyAttendanceList.get(i).setNcpDays(layOff + legalStrike);
 
 				summaryDailyAttendanceList.get(i).setTotalDaysInmonth(totalDaysInmonth);
 				workingDays = totalDaysInmonth - summaryDailyAttendanceList.get(i).getWeeklyOff()
@@ -1514,6 +1514,25 @@ public class AttendanceApiController {
 		}
 
 		return lvTypeList;
+
+	}
+
+	@RequestMapping(value = { "/getDailyDailyRecordBetweenDateAndByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody List<DailyAttendance> getDailyDailyRecordBetweenDateAndByEmpId(
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,
+			@RequestParam("empId") int empId) {
+
+		List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
+		try {
+
+			dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceList(fromDate, toDate, empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return dailyAttendanceList;
 
 	}
 
