@@ -26,6 +26,8 @@ import com.ats.hrmgt.repo.loan.LoanDetailsRepo;
 import com.ats.hrmgt.repo.loan.LoanMainRepo;
 import com.ats.hrmgt.repository.SettingRepo;
 
+import ch.qos.logback.classic.pattern.DateConverter;
+
 @RestController
 public class LoanApiController {
 
@@ -156,7 +158,7 @@ public class LoanApiController {
 
 	@RequestMapping(value = { "/calLoan" }, method = RequestMethod.POST)
 	public @ResponseBody LoanCalculation calLoan(@RequestParam("roi") String roi, @RequestParam("tenure") String tenure,
-			@RequestParam("loanAmt") String loanAmt) {
+			@RequestParam("loanAmt") String loanAmt,@RequestParam("startDate") String startDate) {
 
 		LoanCalculation list = new LoanCalculation();
 		try {
@@ -169,6 +171,16 @@ public class LoanApiController {
 			float period = Float.parseFloat(tenure);
 			float si = 0;
 			float emi = 0;
+			
+			LocalDate localDate = LocalDate.parse(startDate);
+
+			System.out.println("bef" + localDate);
+			LocalDate oneMonthLater = localDate.plusMonths(Integer.parseInt(tenure));
+			System.out.println("aft" + oneMonthLater);
+			
+			list.setCalDate(String.valueOf(oneMonthLater));
+			
+			
 			if (type == 1) {
 				si = (principle * (period / 12) * rate) / 100;
 				si = si + principle;
@@ -355,31 +367,29 @@ public class LoanApiController {
 
 	@RequestMapping(value = { "/calDatePartialPay" }, method = RequestMethod.POST)
 	public @ResponseBody Info calDatePartialPay(@RequestParam("currentOutstanding") String currentOutstanding,
-			@RequestParam("loanEmi") String loanEmi, @RequestParam("partialAmt") String partialAmt,
+			@RequestParam("loanEmi") int loanEmi, @RequestParam("partialAmt") String partialAmt,
 			@RequestParam("endDate") String endDate) {
 
 		Info info = new Info();
-		LocalDate localDate = LocalDate.parse(endDate);
-
-		System.out.println("bef" + localDate);
-		LocalDate oneMonthLater = localDate.plusMonths(3);
-		System.out.println("aft" + oneMonthLater);
-
+		
 		try {
 			int currentOutstanding1 = Integer.parseInt(currentOutstanding);
-			int loanEmi1 = Integer.parseInt(loanEmi);
+		//	int loanEmi1 = Integer.parseInt(loanEmi);
 			int partialAmt1 = Integer.parseInt(partialAmt);
 
 			if (partialAmt1 <= currentOutstanding1) {
 
 				int n = currentOutstanding1 - partialAmt1;
-				int x = n / loanEmi1;
-				// Date firstDay = new GregorianCalendar(year, month + x, 1).getTime();
+				int x = n / loanEmi;
+				LocalDate localDate = LocalDate.parse(endDate);
 
-				// default, ISO_LOCAL_DATE
+				System.out.println("bef" + localDate);
+				LocalDate oneMonthLater = localDate.plusMonths(x);
+				System.out.println("aft" + oneMonthLater);
+
 
 				info.setError(false);
-				info.setMsg("success");
+				info.setMsg(String.valueOf(oneMonthLater));
 			} else {
 				info.setError(true);
 				info.setMsg("Partial Pay Amount Should be Less than or Equal to Currentoutstanding Amount");
