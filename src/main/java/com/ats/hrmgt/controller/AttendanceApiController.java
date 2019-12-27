@@ -309,8 +309,8 @@ public class AttendanceApiController {
 			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 			List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate);
 			List<LvType> lvTypeList = lvTypeRepository.findAll();
-			
-			System.out.println(fileUploadedDataList);
+
+			//System.out.println(fileUploadedDataList);
 			/*
 			 * List<SummaryDailyAttendance> summaryDailyAttendanceList =
 			 * summaryDailyAttendanceRepository .summaryDailyAttendanceList(month, year);
@@ -510,8 +510,8 @@ public class AttendanceApiController {
 						dailyAttendanceList.get(i).setLateMin(0);
 						dailyAttendanceList.get(i).setLateMark("0");
 					}
-					
-					if(Float.parseFloat(shiftMaster.getShiftHr())>dailyAttendanceList.get(i).getWorkingHrs()) {
+
+					if (Float.parseFloat(shiftMaster.getShiftHr()) > dailyAttendanceList.get(i).getWorkingHrs()) {
 						dailyAttendanceList.get(i).setLateMark("0");
 					}
 
@@ -981,7 +981,8 @@ public class AttendanceApiController {
 				float unPaidLeave = 0;
 				float weeklyOff = 0;
 				float paidHoliday = 0;
-
+				float layOff = 0;
+				float legalStrike = 0;
 				int lateMin = 0;
 				int lateMark = 0;
 				int totalWorkingHr = 0;
@@ -1070,6 +1071,14 @@ public class AttendanceApiController {
 							unPaidLeave = unPaidLeave + dailyDailyInformationList.get(j).getDaycount();
 
 						}
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 9) {
+							layOff = layOff + dailyDailyInformationList.get(j).getDaycount();
+
+						}
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 8) {
+							legalStrike = legalStrike + dailyDailyInformationList.get(j).getDaycount();
+
+						}
 					}
 				}
 				summaryDailyAttendanceList.get(i).setTotlateMins(lateMin);
@@ -1082,6 +1091,9 @@ public class AttendanceApiController {
 				summaryDailyAttendanceList.get(i).setWeeklyOff(weeklyOff);
 				summaryDailyAttendanceList.get(i).setPaidHoliday(paidHoliday);
 				summaryDailyAttendanceList.get(i).setUnpaidLeave(unPaidLeave);
+				summaryDailyAttendanceList.get(i).setLayOff(layOff);
+				summaryDailyAttendanceList.get(i).setLegalStrike(legalStrike);
+				summaryDailyAttendanceList.get(i).setNcpDays(layOff+legalStrike);
 
 				summaryDailyAttendanceList.get(i).setTotalDaysInmonth(totalDaysInmonth);
 				workingDays = totalDaysInmonth - summaryDailyAttendanceList.get(i).getWeeklyOff()
@@ -1456,17 +1468,16 @@ public class AttendanceApiController {
 				info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year, dailyRecordById.getEmpId());
 				// System.out.println(othrsarry[0] + " " + othrsarry[1]);
 			} else {
-				 
-				 
+
 				List<FileUploadedData> fileUploadedDataList = new ArrayList<>();
 				FileUploadedData fileUploadedData = new FileUploadedData();
 				fileUploadedData.setEmpCode(dailyRecordById.getEmpCode());
 				fileUploadedData.setEmpName(dailyRecordById.getEmpName());
 				fileUploadedData.setLogDate(DateConvertor.convertToDMY(dailyRecordById.getAttDate()));
 				fileUploadedData.setInTime(inTime);
-				fileUploadedData.setOutTime(outTime); 
+				fileUploadedData.setOutTime(outTime);
 				fileUploadedDataList.add(fileUploadedData);
-				 
+
 				DataForUpdateAttendance dataForUpdateAttendance = new DataForUpdateAttendance();
 				dataForUpdateAttendance.setFromDate(dailyRecordById.getAttDate());
 				dataForUpdateAttendance.setToDate(dailyRecordById.getAttDate());
@@ -1475,9 +1486,9 @@ public class AttendanceApiController {
 				dataForUpdateAttendance.setUserId(userId);
 				dataForUpdateAttendance.setFileUploadedDataList(fileUploadedDataList);
 				dataForUpdateAttendance.setEmpId(dailyRecordById.getEmpId());
-				info = getVariousListForUploadAttendace(dataForUpdateAttendance); 
+				info = getVariousListForUploadAttendace(dataForUpdateAttendance);
 				info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year, dailyRecordById.getEmpId());
-				
+
 			}
 
 		} catch (Exception e) {
@@ -1488,6 +1499,22 @@ public class AttendanceApiController {
 		return info;
 
 	}
- 
+
+	@RequestMapping(value = { "/getLvTypeList" }, method = RequestMethod.GET)
+	public @ResponseBody List<LvType> getLvTypeList() {
+
+		List<LvType> lvTypeList = new ArrayList<>();
+		try {
+
+			lvTypeList = lvTypeRepository.getLvTypeList();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return lvTypeList;
+
+	}
 
 }
