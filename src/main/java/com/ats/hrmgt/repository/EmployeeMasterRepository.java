@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ats.hrmgt.model.EmployeeMaster;
+import java.lang.String;
 
 public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, Integer> {
 
@@ -88,8 +89,12 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	public int deleteEmployee(@Param("empId") int empId);
 	
 
-@Transactional
+	@Transactional
 	@Modifying
 	@Query(value = "UPDATE m_employees SET current_shiftid =:shiftId WHERE emp_id IN(:empIdList)", nativeQuery = true)
 	int assignShift(@Param("empIdList") List<Integer> empIdList, @Param("shiftId") String shiftId);
+
+	
+	EmployeeMaster findByEmpCode(String empcode);
+	
 }

@@ -58,6 +58,21 @@ public class EmployeeApiController {
 	@Autowired	EmployeeDocsRepository employeeDocsRepository;
 	
 		/**********************************Employee*********************************/
+	
+	
+	@RequestMapping(value = {"/getEmpInfoByEmpCode"}, method = RequestMethod.POST)
+	public EmployeeMaster getEmpInfoByEmpCode(@RequestParam String empCode) {
+		EmployeeMaster emp = new EmployeeMaster();
+		try {
+			emp = empRepo.findByEmpCode(empCode);
+		}catch (Exception e) {
+			System.err.println("Excep in getEmpInfoByEmpCode : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return emp;
+		
+	}
 		
 		@RequestMapping(value = {"/getAllEmployee"}, method = RequestMethod.POST)
 		public List<EmployeeMaster> getAllEmployee(@RequestParam int companyId){
