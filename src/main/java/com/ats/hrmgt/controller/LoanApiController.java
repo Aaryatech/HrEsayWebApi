@@ -78,6 +78,24 @@ public class LoanApiController {
 		return save;
 
 	}
+	
+	@RequestMapping(value = { "/getEmpLoanDetailByMainId" }, method = RequestMethod.POST)
+	public @ResponseBody List<LoanDetails> getEmpLoanDetailByMainId(@RequestParam("loanId") int loanId) {
+
+		List<LoanDetails> list = new ArrayList<LoanDetails>();
+		try {
+
+			list = loanDetailsRepo.findByLoanMainIdAndDelStatus(loanId,1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
 
 	@RequestMapping(value = { "/updateLoanMainAfterForeclose" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateLoanMainAfterForeclose(@RequestParam("dateTimeUpdate") String dateTimeUpdate,
@@ -138,7 +156,7 @@ public class LoanApiController {
 
 	@RequestMapping(value = { "/getLastApplicationNumber" }, method = RequestMethod.GET)
 	public @ResponseBody LoanMain getLastApplicationNumber() {
-
+		
 		LoanMain list = new LoanMain();
 		try {
 
@@ -364,36 +382,59 @@ public class LoanApiController {
 		return info;
 
 	}
+	
 
 	@RequestMapping(value = { "/calDatePartialPay" }, method = RequestMethod.POST)
 	public @ResponseBody Info calDatePartialPay(@RequestParam("currentOutstanding") String currentOutstanding,
 			@RequestParam("loanEmi") int loanEmi, @RequestParam("partialAmt") String partialAmt,
-			@RequestParam("endDate") String endDate) {
+			@RequestParam("endDate") String endDate,@RequestParam("loanId") int loanId) {
 
 		Info info = new Info();
-		
+		LoanDetails dt=new LoanDetails();
 		try {
+			
+			
+			String day=null;
+			Date date = new Date();
+ 			Date date1 = new SimpleDateFormat("yyyy-MM-dd")
+					.parse(endDate);
+			int x=date1.getDay();
+			
+			if(String.valueOf(x).length()==1) {
+				day="0".concat(String.valueOf(x));
+			}else {
+				day=String.valueOf(x);
+			}
+			
+		
+			dt=loanDetailsRepo.getRecord(loanId);
+			String month=null;
+			if(String.valueOf(dt.getMonths()).length()==1) {
+				month="0".concat(String.valueOf(dt.getMonths()));
+			}else {
+				month=String.valueOf(dt.getMonths());
+			}
+			
+			String calDate=String.valueOf(dt.getYears()).concat("-").concat(month).concat("-").concat(day);
+			//System.err.println("cal"+calDate);
 			int currentOutstanding1 = Integer.parseInt(currentOutstanding);
 		//	int loanEmi1 = Integer.parseInt(loanEmi);
 			int partialAmt1 = Integer.parseInt(partialAmt);
-
-			if (partialAmt1 <= currentOutstanding1) {
-
+ 
 				int n = currentOutstanding1 - partialAmt1;
-				int x = n / loanEmi;
-				LocalDate localDate = LocalDate.parse(endDate);
+				int y = n / loanEmi;
+				LocalDate localDate = LocalDate.parse(calDate);
 
-				System.out.println("bef" + localDate);
-				LocalDate oneMonthLater = localDate.plusMonths(x);
-				System.out.println("aft" + oneMonthLater);
+				//System.out.println("bef" + localDate);
+				//System.out.println("y" + y);
+				LocalDate oneMonthLater = localDate.plusMonths(y);
+				//System.out.println("aft" + oneMonthLater);
 
 
 				info.setError(false);
 				info.setMsg(String.valueOf(oneMonthLater));
-			} else {
-				info.setError(true);
-				info.setMsg("Partial Pay Amount Should be Less than or Equal to Currentoutstanding Amount");
-			}
+ 
+			 
 
 		} catch (Exception e) {
 
