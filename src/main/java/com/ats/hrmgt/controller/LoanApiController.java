@@ -391,6 +391,8 @@ public class LoanApiController {
 
 		Info info = new Info();
 		LoanDetails dt = new LoanDetails();
+		Date dateCal = new Date();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 
 			String day = null;
@@ -406,13 +408,21 @@ public class LoanApiController {
 
 			dt = loanDetailsRepo.getRecord(loanId);
 			String month = null;
-			if (String.valueOf(dt.getMonths()).length() == 1) {
-				month = "0".concat(String.valueOf(dt.getMonths()));
-			} else {
-				month = String.valueOf(dt.getMonths());
-			}
+			String calDate =null;
+			if(dt!=null) {
+				if (String.valueOf(dt.getMonths()).length() == 1) {
+					month = "0".concat(String.valueOf(dt.getMonths()));
+				} else {
+					month = String.valueOf(dt.getMonths());
+				}
+				  calDate = String.valueOf(dt.getYears()).concat("-").concat(month).concat("-").concat(day);
 
-			String calDate = String.valueOf(dt.getYears()).concat("-").concat(month).concat("-").concat(day);
+			}else {
+				calDate=sf.format(date1);
+			}
+			
+			
+
 			//System.err.println("cal" + calDate);
 			int currentOutstanding1 = Integer.parseInt(currentOutstanding);
 			int loanEmi1 = Integer.parseInt(loanEmi);
