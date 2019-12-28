@@ -208,6 +208,7 @@ public class AttendanceApiController {
 					dailyAttendance.setLoginName(String.valueOf(userId));
 					dailyAttendance.setEmpJson(json);
 					dailyAttendance.setRecStatus("O");
+					dailyAttendance.setAttStatus("NA");
 					dailyAttendanceList.add(dailyAttendance);
 					j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
@@ -1533,6 +1534,25 @@ public class AttendanceApiController {
 		}
 
 		return dailyAttendanceList;
+
+	}
+
+	@RequestMapping(value = { "/getDatesOfWeeklyOfForShiftingDate" }, method = RequestMethod.POST)
+	public @ResponseBody List<String> getDatesOfWeeklyOfForShiftingDate(@RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate, @RequestParam("locationId") int locationId) {
+
+		List<String> datesList = new ArrayList<>();
+		try {
+			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
+			datesList = commonFunctionService.getDatesOfWeeklyOfForShiftingDate(fromDate, toDate, weeklyOfflist,
+					locationId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return datesList;
 
 	}
 

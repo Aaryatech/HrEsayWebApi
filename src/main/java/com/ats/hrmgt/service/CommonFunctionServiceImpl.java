@@ -1,6 +1,7 @@
 package com.ats.hrmgt.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -457,7 +458,6 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 		return sts;
 	}
- 
 
 	public int diffrence(Date date1, Date date2, Date holfrstdt, Date holseconddt, int day) {
 
@@ -571,6 +571,493 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 			e.printStackTrace();
 		}
 		return stsInfo;
+	}
+
+	@Override
+	public List<String> getDatesOfWeeklyOfForShiftingDate(String fromDate, String toDate, List<WeeklyOff> weeklyList,
+			int locationId) {
+
+		List<String> dates = new ArrayList<>();
+		try {
+			SimpleDateFormat yydate = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dddate = new SimpleDateFormat("dd-MM-yyyy");
+
+			for (int i = 0; i < weeklyList.size(); i++) {
+
+				if (locationId == Integer.parseInt(weeklyList.get(i).getLocId())) {
+
+					if (Integer.parseInt(weeklyList.get(i).getWoType()) == 0) {
+
+						for (Date j = yydate.parse(fromDate); j.compareTo(yydate.parse(toDate)) <= 0;) {
+
+							Calendar c = Calendar.getInstance();
+							c.setTime(j);
+							int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+
+							if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())) {
+
+								String dt = dddate.format(j);
+								dates.add(dt); 
+							}
+							j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+
+						}
+
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 3) {
+
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
+
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
+
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = fc.get(Calendar.YEAR);
+						// System.out.println("year " + year);
+
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+
+							String fd = year + "-" + k + "-01";
+							String ld = year + "-" + k + "-07";
+
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+
+							// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
+
+							for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
+
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+
+										Calendar tempc = Calendar.getInstance();
+										tempc.setTime(j);
+										int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(yydate.parse(fromDate)) >= 0
+												&& m.compareTo(yydate.parse(toDate)) <= 0) {
+
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+									}
+
+								}
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 4) {
+
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
+
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
+
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = fc.get(Calendar.YEAR);
+						// System.out.println("year " + year);
+
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+
+							String fd = year + "-" + k + "-08";
+							String ld = year + "-" + k + "-14";
+
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+
+							// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
+
+							for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
+
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+
+										Calendar tempc = Calendar.getInstance();
+										tempc.setTime(j);
+										int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(yydate.parse(fromDate)) >= 0
+												&& m.compareTo(yydate.parse(toDate)) <= 0) {
+
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+									}
+
+								}
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 5) {
+
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
+
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
+
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = fc.get(Calendar.YEAR);
+						// System.out.println("year " + year);
+
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+
+							String fd = year + "-" + k + "-15";
+							String ld = year + "-" + k + "-21";
+
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+
+							// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
+
+							for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
+
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+
+										Calendar tempc = Calendar.getInstance();
+										tempc.setTime(j);
+										int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(yydate.parse(fromDate)) >= 0
+												&& m.compareTo(yydate.parse(toDate)) <= 0) {
+
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+									}
+
+								}
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 6) {
+
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
+
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
+
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = fc.get(Calendar.YEAR);
+						// System.out.println("year " + year);
+
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+
+							String fd = year + "-" + k + "-22";
+							String ld = year + "-" + k + "-28";
+
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+
+							// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
+
+							for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
+
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+
+										Calendar tempc = Calendar.getInstance();
+										tempc.setTime(j);
+										int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(yydate.parse(fromDate)) >= 0
+												&& m.compareTo(yydate.parse(toDate)) <= 0) {
+
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+									}
+
+								}
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+
+						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 1) {
+
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
+
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
+
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = fc.get(Calendar.YEAR);
+						// System.out.println("year " + year);
+
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+
+							String fd = year + "-" + k + "-08";
+							String ld = year + "-" + k + "-14";
+
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
+
+							for (Date m = frmdt; m.compareTo(todt) <= 0;) {
+
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+
+										Calendar fz = Calendar.getInstance();
+										fz.setTime(j);
+										int dayOfWeek = fz.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+
+									}
+
+								}
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String fd1 = year + "-" + k + "-22";
+							String ld1 = year + "-" + k + "-28";
+
+							Date wkfstdt1 = yydate.parse(fd1);
+							Date wklstdt1 = yydate.parse(ld1);
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
+
+							for (Date n = frmdt; n.compareTo(todt) <= 0;) {
+
+								if (n.compareTo(wkfstdt1) >= 0 && n.compareTo(wklstdt1) <= 0) {
+
+									for (Date j = n; j.compareTo(wklstdt1) <= 0;) {
+
+										Calendar fz = Calendar.getInstance();
+										fz.setTime(j);
+										int dayOfWeek = fz.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& n.compareTo(wkfstdt1) >= 0 && n.compareTo(wklstdt1) <= 0) {
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+
+									}
+
+								}
+								n.setTime(n.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+
+						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 2) {
+
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
+
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
+
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = fc.get(Calendar.YEAR);
+						// System.out.println("year " + year);
+
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+
+							String fd = year + "-" + k + "-01";
+							String ld = year + "-" + k + "-07";
+
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
+
+							for (Date m = frmdt; m.compareTo(todt) <= 0;) {
+
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+
+										Calendar fz = Calendar.getInstance();
+										fz.setTime(j);
+										int dayOfWeek = fz.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+
+									}
+
+								}
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String fd1 = year + "-" + k + "-15";
+							String ld1 = year + "-" + k + "-21";
+
+							Date wkfstdt1 = yydate.parse(fd1);
+							Date wklstdt1 = yydate.parse(ld1);
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
+
+							for (Date n = frmdt; n.compareTo(todt) <= 0;) {
+
+								if (n.compareTo(wkfstdt1) >= 0 && n.compareTo(wklstdt1) <= 0) {
+
+									for (Date j = n; j.compareTo(wklstdt1) <= 0;) {
+
+										Calendar fz = Calendar.getInstance();
+										fz.setTime(j);
+										int dayOfWeek = fz.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& n.compareTo(wkfstdt1) >= 0 && n.compareTo(wklstdt1) <= 0) {
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+
+									}
+
+								}
+								n.setTime(n.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String fd3 = year + "-" + k + "-29";
+							String ld3 = year + "-" + (k + 1) + "-0";
+
+							Date wkfstdt3 = yydate.parse(fd3);
+							Date wklstdt3 = yydate.parse(ld3);
+
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
+
+							for (Date o = frmdt; o.compareTo(todt) <= 0;) {
+
+								if (o.compareTo(wkfstdt3) >= 0 && o.compareTo(wklstdt3) <= 0) {
+
+									for (Date j = o; j.compareTo(wklstdt3) <= 0;) {
+
+										Calendar fz = Calendar.getInstance();
+										fz.setTime(j);
+										int dayOfWeek = fz.get(Calendar.DAY_OF_WEEK) - 1;
+
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& o.compareTo(wkfstdt3) >= 0 && o.compareTo(wklstdt3) <= 0) {
+											String dt = dddate.format(j);
+											dates.add(dt); 
+										}
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+
+									}
+
+								}
+								o.setTime(o.getTime() + 1000 * 60 * 60 * 24);
+							}
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+
+						}
+					}
+
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dates;
 	}
 
 }

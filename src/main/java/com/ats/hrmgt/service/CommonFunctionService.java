@@ -20,4 +20,7 @@ public interface CommonFunctionService {
 
 	public LeaveStsAndLeaveId findDateInLeave(String fromDate, List<LeaveApply> leavetList, int empId);
 
+	public List<String> getDatesOfWeeklyOfForShiftingDate(String fromDate, String toDate, List<WeeklyOff> weeklyOfflist,
+			int locationId);
+
 }
