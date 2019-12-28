@@ -60,7 +60,7 @@ public class ClaimApiController {
 	
 	@Autowired
 	GetLeaveAuthorityRepo getLeaveAuthorityRepo;
-	//hii
+	//hiifsgh
 	
 	/*
 	 * @Autowired EmployeeInfoRepository employeeInfoRepository;
