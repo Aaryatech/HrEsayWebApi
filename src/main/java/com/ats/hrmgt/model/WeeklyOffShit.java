@@ -39,6 +39,19 @@ public class WeeklyOffShit {
 
 	@Column(name = "location_id")
 	private int locationId;
+	
+	@Column(name = "del_status")
+	private int delStatus;
+
+
+	 
+	public int getDelStatus() {
+		return delStatus;
+	}
+
+	public void setDelStatus(int delStatus) {
+		this.delStatus = delStatus;
+	}
 
 	public int getId() {
 		return id;
@@ -116,9 +129,9 @@ public class WeeklyOffShit {
 	public String toString() {
 		return "WeeklyOffShit [id=" + id + ", month=" + month + ", year=" + year + ", weekofffromdate="
 				+ weekofffromdate + ", weekoffshiftdate=" + weekoffshiftdate + ", cmpId=" + cmpId + ", reason=" + reason
-				+ ", loginTime=" + loginTime + ", locationId=" + locationId + "]";
+				+ ", loginTime=" + loginTime + ", locationId=" + locationId + ", delStatus=" + delStatus + "]";
 	}
 
 	 
-
+	 
 }

@@ -3,7 +3,9 @@ package com.ats.hrmgt.controller;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,6 +158,7 @@ public class LoanApiController {
 	@RequestMapping(value = { "/getLastApplicationNumber" }, method = RequestMethod.GET)
 	public @ResponseBody LoanMain getLastApplicationNumber() {
 
+		 
 		LoanMain list = new LoanMain();
 		try {
 
@@ -176,7 +179,7 @@ public class LoanApiController {
 	@RequestMapping(value = { "/calLoan" }, method = RequestMethod.POST)
 	public @ResponseBody LoanCalculation calLoan(@RequestParam("roi") String roi, @RequestParam("tenure") String tenure,
 			@RequestParam("loanAmt") String loanAmt, @RequestParam("startDate") String startDate) {
-
+		  
 		LoanCalculation list = new LoanCalculation();
 		try {
 
@@ -191,9 +194,9 @@ public class LoanApiController {
 
 			LocalDate localDate = LocalDate.parse(startDate);
 
-			System.out.println("bef" + localDate);
+		//	System.out.println("bef" + localDate);
 			LocalDate oneMonthLater = localDate.plusMonths(Integer.parseInt(tenure));
-			System.out.println("aft" + oneMonthLater);
+			//System.out.println("aft" + oneMonthLater);
 
 			list.setCalDate(String.valueOf(oneMonthLater));
 

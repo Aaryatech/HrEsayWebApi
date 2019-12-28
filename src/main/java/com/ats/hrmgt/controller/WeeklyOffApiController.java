@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -15,14 +16,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.model.GetWeeklyOff;
 import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveCount;
 import com.ats.hrmgt.model.WeeklyOff;
+import com.ats.hrmgt.model.WeeklyOffShit;
 import com.ats.hrmgt.repository.GetWeeklyOffRepo;
 import com.ats.hrmgt.repository.HolidayRepo;
-import com.ats.hrmgt.repository.WeeklyOffRepo; 
+import com.ats.hrmgt.repository.WeeklyOffRepo;
+import com.ats.hrmgt.repository.WeeklyOffShitRepository;
+import com.ats.hrmgt.service.CommonFunctionService;
+
+import ch.qos.logback.classic.pattern.DateConverter;
 
 @RestController
 public class WeeklyOffApiController {
@@ -79,6 +86,8 @@ public class WeeklyOffApiController {
 		return save;
 	}
 
+	
+	
 	@RequestMapping(value = { "/getWeeklyOffList" }, method = RequestMethod.GET)
 	public @ResponseBody List<WeeklyOff> getWeeklyOffList() {
 
@@ -237,21 +246,20 @@ public class WeeklyOffApiController {
 					Calendar tc = Calendar.getInstance();
 					tc.setTime(todt);
 
-					
 					// System.out.println("year " + year);
 					Calendar temp = Calendar.getInstance();
 					temp.setTime(yydate.parse(fromDate));
-					int k=temp.get(Calendar.MONTH)+1;
+					int k = temp.get(Calendar.MONTH) + 1;
 					int year = temp.get(Calendar.YEAR);
-					
+
 					for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
- 
+
 						String fd = year + "-" + k + "-01";
 						String ld = year + "-" + k + "-07";
 
 						Date wkfstdt = yydate.parse(fd);
 						Date wklstdt = yydate.parse(ld);
-						//System.out.println(wkfstdt + " " + wklstdt);
+						// System.out.println(wkfstdt + " " + wklstdt);
 						// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
 
 						for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
@@ -283,14 +291,14 @@ public class WeeklyOffApiController {
 							m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
 						}
 
-						String dt = year + "-" + (k+1) + "-0";
+						String dt = year + "-" + (k + 1) + "-0";
 						e = yydate.parse(dt);
 						e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
 						Calendar a = Calendar.getInstance();
 						a.setTime(e);
 						year = a.get(Calendar.YEAR);
-						k=a.get(Calendar.MONTH)+1;
-						
+						k = a.get(Calendar.MONTH) + 1;
+
 					}
 				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 4) {
 
@@ -304,7 +312,7 @@ public class WeeklyOffApiController {
 
 					Calendar temp = Calendar.getInstance();
 					temp.setTime(yydate.parse(fromDate));
-					int k=temp.get(Calendar.MONTH)+1;
+					int k = temp.get(Calendar.MONTH) + 1;
 					int year = temp.get(Calendar.YEAR);
 					// System.out.println("year " + year);
 
@@ -351,7 +359,7 @@ public class WeeklyOffApiController {
 						Calendar a = Calendar.getInstance();
 						a.setTime(e);
 						year = a.get(Calendar.YEAR);
-						k=a.get(Calendar.MONTH)+1;
+						k = a.get(Calendar.MONTH) + 1;
 					}
 				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 5) {
 
@@ -365,7 +373,7 @@ public class WeeklyOffApiController {
 
 					Calendar temp = Calendar.getInstance();
 					temp.setTime(yydate.parse(fromDate));
-					int k=temp.get(Calendar.MONTH)+1;
+					int k = temp.get(Calendar.MONTH) + 1;
 					int year = temp.get(Calendar.YEAR);
 					// System.out.println("year " + year);
 
@@ -412,7 +420,7 @@ public class WeeklyOffApiController {
 						Calendar a = Calendar.getInstance();
 						a.setTime(e);
 						year = a.get(Calendar.YEAR);
-						k=a.get(Calendar.MONTH)+1;
+						k = a.get(Calendar.MONTH) + 1;
 					}
 				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 6) {
 
@@ -426,7 +434,7 @@ public class WeeklyOffApiController {
 
 					Calendar temp = Calendar.getInstance();
 					temp.setTime(yydate.parse(fromDate));
-					int k=temp.get(Calendar.MONTH)+1;
+					int k = temp.get(Calendar.MONTH) + 1;
 					int year = temp.get(Calendar.YEAR);
 					// System.out.println("year " + year);
 
@@ -473,7 +481,7 @@ public class WeeklyOffApiController {
 						Calendar a = Calendar.getInstance();
 						a.setTime(e);
 						year = a.get(Calendar.YEAR);
-						k=a.get(Calendar.MONTH)+1;
+						k = a.get(Calendar.MONTH) + 1;
 
 					}
 				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 1) {
@@ -488,7 +496,7 @@ public class WeeklyOffApiController {
 
 					Calendar temp = Calendar.getInstance();
 					temp.setTime(yydate.parse(fromDate));
-					int k=temp.get(Calendar.MONTH)+1;
+					int k = temp.get(Calendar.MONTH) + 1;
 					int year = temp.get(Calendar.YEAR);
 					// System.out.println("year " + year);
 
@@ -527,7 +535,7 @@ public class WeeklyOffApiController {
 						Calendar a = Calendar.getInstance();
 						a.setTime(e);
 						year = a.get(Calendar.YEAR);
-						k=a.get(Calendar.MONTH)+1;
+						k = a.get(Calendar.MONTH) + 1;
 					}
 				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 2) {
 
@@ -541,7 +549,7 @@ public class WeeklyOffApiController {
 
 					Calendar temp = Calendar.getInstance();
 					temp.setTime(yydate.parse(fromDate));
-					int k=temp.get(Calendar.MONTH)+1;
+					int k = temp.get(Calendar.MONTH) + 1;
 					int year = temp.get(Calendar.YEAR);
 					// System.out.println("year " + year);
 
@@ -589,7 +597,7 @@ public class WeeklyOffApiController {
 						Calendar a = Calendar.getInstance();
 						a.setTime(e);
 						year = a.get(Calendar.YEAR);
-						k=a.get(Calendar.MONTH)+1;
+						k = a.get(Calendar.MONTH) + 1;
 					}
 				}
 
@@ -697,5 +705,99 @@ public class WeeklyOffApiController {
 
 		return result + 1;
 	}
+
+	// change Week off
+	@Autowired
+	WeeklyOffShitRepository weeklyOffShitRepository;
+	@Autowired
+	WeeklyOffRepo weeklyOffRepo1;
+
+	@Autowired
+	CommonFunctionService commonFunctionService;
+
+	@RequestMapping(value = { "/getWeeklyOffDatesToChange" }, method = RequestMethod.POST)
+	public @ResponseBody List<String> getWeeklyOffDatesToChange(@RequestParam("companyId") int companyId,
+			@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("locId") int locId) {
+		List<WeeklyOffShit> sht = new ArrayList<WeeklyOffShit>();
+
+		List<String> datesList = new ArrayList<>();
+		try {
+
+			String monthNew = null;
+			if (String.valueOf(month).length() == 1) {
+				monthNew = "0".concat(String.valueOf(month));
+			} else {
+				monthNew = String.valueOf(month);
+			}
+
+			int monthN = Integer.parseInt(monthNew);
+			sht = weeklyOffShitRepository.getRecord(companyId, month, year, locId);
+
+			Calendar calendar = Calendar.getInstance();
+			int date = 1;
+			calendar.set(year, monthN, date);
+			int days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+			// System.out.println("Number of Days: " + days);
+			String fromDate = String.valueOf(year).concat("-").concat(String.valueOf(monthN)).concat("-").concat("01");
+			String toDate = String.valueOf(year).concat("-").concat(String.valueOf(monthN)).concat("-")
+					.concat(String.valueOf(days));
+			// System.out.println("sht: " +
+			// DateConvertor.convertToDMY(sht.getWeekofffromdate()));
+
+			// System.out.println("toDate: " + toDate);
+
+			try {
+				List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
+				datesList = commonFunctionService.getDatesOfWeeklyOfForShiftingDate(fromDate, toDate, weeklyOfflist,
+						locId);
+				// System.out.println("datesList: " + datesList.toString());
+
+				if (sht != null) {
+					
+					for (int j = 0; j < sht.size(); j++) {
+					for (int i = 0; i < datesList.size(); i++) {
+						 
+						if (datesList.get(i).equals(DateConvertor.convertToDMY(sht.get(j).getWeekofffromdate()))) {
+							// System.err.println("matched" + datesList.get(i));
+							datesList.remove(i);
+							break;
+						}
+					}
+					}
+				}
+
+				// System.out.println("datesList******: " + datesList.toString());
+
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return datesList;
+
+	}
+	
+	@RequestMapping(value = { "/saveWeeklyOffShit" }, method = RequestMethod.POST)
+	public @ResponseBody WeeklyOffShit saveWeeklyOffShit(@RequestBody WeeklyOffShit weeklyOff) {
+
+		WeeklyOffShit save = new WeeklyOffShit();
+		try {
+
+			save = weeklyOffShitRepository.saveAndFlush(weeklyOff);
+ 
+
+		} catch (Exception e) {
+			 
+			e.printStackTrace();
+		}
+
+		return save;
+	}
+
 
 }
