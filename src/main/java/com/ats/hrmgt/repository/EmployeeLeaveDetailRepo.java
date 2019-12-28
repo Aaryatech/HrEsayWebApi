@@ -18,30 +18,36 @@ public interface EmployeeLeaveDetailRepo extends JpaRepository<EmployeeLeaveDeta
 			"        e.emp_code,\n" + 
 			"        e.surname as emp_sname,\n" + 
 			"        \"\" as emp_photo,\n" + 
-			"        \"\" as emp_dept_name,\n" + 
+			"        COALESCE((         select\n" + 
+			"            count(*)                   \n" + 
+			"        from\n" + 
+			"            leave_apply                \n" + 
+			"        where\n" + 
+			"            leave_apply.lvt_application_id_parent=l.leave_id),\n" + 
+			"        null) as emp_dept_name,\n" + 
 			"        lt.lv_title ,\n" + 
 			"        COALESCE((         select\n" + 
 			"            concat(e.first_name,\n" + 
 			"            \" \",\n" + 
 			"            e.middle_name,\n" + 
 			"            \" \",\n" + 
-			"            e.surname) as user_name          \n" + 
+			"            e.surname) as user_name                   \n" + 
 			"        from\n" + 
 			"            m_employees as e,\n" + 
-			"            m_user u          \n" + 
+			"            m_user u                   \n" + 
 			"        where\n" + 
-			"            u.user_id=l.maker_user_id              \n" + 
+			"            u.user_id=l.maker_user_id                           \n" + 
 			"            and e.emp_id=u.emp_id),\n" + 
-			"        null) as user_name \n" + 
+			"        null) as user_name      \n" + 
 			"    FROM\n" + 
 			"        leave_apply AS l,\n" + 
-			"        m_employees AS e, \n" + 
-			"        leave_type AS lt   \n" + 
+			"        m_employees AS e,\n" + 
+			"        leave_type AS lt        \n" + 
 			"    WHERE\n" + 
-			"        l.emp_id =:empId\n" + 
-			"        AND  l.emp_id =e.emp_id \n" + 
-			"        AND l.del_status=1  \n" + 
-			"        AND lt.lv_type_id = l.lv_type_id \n" + 
+			"        l.emp_id =:empId         \n" + 
+			"        AND  l.emp_id =e.emp_id          \n" + 
+			"        AND l.del_status=1           \n" + 
+			"        AND lt.lv_type_id = l.lv_type_id      \n" + 
 			"    ORDER BY\n" + 
 			"        l.leave_id DESC", nativeQuery = true)
 	List<EmployeeLeaveDetail> getLeaveListByEmp(@Param("empId") int empId);
