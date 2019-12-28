@@ -15,7 +15,7 @@ import com.ats.hrmgt.model.claim.GetEmployeeAuthorityWise;
 public interface GetClaimApplyAuthRepo  extends JpaRepository<GetClaimApplyAuthWise, Integer>{
 
 	
-	 
+	 //hii
 	@Query(value = "SELECT\n" + 
 			"        ca.claim_id,\n" + 
 			"        ca.emp_id,\n" + 
