@@ -1291,7 +1291,7 @@ public class AttendanceApiController {
 			 * temp.get(Calendar.YEAR); int month = temp.get(Calendar.MONTH) + 1;
 			 */
 
-			List<EmpInfo> empList = empInfoRepository.getEmpListAll(fromDate, toDate);
+			List<EmpInfo> empList = empInfoRepository.getEmpListAll();
 
 			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceListAll(fromDate,
 					toDate);
@@ -1454,44 +1454,48 @@ public class AttendanceApiController {
 
 			DailyAttendance dailyRecordById = dailyAttendanceRepository.getdailyRecordById(dailyId);
 
-			if (byStatus == 1) {
+			if (dailyRecordById.getIsFixed() == 0) {
 
-				if (selectStatus != 0) {
-					dailyRecordById.setLvSumupId(selectStatus);
-					dailyRecordById.setAttStatus(selectStatusText);
+				if (byStatus == 1) {
+
+					if (selectStatus != 0) {
+						dailyRecordById.setLvSumupId(selectStatus);
+						dailyRecordById.setAttStatus(selectStatusText);
+					}
+					dailyRecordById.setLateMark(lateMark);
+					String[] othrsarry = otHours.split(":");
+					int othrs = (Integer.parseInt(othrsarry[0]) * 60) + Integer.parseInt(othrsarry[1]);
+					dailyRecordById.setOtHr(String.valueOf(othrs));
+					DailyAttendance updateRes = dailyAttendanceRepository.save(dailyRecordById);
+
+					info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year,
+							dailyRecordById.getEmpId());
+					// System.out.println(othrsarry[0] + " " + othrsarry[1]);
+				} else {
+
+					List<FileUploadedData> fileUploadedDataList = new ArrayList<>();
+					FileUploadedData fileUploadedData = new FileUploadedData();
+					fileUploadedData.setEmpCode(dailyRecordById.getEmpCode());
+					fileUploadedData.setEmpName(dailyRecordById.getEmpName());
+					fileUploadedData.setLogDate(DateConvertor.convertToDMY(dailyRecordById.getAttDate()));
+					fileUploadedData.setInTime(inTime);
+					fileUploadedData.setOutTime(outTime);
+					fileUploadedDataList.add(fileUploadedData);
+
+					DataForUpdateAttendance dataForUpdateAttendance = new DataForUpdateAttendance();
+					dataForUpdateAttendance.setFromDate(dailyRecordById.getAttDate());
+					dataForUpdateAttendance.setToDate(dailyRecordById.getAttDate());
+					dataForUpdateAttendance.setMonth(month);
+					dataForUpdateAttendance.setYear(year);
+					dataForUpdateAttendance.setUserId(userId);
+					dataForUpdateAttendance.setFileUploadedDataList(fileUploadedDataList);
+					dataForUpdateAttendance.setEmpId(dailyRecordById.getEmpId());
+					info = getVariousListForUploadAttendace(dataForUpdateAttendance);
+					info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year,
+							dailyRecordById.getEmpId());
+
 				}
-				dailyRecordById.setLateMark(lateMark);
-				String[] othrsarry = otHours.split(":");
-				int othrs = (Integer.parseInt(othrsarry[0]) * 60) + Integer.parseInt(othrsarry[1]);
-				dailyRecordById.setOtHr(String.valueOf(othrs));
-				DailyAttendance updateRes = dailyAttendanceRepository.save(dailyRecordById);
-
-				info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year, dailyRecordById.getEmpId());
-				// System.out.println(othrsarry[0] + " " + othrsarry[1]);
-			} else {
-
-				List<FileUploadedData> fileUploadedDataList = new ArrayList<>();
-				FileUploadedData fileUploadedData = new FileUploadedData();
-				fileUploadedData.setEmpCode(dailyRecordById.getEmpCode());
-				fileUploadedData.setEmpName(dailyRecordById.getEmpName());
-				fileUploadedData.setLogDate(DateConvertor.convertToDMY(dailyRecordById.getAttDate()));
-				fileUploadedData.setInTime(inTime);
-				fileUploadedData.setOutTime(outTime);
-				fileUploadedDataList.add(fileUploadedData);
-
-				DataForUpdateAttendance dataForUpdateAttendance = new DataForUpdateAttendance();
-				dataForUpdateAttendance.setFromDate(dailyRecordById.getAttDate());
-				dataForUpdateAttendance.setToDate(dailyRecordById.getAttDate());
-				dataForUpdateAttendance.setMonth(month);
-				dataForUpdateAttendance.setYear(year);
-				dataForUpdateAttendance.setUserId(userId);
-				dataForUpdateAttendance.setFileUploadedDataList(fileUploadedDataList);
-				dataForUpdateAttendance.setEmpId(dailyRecordById.getEmpId());
-				info = getVariousListForUploadAttendace(dataForUpdateAttendance);
-				info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year, dailyRecordById.getEmpId());
-
 			}
-
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -1553,6 +1557,52 @@ public class AttendanceApiController {
 		}
 
 		return datesList;
+
+	}
+
+	@RequestMapping(value = { "/getEmpListForFixAttendace" }, method = RequestMethod.GET)
+	public @ResponseBody List<EmpInfo> getEmpListForFixAttendace() {
+
+		List<EmpInfo> empList = new ArrayList<>();
+		try {
+			empList = empInfoRepository.getEmpListAll();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return empList;
+
+	}
+
+	@RequestMapping(value = { "/fixAttendanceByDateOfEmpLoyee" }, method = RequestMethod.POST)
+	public @ResponseBody Info fixAttendanceByDateOfEmpLoyee(@RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate, @RequestParam("empIds") List<Integer> empIds) {
+
+		Info info = new Info();
+
+		try {
+
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			Date fmdt = df.parse(fromDate);
+			Date todt = df.parse(toDate);
+
+			for (Date j = fmdt; j.compareTo(todt) <= 0;) {
+
+				int fixDailyDailyRecord = dailyAttendanceRepository.fixDailyDailyRecord(df.format(j), empIds);
+				j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+			}
+
+			info.setError(false);
+			info.setMsg("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("failed");
+			e.printStackTrace();
+		}
+
+		return info;
 
 	}
 
