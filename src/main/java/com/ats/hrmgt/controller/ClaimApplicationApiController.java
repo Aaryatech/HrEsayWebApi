@@ -102,6 +102,9 @@ public class ClaimApplicationApiController {
 		return list;
 
 	}
+	
+	
+	
 
 	@RequestMapping(value = { "/getEmpInfoAuthWise" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetEmployeeInfo> getEmpInfoAuthWise(@RequestParam("companyId") int companyId,

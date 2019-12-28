@@ -1,6 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,38 +12,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.claim.repository.GetEmpInfoRepo;
 import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.model.CalenderYear;
-import com.ats.hrmgt.model.EmployeeMaster; 
+import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveSummary;
 import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
+import com.ats.hrmgt.model.claim.GetEmployeeInfo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveSummaryRepository;
 import com.ats.hrmgt.repository.LeaveTypeRepository;
-import com.ats.hrmgt.repository.LocationRepository; 
- 
- 
+import com.ats.hrmgt.repository.LocationRepository;
+
 @RestController
 public class MasterApiController {
-	
+
 	@Autowired
 	LeaveTypeRepository leaveTypeRepository;
-	
+
 	@Autowired
 	LeaveSummaryRepository leaveSummaryRepository;
-	
+
 	@Autowired
 	LocationRepository locationRepository;
-	
+
 	@Autowired
 	CalculateYearRepository calculateYearRepository;
-	
+
 	@Autowired
 	EmployeeMasterRepository employeeMasterRepository;
-	
+
 	@RequestMapping(value = { "/saveLeaveType" }, method = RequestMethod.POST)
 	public @ResponseBody LeaveType saveLeaveType(@RequestBody LeaveType leaveType) {
 
@@ -67,7 +69,7 @@ public class MasterApiController {
 		return save;
 
 	}
-	
+
 	@RequestMapping(value = { "/getLeaveTypeListIsStructure" }, method = RequestMethod.POST)
 	public @ResponseBody List<LeaveType> getLeaveTypeListIsStructure(@RequestParam("companyId") int companyId) {
 
@@ -84,7 +86,7 @@ public class MasterApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getLeaveTypeList" }, method = RequestMethod.POST)
 	public @ResponseBody List<LeaveType> getLeaveTypeList() {
 
@@ -101,7 +103,7 @@ public class MasterApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/deleteLeaveType" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteLeaveType(@RequestParam("lvTypeId") int lvTypeId) {
 
@@ -172,35 +174,32 @@ public class MasterApiController {
 		return leaveType;
 
 	}
-	
+
 	@RequestMapping(value = { "/getLeaveSummaryList" }, method = RequestMethod.POST)
 	public @ResponseBody List<LeaveSummary> getLeaveSummaryList(@RequestParam("compId") int compId) {
 
-		 
 		List<LeaveSummary> list = new ArrayList<LeaveSummary>();
 		try {
-			 
-			if(compId!=0) {
-				
-				list = leaveSummaryRepository.findByDelStatusAndCompanyId(1,compId);
-				
-			}else {
-				
+
+			if (compId != 0) {
+
+				list = leaveSummaryRepository.findByDelStatusAndCompanyId(1, compId);
+
+			} else {
+
 				list = leaveSummaryRepository.findByDelStatus(1);
-				
+
 			}
-			
-  
 
 		} catch (Exception e) {
- 
+
 			e.printStackTrace();
 		}
 
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/saveLocation" }, method = RequestMethod.POST)
 	public @ResponseBody Location saveLocation(@RequestBody Location location) {
 
@@ -283,7 +282,7 @@ public class MasterApiController {
 		return location;
 
 	}
-	
+
 	@RequestMapping(value = { "/getCalculateYearListIsCurrent" }, method = RequestMethod.GET)
 	public @ResponseBody CalenderYear getCalculateYearListIsCurrent() {
 
@@ -322,8 +321,7 @@ public class MasterApiController {
 		return calendearYear;
 
 	}
-	
-	
+
 	@RequestMapping(value = { "/getEmplistForAssignAuthority" }, method = RequestMethod.GET)
 	public @ResponseBody List<EmployeeMaster> getEmplistForAssignAuthority() {
 
@@ -340,7 +338,7 @@ public class MasterApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getEmpInfoListForLeaveAuth" }, method = RequestMethod.GET)
 	public @ResponseBody List<EmployeeMaster> getEmpInfoListForLeaveAuth() {
 
@@ -357,14 +355,39 @@ public class MasterApiController {
 		return list;
 
 	}
-	
-	@RequestMapping(value = { "/getEmpInfoListByEmpIdList" }, method = RequestMethod.POST)
-	public @ResponseBody List<EmployeeMaster> getEmpInfoListByEmpIdList(@RequestParam("empIdList") List<Integer> empIdList) {
 
-		List<EmployeeMaster> list = new ArrayList<EmployeeMaster>();
+	
+	  @RequestMapping(value = { "/getEmpInfoListByEmpIdList" }, method =
+	  RequestMethod.POST) public @ResponseBody List<EmployeeMaster>
+	  getEmpInfoListByEmpIdList(@RequestParam("empIdList") List<Integer> empIdList)
+	  {
+	  
+	  List<EmployeeMaster> list = new ArrayList<EmployeeMaster>(); try {
+	  
+	  list = employeeMasterRepository.getEmpListByCompanyIdAndEmpIdList(empIdList);
+	  
+	  System.err.println("list**"+list.toString());
+	  
+	  } catch (Exception e) {
+	  
+	  e.printStackTrace(); }
+	  
+	  return list;
+	  
+	  }
+	  
+	 
+	@Autowired
+	GetEmpInfoRepo getEmpInfo;
+
+	@RequestMapping(value = { "/getEmpInfoListByEmpIdList1" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetEmployeeInfo> getEmpInfoListByEmpIdList(@RequestParam("companyId") int companyId,
+			@RequestParam("empIdList") List<Integer> empIdList) {
+
+		List<GetEmployeeInfo> list = new ArrayList<GetEmployeeInfo>();
 		try {
 
-			list = employeeMasterRepository.getEmpListByCompanyIdAndEmpIdList(empIdList);
+			list = getEmpInfo.getEmpListByCompanyIdByEmp(companyId, empIdList);
 
 		} catch (Exception e) {
 
@@ -374,7 +397,7 @@ public class MasterApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getAuthorityWiseEmpListByEmpId" }, method = RequestMethod.POST)
 	public @ResponseBody List<EmployeeMaster> getAuthorityWiseEmpListByEmpId(@RequestParam("empId") int empId) {
 
@@ -408,5 +431,5 @@ public class MasterApiController {
 		return employeeMaster;
 
 	}
-	
+
 }

@@ -57,6 +57,53 @@ public interface GetEmpInfoRepo extends JpaRepository<GetEmployeeInfo, Integer> 
 
 	List<GetEmployeeInfo> getEmpListByCompanyId(@Param("companyId") int companyId,
 			@Param("locIdList") List<Integer> locIdList);
+	
+	
+	
+
+	@Query(value = " SELECT\n" + 
+			"        emp_info.emp_code ,\n" + 
+			"        emp_info.emp_id,\n" + 
+			"        emp_info.middle_name as emp_mname,\n" + 
+			"        emp_info.first_name as emp_fname      ,\n" + 
+			"        emp_info.surname as emp_sname ,\n" + 
+			"        emp_info.mobile_no_1 as emp_mobile1 ,\n" + 
+			"        emp_info.email_id as emp_email      ,\n" + 
+			"        m_department.name as emp_dept_short_name,\n" + 
+			"        emp_info.new_basic_rate as emp_rate_perhr  ,\n" + 
+			"       '0' as emp_prev_exp_yrs ,\n" + 
+			"        m_department.name as emp_dept ,\n" + 
+			"        tbl_mst_emp_types.name as  emp_type,\n" + 
+			"       m_designation.name as emp_category,\n" + 
+			"        emp_info.cmp_code as company_id,\n" + 
+			"        emp_info.ex_var1,\n" + 
+			"        m_company.company_name   ,\n" + 
+			"        '-' as emp_cat_short_name,\n" + 
+			"        '-' as emp_type_short_name,\n" + 
+			"       '0' as emp_cat_id,\n" + 
+			"        emp_info.emp_type as emp_type_id,\n" + 
+			"        emp_info.depart_id as emp_dept_id  \n" + 
+			"    from\n" + 
+			"      m_employees emp_info,\n" + 
+			"        m_department,\n" + 
+			"        tbl_mst_emp_types,\n" + 
+			"         m_company ,m_designation\n" + 
+			"    where\n" + 
+			"        emp_info.depart_id=m_department.depart_id\n" + 
+			"     \n" + 
+			"        and emp_info.emp_type=tbl_mst_emp_types.emp_type_id \n" + 
+			"        and emp_info.del_status=1    \n" + 
+			"         and emp_info.cmp_code=:companyId \n" + 
+			"        and emp_info.emp_id IN(\n" + 
+			"        :empIdList \n" + 
+			"        ) \n" + 
+			"        and emp_info.cmp_code=m_company.company_id   AND m_designation.desig_id=  emp_info.designation_id\n" + 
+			"     order by\n" + 
+			"        emp_info.emp_id desc ", nativeQuery = true)
+
+	List<GetEmployeeInfo> getEmpListByCompanyIdByEmp(@Param("companyId") int companyId,
+			@Param("empIdList") List<Integer> empIdList);
+
 
 	@Query(value = "SELECT\n" + 
 			"        emp_info.emp_code,\n" + 
