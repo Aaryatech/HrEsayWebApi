@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
-import com.ats.hrmgt.repository.SettingRepo; 
+import com.ats.hrmgt.model.User;
+import com.ats.hrmgt.repository.SettingRepo;
+import com.ats.hrmgt.repository.UserRepo; 
 
 @RestController
 public class SettingApiController {
@@ -82,6 +84,35 @@ public class SettingApiController {
 		}
 
 		return info;
+
+	}
+	
+	
+	@Autowired
+	UserRepo userRepo;
+	@RequestMapping(value = { "/saveUserInfo" }, method = RequestMethod.POST)
+	public @ResponseBody User saveUserInfo(@RequestBody User userInfo) {
+
+		User save = new User();
+		try {
+
+			save = userRepo.saveAndFlush(userInfo);
+
+			if (save == null) {
+
+				save = new User();
+				save.setError(true);
+
+			} else {
+				save.setError(false);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
 
 	}
 	
