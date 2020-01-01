@@ -45,15 +45,15 @@ public class AccessRoleRestController {
 		LoginResponse loginResponse = new LoginResponse();
 		try {
 
-			 
-	        /*MessageDigest md = MessageDigest.getInstance("MD5");
-	        byte[] messageDigest = md.digest(password.getBytes());
-	        BigInteger number = new BigInteger(1, messageDigest);
-	        String hashtext = number.toString(16);*/
-	        
+			/*
+			 * MessageDigest md = MessageDigest.getInstance("MD5"); byte[] messageDigest =
+			 * md.digest(password.getBytes()); BigInteger number = new BigInteger(1,
+			 * messageDigest); String hashtext = number.toString(16);
+			 */
+
 			loginResponse = loginResponseRepository.loginProcess(username, password);
 
-			//System.out.println(loginResponse);
+			// System.out.println(loginResponse);
 			if (loginResponse == null) {
 				loginResponse = new LoginResponse();
 				loginResponse.setIsError(true);
@@ -78,15 +78,24 @@ public class AccessRoleRestController {
 		try {
 
 			accessRightModuleList = accessRightModuleRepository.getModule();
+			List<AccessRightSubModule> accessRightSubModuleList = accessRightSubModuleRepository.getSubModuleAll();
 
 			for (int i = 0; i < accessRightModuleList.size(); i++) {
 
-				List<AccessRightSubModule> accessRightSubModuleList = accessRightSubModuleRepository
-						.getSubModule(accessRightModuleList.get(i).getModuleId());
-				accessRightModuleList.get(i).setAccessRightSubModuleList(accessRightSubModuleList);
+				List<AccessRightSubModule> list = new ArrayList<>();
+
+				for (int j = 0; j < accessRightSubModuleList.size(); j++) {
+
+					if (accessRightModuleList.get(i).getModuleId() == accessRightSubModuleList.get(j).getModuleId()) {
+						list.add(accessRightSubModuleList.get(j));
+					}
+
+				}
+
+				accessRightModuleList.get(i).setAccessRightSubModuleList(list);
 
 			}
-			System.out.println(accessRightModuleList);
+			// System.out.println(accessRightModuleList);
 		} catch (Exception e) {
 
 			e.printStackTrace();
