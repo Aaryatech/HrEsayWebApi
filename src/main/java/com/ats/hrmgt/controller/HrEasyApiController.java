@@ -15,12 +15,14 @@ import com.ats.hrmgt.model.Contractor;
 import com.ats.hrmgt.model.Department;
 import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.GetWeekShiftChange;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.repository.BankRepo;
 import com.ats.hrmgt.repository.ContractorRepo;
 import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
+import com.ats.hrmgt.repository.GetWeekShiftChangeRepo;
 
 @RestController
 public class HrEasyApiController {
@@ -354,6 +356,23 @@ public class HrEasyApiController {
 		}
 		
 		return savBank;
+		
+	}
+	
+	
+	@Autowired
+	GetWeekShiftChangeRepo getWeekShiftChangeRepo;
+	@RequestMapping(value = {"/getAllWeekOffShifted"}, method = RequestMethod.POST)
+	public List<GetWeekShiftChange> getAllWeekOffShifted(@RequestParam String year,@RequestParam int companyId){
+		List<GetWeekShiftChange> list = new ArrayList<GetWeekShiftChange>();
+		try {
+			list = getWeekShiftChangeRepo.getAllWeekShifted(year,companyId);
+		}catch (Exception e) {
+			System.err.println("Excep in getAllBanks : "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return list;
 		
 	}
 	

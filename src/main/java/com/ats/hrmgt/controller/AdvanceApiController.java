@@ -15,8 +15,10 @@ import com.ats.hrmgt.advance.repository.AdvanceRepo;
 import com.ats.hrmgt.advance.repository.GetAdvanceRepo;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveType;
+import com.ats.hrmgt.model.User;
 import com.ats.hrmgt.model.advance.Advance;
 import com.ats.hrmgt.model.advance.GetAdvance;
+import com.ats.hrmgt.repository.UserRepo;
 
 @RestController
 public class AdvanceApiController {
@@ -187,6 +189,67 @@ public class AdvanceApiController {
 
 		} catch (Exception e) {
 			System.err.println("Exce in checkEmployeeEmail  " + e.getMessage());
+		}
+
+		return info;
+
+	}
+	@Autowired
+	UserRepo userRepo;
+	
+	@RequestMapping(value = { "/getUserInfoByEmpIdPass" }, method = RequestMethod.POST)
+	public @ResponseBody User getUserInfoByEmpIdPass(@RequestParam("empId") int empId,@RequestParam("password") String password) {
+
+		User user = new User();
+		try {
+
+			user = userRepo.getSpecificUserRecord(empId,password);
+			
+			if(user==null) {
+				user = new User();
+				user.setError(true);
+			}else {
+				user.setError(false);
+				
+
+			}
+			
+		  
+			
+			System.out.println(user);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return user;
+
+	}
+	
+
+	@RequestMapping(value = { "/updateUserPass" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateUserPass(@RequestParam("empId") int empId,@RequestParam("password") String password) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = userRepo.updateUserPassword(empId,password);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
 		}
 
 		return info;

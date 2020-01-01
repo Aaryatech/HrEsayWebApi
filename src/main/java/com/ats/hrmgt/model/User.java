@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "m_user")
@@ -22,13 +23,13 @@ public class User {
 	private int empTypeId;
 	
 	@Column(name="loc_id")
-	private int locId;
+	private String locId;
 	
 	@Column(name="user_name")
 	private String userName;
 	
 	@Column(name="user_pwd")
-	private String user_pwd;
+	private String userPwd;
 	
 	@Column(name="del_status")
 	private int delStatus;
@@ -42,23 +43,40 @@ public class User {
 	@Column(name="maker_enter_datetime")
 	private String makerEnterDatetime;
 	
-	@Column(name="exInt1")
+	@Column(name="ex_int1")
 	private int exInt1;
 	
 	@Column(name="ex_int2")
-	private int ex_int2;
+	private int exInt2;
 	
 	@Column(name="ex_int3")
 	private int exInt3;
 	
 	@Column(name="ex_var1")
-	private int exVar1;
+	private String exVar1;
 	
 	@Column(name="ex_var2")
 	private String exVar2;
 	
 	@Column(name="ex_var3")
 	private String exVar3;
+	
+	@Transient
+	private boolean error;
+
+
+	
+	public void setLocId(String locId) {
+		this.locId = locId;
+	}
+
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
+	}
 
 	public int getUser_id() {
 		return user_id;
@@ -83,14 +101,7 @@ public class User {
 	public void setEmpTypeId(int empTypeId) {
 		this.empTypeId = empTypeId;
 	}
-
-	public int getLocId() {
-		return locId;
-	}
-
-	public void setLocId(int locId) {
-		this.locId = locId;
-	}
+ 
 
 	public String getUserName() {
 		return userName;
@@ -100,12 +111,14 @@ public class User {
 		this.userName = userName;
 	}
 
-	public String getUser_pwd() {
-		return user_pwd;
+	 
+
+	public String getUserPwd() {
+		return userPwd;
 	}
 
-	public void setUser_pwd(String user_pwd) {
-		this.user_pwd = user_pwd;
+	public void setUserPwd(String userPwd) {
+		this.userPwd = userPwd;
 	}
 
 	public int getDelStatus() {
@@ -148,13 +161,7 @@ public class User {
 		this.exInt1 = exInt1;
 	}
 
-	public int getEx_int2() {
-		return ex_int2;
-	}
-
-	public void setEx_int2(int ex_int2) {
-		this.ex_int2 = ex_int2;
-	}
+	 
 
 	public int getExInt3() {
 		return exInt3;
@@ -164,11 +171,11 @@ public class User {
 		this.exInt3 = exInt3;
 	}
 
-	public int getExVar1() {
+	public String getExVar1() {
 		return exVar1;
 	}
 
-	public void setExVar1(int exVar1) {
+	public void setExVar1(String exVar1) {
 		this.exVar1 = exVar1;
 	}
 
@@ -188,14 +195,27 @@ public class User {
 		this.exVar3 = exVar3;
 	}
 
+	public int getExInt2() {
+		return exInt2;
+	}
+
+	public void setExInt2(int exInt2) {
+		this.exInt2 = exInt2;
+	}
+
+	public String getLocId() {
+		return locId;
+	}
+
 	@Override
 	public String toString() {
 		return "User [user_id=" + user_id + ", empId=" + empId + ", empTypeId=" + empTypeId + ", locId=" + locId
-				+ ", userName=" + userName + ", user_pwd=" + user_pwd + ", delStatus=" + delStatus + ", isActive="
+				+ ", userName=" + userName + ", userPwd=" + userPwd + ", delStatus=" + delStatus + ", isActive="
 				+ isActive + ", makerUserId=" + makerUserId + ", makerEnterDatetime=" + makerEnterDatetime + ", exInt1="
-				+ exInt1 + ", ex_int2=" + ex_int2 + ", exInt3=" + exInt3 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2
-				+ ", exVar3=" + exVar3 + "]";
+				+ exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2
+				+ ", exVar3=" + exVar3 + ", error=" + error + "]";
 	}
-	
+
+	 
 	
 }

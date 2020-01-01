@@ -40,6 +40,21 @@ public class LoginResponse {
 	@Column(name="loc_id")
 	private String locationIds; 
 	
+	@Column(name="user_pwd")
+	private String userPwd; 
+	
+	
+	
+	
+	
+	public String getUserPwd() {
+		return userPwd;
+	}
+
+	public void setUserPwd(String userPwd) {
+		this.userPwd = userPwd;
+	}
+
 	@Transient
 	private boolean isError;
 
@@ -131,11 +146,10 @@ public class LoginResponse {
 	public String toString() {
 		return "LoginResponse [empId=" + empId + ", empCode=" + empCode + ", firstName=" + firstName + ", middleName="
 				+ middleName + ", surname=" + surname + ", motherName=" + motherName + ", emailId=" + emailId
-				+ ", userId=" + userId + ", locationIds=" + locationIds + ", isError=" + isError + "]";
+				+ ", userId=" + userId + ", locationIds=" + locationIds + ", userPwd=" + userPwd + ", isError="
+				+ isError + "]";
 	}
-	
-	
-	
-	
+
+	 
 
 }
