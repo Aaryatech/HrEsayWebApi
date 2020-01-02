@@ -63,6 +63,9 @@ public class ShiftMaster {
 	
 	@Column(name="status")
 	private int status;
+	
+	@Column(name="location_id")
+	private int locationId;
 
 	public int getId() {
 		return id;
@@ -200,6 +203,14 @@ public class ShiftMaster {
 		this.selfGroupId = selfGroupId;
 	}
 
+	public int getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
+
 	@Override
 	public String toString() {
 		return "ShiftMaster [id=" + id + ", shiftname=" + shiftname + ", fromtime=" + fromtime + ", totime=" + totime
@@ -207,7 +218,8 @@ public class ShiftMaster {
 				+ ", maxLateTimeAllowed=" + maxLateTimeAllowed + ", shiftHr=" + shiftHr + ", shiftHalfdayHr="
 				+ shiftHalfdayHr + ", earlyGoingMin=" + earlyGoingMin + ", otCalculatedTime=" + otCalculatedTime
 				+ ", otCalculatedAfterHr=" + otCalculatedAfterHr + ", shiftOtHour=" + shiftOtHour + ", departmentId="
-				+ departmentId + ", selfGroupId=" + selfGroupId + ", status=" + status + "]";
+				+ departmentId + ", selfGroupId=" + selfGroupId + ", status=" + status + ", locationId=" + locationId
+				+ "]";
 	} 
 	
 	

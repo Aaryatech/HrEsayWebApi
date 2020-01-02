@@ -359,7 +359,8 @@ public class AttendanceApiController {
 				// get timeShifting record by shiftid
 				for (int j = 0; j < shiftList.size(); j++) {
 
-					if (shiftList.get(j).getId() == employee.getCurrentShiftid()) {
+					if (shiftList.get(j).getId() == employee.getCurrentShiftid()
+							&& employee.getLocationId() == shiftList.get(j).getLocationId()) {
 						shiftMaster = shiftList.get(j);
 						dailyAttendanceList.get(i).setCurrentShiftid(shiftList.get(j).getId());
 						break;
@@ -370,7 +371,8 @@ public class AttendanceApiController {
 				// get possible timeShifting records List by same deptId of employee
 				for (int j = 0; j < shiftList.size(); j++) {
 
-					if (shiftList.get(j).getSelfGroupId() == shiftMaster.getSelfGroupId()) {
+					if (shiftList.get(j).getSelfGroupId() == shiftMaster.getSelfGroupId()
+							&& employee.getLocationId() == shiftList.get(j).getLocationId()) {
 						possibleShiftList.add(shiftList.get(j));
 					}
 

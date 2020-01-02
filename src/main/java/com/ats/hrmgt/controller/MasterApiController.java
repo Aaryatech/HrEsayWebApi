@@ -20,12 +20,16 @@ import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveSummary;
 import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
+import com.ats.hrmgt.model.SelfGroup;
+import com.ats.hrmgt.model.ShiftMaster;
 import com.ats.hrmgt.model.claim.GetEmployeeInfo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveSummaryRepository;
 import com.ats.hrmgt.repository.LeaveTypeRepository;
 import com.ats.hrmgt.repository.LocationRepository;
+import com.ats.hrmgt.repository.SelfGroupRepository;
+import com.ats.hrmgt.repository.ShiftMasterRepository;
 
 @RestController
 public class MasterApiController {
@@ -44,6 +48,12 @@ public class MasterApiController {
 
 	@Autowired
 	EmployeeMasterRepository employeeMasterRepository;
+
+	@Autowired
+	ShiftMasterRepository shiftMasterRepository;
+
+	@Autowired
+	SelfGroupRepository selfGroupRepository;
 
 	@RequestMapping(value = { "/saveLeaveType" }, method = RequestMethod.POST)
 	public @ResponseBody LeaveType saveLeaveType(@RequestBody LeaveType leaveType) {
@@ -356,27 +366,26 @@ public class MasterApiController {
 
 	}
 
-	
-	  @RequestMapping(value = { "/getEmpInfoListByEmpIdList" }, method =
-	  RequestMethod.POST) public @ResponseBody List<EmployeeMaster>
-	  getEmpInfoListByEmpIdList(@RequestParam("empIdList") List<Integer> empIdList)
-	  {
-	  
-	  List<EmployeeMaster> list = new ArrayList<EmployeeMaster>(); try {
-	  
-	  list = employeeMasterRepository.getEmpListByCompanyIdAndEmpIdList(empIdList);
-	  
-	  System.err.println("list**"+list.toString());
-	  
-	  } catch (Exception e) {
-	  
-	  e.printStackTrace(); }
-	  
-	  return list;
-	  
-	  }
-	  
-	 
+	@RequestMapping(value = { "/getEmpInfoListByEmpIdList" }, method = RequestMethod.POST)
+	public @ResponseBody List<EmployeeMaster> getEmpInfoListByEmpIdList(
+			@RequestParam("empIdList") List<Integer> empIdList) {
+
+		List<EmployeeMaster> list = new ArrayList<EmployeeMaster>();
+		try {
+
+			list = employeeMasterRepository.getEmpListByCompanyIdAndEmpIdList(empIdList);
+
+			System.err.println("list**" + list.toString());
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
 	@Autowired
 	GetEmpInfoRepo getEmpInfo;
 
@@ -432,4 +441,76 @@ public class MasterApiController {
 
 	}
 
+	@RequestMapping(value = { "/showShiftListByLocationIds" }, method = RequestMethod.POST)
+	public @ResponseBody List<ShiftMaster> showShiftListByLocationIds(
+			@RequestParam("locationIds") List<Integer> locationIds) {
+
+		List<ShiftMaster> shiftList = new ArrayList<>();
+		try {
+
+			shiftList = shiftMasterRepository.showShiftListByLocationIds(locationIds);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return shiftList;
+
+	}
+
+	@RequestMapping(value = { "/deleteShiftTime" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteShiftTime(@RequestParam("shiftId") int shiftId) {
+
+		Info info = new Info();
+		try {
+
+			int delete = shiftMasterRepository.deleteShiftTime(shiftId);
+			info.setError(false);
+			info.setMsg("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("failed");
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+
+	@RequestMapping(value = { "/getSelftGroupList" }, method = RequestMethod.GET)
+	public @ResponseBody List<SelfGroup> getSelftGroupList() {
+
+		List<SelfGroup> selfGrouptList = new ArrayList<>();
+		try {
+
+			selfGrouptList = selfGroupRepository.selfGrouptList();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return selfGrouptList;
+
+	}
+
+	@RequestMapping(value = { "/getShiftListByGroupIdandlocId" }, method = RequestMethod.POST)
+	public @ResponseBody List<ShiftMaster> getShiftListByGroupIdandlocId(@RequestParam("locationId") int locationId,
+			@RequestParam("groupId") int groupId) {
+
+		List<ShiftMaster> shiftList = new ArrayList<>();
+		try {
+
+			shiftList = shiftMasterRepository.getShiftListByGroupIdandlocId(locationId,groupId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return shiftList;
+
+	}
 }
