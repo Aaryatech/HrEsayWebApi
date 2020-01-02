@@ -496,6 +496,28 @@ public class MasterApiController {
 
 	}
 
+	@RequestMapping(value = { "/saveShiftMaster" }, method = RequestMethod.POST)
+	public @ResponseBody ShiftMaster getSelftGroupList(@RequestBody ShiftMaster shiftMaster) {
+
+		ShiftMaster save = new ShiftMaster();
+		try {
+
+			save = shiftMasterRepository.save(shiftMaster);
+
+			if (shiftMaster.getChangewith() == 0) {
+				save.setChangewith(save.getId());
+				save = shiftMasterRepository.save(shiftMaster);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+
 	@RequestMapping(value = { "/getShiftListByGroupIdandlocId" }, method = RequestMethod.POST)
 	public @ResponseBody List<ShiftMaster> getShiftListByGroupIdandlocId(@RequestParam("locationId") int locationId,
 			@RequestParam("groupId") int groupId) {
@@ -503,7 +525,7 @@ public class MasterApiController {
 		List<ShiftMaster> shiftList = new ArrayList<>();
 		try {
 
-			shiftList = shiftMasterRepository.getShiftListByGroupIdandlocId(locationId,groupId);
+			shiftList = shiftMasterRepository.getShiftListByGroupIdandlocId(locationId, groupId);
 
 		} catch (Exception e) {
 
