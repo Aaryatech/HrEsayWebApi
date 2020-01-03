@@ -22,6 +22,7 @@ import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
 import com.ats.hrmgt.model.SelfGroup;
 import com.ats.hrmgt.model.ShiftMaster;
+import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.model.claim.GetEmployeeInfo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
@@ -478,7 +479,33 @@ public class MasterApiController {
 		return info;
 
 	}
+	
+	//self grp
+	@RequestMapping(value = { "/saveSelfGrp" }, method = RequestMethod.POST)
+	public @ResponseBody SelfGroup saveSelfGrp(@RequestBody SelfGroup bonusMaster) {
 
+		SelfGroup save = new SelfGroup();
+		try {
+
+			save = selfGroupRepository.saveAndFlush(bonusMaster);
+			if (save == null) {
+
+				save = new SelfGroup();
+				save.setError(true);
+
+			} else {
+				save.setError(false);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+	
 	@RequestMapping(value = { "/getSelftGroupList" }, method = RequestMethod.GET)
 	public @ResponseBody List<SelfGroup> getSelftGroupList() {
 
@@ -495,6 +522,52 @@ public class MasterApiController {
 		return selfGrouptList;
 
 	}
+	
+	@RequestMapping(value = { "/deleteSelfGroup" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteSelfGroup(@RequestParam("bonusId") int bonusId) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = selfGroupRepository.deleteSelfGroup(bonusId);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
+		}
+
+		return info;
+
+	}
+	
+	@RequestMapping(value = { "/getSelfGroupById" }, method = RequestMethod.POST)
+	public @ResponseBody SelfGroup getSelfGroupById(@RequestParam("bonusId") int selftGroupId) {
+
+		SelfGroup bous = new SelfGroup();
+		try {
+
+			bous = selfGroupRepository.findBySelftGroupIdAndDelStatus(selftGroupId, 1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return bous;
+
+	}
+	//selfgrp end 
 
 	@RequestMapping(value = { "/saveShiftMaster" }, method = RequestMethod.POST)
 	public @ResponseBody ShiftMaster getSelftGroupList(@RequestBody ShiftMaster shiftMaster) {
