@@ -3,6 +3,8 @@ package com.ats.hrmgt.model.bonus;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class BonusMaster {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int bonusId;
 	private String fyTitle;
 	private Date fyFromdt;

@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.Info;
- import com.ats.hrmgt.model.bonus.BonusMaster;
+import com.ats.hrmgt.model.advance.Advance;
+import com.ats.hrmgt.model.bonus.BonusCalc;
+import com.ats.hrmgt.model.bonus.BonusMaster;
+import com.ats.hrmgt.repo.bonus.BonusCalcRepo;
 import com.ats.hrmgt.repo.bonus.BonusMasterRepo;
 
 @RestController
@@ -105,6 +108,52 @@ public class BonusApiController {
 		}
 
 		return info;
+
+	}
+	
+	@RequestMapping(value = { "/checkBonusTitle" }, method = RequestMethod.POST)
+	public @ResponseBody Info checkBonusTitle(@RequestParam String bonusTitle) {
+
+		Info info = new Info();
+		List<BonusMaster> emp = new ArrayList<BonusMaster>();
+		try {
+
+			emp = bonusMasterRepo.findByFyTitleAndDelStatus(bonusTitle,1);
+			
+			
+			if (emp.size() > 0) {
+				info.setError(true);
+			} else {
+				info.setError(false);
+
+			}
+
+		} catch (Exception e) {
+			System.err.println("Exce in checkEmployeeEmail  " + e.getMessage());
+		}
+
+		return info;
+
+	}
+	
+	
+	@Autowired
+	BonusCalcRepo bonusCalcRepo;
+	
+	@RequestMapping(value = { "/getAllBonusCalcList" }, method = RequestMethod.GET)
+	public @ResponseBody List<BonusCalc> getAllBonusCalcList() {
+
+		List<BonusCalc> list = new ArrayList<BonusCalc>();
+		try {
+
+			list = bonusCalcRepo.findByDelStatus(1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
 
 	}
 
