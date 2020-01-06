@@ -20,6 +20,8 @@ public interface EmpSalAllowanceRepo extends JpaRepository<EmpSalAllowance, Inte
 	@Query(value="UPDATE `emp_sal_allowance` SET del_status=0 WHERE emp_id=:empId",nativeQuery=true)
 	int deleteEmpAllowances(@Param("empId") int empId);
 
+	List<EmpSalAllowance> findByDelStatus(int i);
+
 	
 
 }

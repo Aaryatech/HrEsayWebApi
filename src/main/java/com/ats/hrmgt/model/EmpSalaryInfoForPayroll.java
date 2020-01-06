@@ -2,12 +2,14 @@ package com.ats.hrmgt.model;
  
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -142,6 +144,8 @@ public class EmpSalaryInfoForPayroll {
 	@Column(name="loc_name")	
 	private String locName;
 
+	@Transient
+	List<EmpAllowanceList> empAllowanceList;
 	
 	public int getEmpId() {
 		return empId;
@@ -479,6 +483,14 @@ public class EmpSalaryInfoForPayroll {
 		this.locName = locName;
 	}
 
+	public List<EmpAllowanceList> getEmpAllowanceList() {
+		return empAllowanceList;
+	}
+
+	public void setEmpAllowanceList(List<EmpAllowanceList> empAllowanceList) {
+		this.empAllowanceList = empAllowanceList;
+	}
+
 	@Override
 	public String toString() {
 		return "EmpSalaryInfoForPayroll [empId=" + empId + ", salaryInfoId=" + salaryInfoId + ", salaryTypeId="
@@ -495,7 +507,7 @@ public class EmpSalaryInfoForPayroll {
 				+ employerEsicPercentage + ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2
 				+ ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", empCode=" + empCode + ", empTypeName=" + empTypeName
 				+ ", salTypeName=" + salTypeName + ", designation=" + designation + ", deptName=" + deptName
-				+ ", empName=" + empName + ", locName=" + locName + "]";
+				+ ", empName=" + empName + ", locName=" + locName + ", empAllowanceList=" + empAllowanceList + "]";
 	}
 	
 	
