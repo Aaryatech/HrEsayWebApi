@@ -692,22 +692,22 @@ public class ClaimApplicationApiController {
 				leaveApply = claimHeaderRepo.findByCaHeadIdAndDelStatus(claimId, 1);
 				System.err.println("ClaimApplyHeader" +leaveApply.toString());
 				int empId = leaveApply.getEmpId();
-				System.err.println("empId" +empId);
+			//	System.err.println("empId" +empId);
 				EmployeeMaster emp = new EmployeeMaster();
 				emp = employeeInfoRepository.findByEmpIdAndDelStatus(empId, 1);
-				System.err.println("emp details" + emp.toString());
+				//System.err.println("emp details" + emp.toString());
 				GetAuthorityIds claimApply = new GetAuthorityIds();
 				claimApply = getAuthorityIdsRepo.getClaimAuthIdsDict(empId);
 
 				String empIds = claimApply.getRepToEmpIds();
 				String[] values = empIds.split(",");
-				System.err.println("emp ids for notification are::" + empIds);
+				//System.err.println("emp ids for notification are::" + empIds);
 				List<String> al = new ArrayList<String>(Arrays.asList(values));
 
 				Set<String> set = new HashSet<>(al);
 				al.clear();
 				al.addAll(set);
-				System.err.println("emp ids for notification are:--------------:" + al.toString());
+				//System.err.println("emp ids for notification are:--------------:" + al.toString());
 
 				SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
 				SimpleDateFormat sdf2 = new SimpleDateFormat("dd-MM-yyyy");
@@ -762,9 +762,11 @@ public class ClaimApplicationApiController {
 						//Firebase.sendPushNotification(emp.getExVar1(), "HRMS", claimMsg, 2);
 
 					}
-					Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123",
-							emp.getEmailId(), " HRMS Claim Application Status", "", claimMsg);
-
+					/*
+					 * Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com",
+					 * "atsinfosoft@123", emp.getEmailId(), " HRMS Claim Application Status", "",
+					 * claimMsg);
+					 */
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -809,8 +811,11 @@ public class ClaimApplicationApiController {
 
 					empInfo = employeeInfoRepository.findByEmpIdAndDelStatus(Integer.parseInt(al.get(i)), 1);
 
-					Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123",
-							empInfo.getEmailId(), " HRMS Claim Application Status", "", claimMsg1);
+					/*
+					 * Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com",
+					 * "atsinfosoft@123", empInfo.getEmailId(), " HRMS Claim Application Status",
+					 * "", claimMsg1);
+					 */
 
 					//Firebase.sendPushNotification(empInfo.getExVar1(), "HRMS", claimMsg1, 2);
 				}
@@ -819,8 +824,10 @@ public class ClaimApplicationApiController {
 				setting = settingRepo.findByKey("hremail");
 				String hrEmail = (setting.getValue());
 				System.out.println(hrEmail);
-				Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123", hrEmail,
-						" HRMS Claim Application Status", "", claimMsg1);
+				/*
+				 * Info emailRes = EmailUtility.sendEmail("atsinfosoft@gmail.com",
+				 * "atsinfosoft@123", hrEmail, " HRMS Claim Application Status", "", claimMsg1);
+				 */
 
 			} else {
 				

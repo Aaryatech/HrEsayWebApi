@@ -99,7 +99,7 @@ public class ClaimHeaderDetailApiController {
 				Set<String> set = new HashSet<>(al);
 				al.clear();
 				al.addAll(set);
-				System.err.println("emp ids for notification are:--------------:" + al.toString());
+			//	System.err.println("emp ids for notification are:--------------:" + al.toString());
 
 				for (int i = 0; i < al.size(); i++) {
 
@@ -129,19 +129,19 @@ public class ClaimHeaderDetailApiController {
 						e.printStackTrace();
 					}
 
-					try {
-
-						Firebase.sendPushNotification(
-								empInfo.getExVar1(), "HRMS", " " + name + " has applied for Claim for Rs. "
-										+ claimHeader.getClaimAmount() + " From " + claimDateFrom + "To"+claimDateTo+", Please check for Approval",
-								21);
-						
-						Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com", "atsinfosoft@123",
-								empInfo.getEmailId(), " HRMS Claim Application Status", "",  name + " has applied for Claim for Rs. "
-										+ claimHeader.getClaimAmount() + " From " + claimDateFrom + "To"+claimDateTo+", Please check for Approval");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					/*
+					 * try {
+					 * 
+					 * Firebase.sendPushNotification( empInfo.getExVar1(), "HRMS", " " + name +
+					 * " has applied for Claim for Rs. " + claimHeader.getClaimAmount() + " From " +
+					 * claimDateFrom + "To"+claimDateTo+", Please check for Approval", 21);
+					 * 
+					 * Info emailRes1 = EmailUtility.sendEmail("atsinfosoft@gmail.com",
+					 * "atsinfosoft@123", empInfo.getEmailId(), " HRMS Claim Application Status",
+					 * "", name + " has applied for Claim for Rs. " + claimHeader.getClaimAmount() +
+					 * " From " + claimDateFrom + "To"+claimDateTo+", Please check for Approval"); }
+					 * catch (Exception e) { e.printStackTrace(); }
+					 */
 
 				}
 
