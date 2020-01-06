@@ -22,7 +22,8 @@ public interface EmpSalAllowanceRepo extends JpaRepository<EmpSalAllowance, Inte
 
 	List<EmpSalAllowance> findByDelStatus(int i);
 
-	EmpSalAllowance findByAllowanceId(int allowanceId);
+ 
+	EmpSalAllowance findByAllowanceIdAndEmpId(int allowanceId, int empId);
 
 	
 

@@ -31,9 +31,9 @@ public class SalaryCalc {
 	private double vdaCal;
 	private double washingAllownceCal;
 	private double addWashingCal;
-	private double othF1Cal;
-	private double othF2Cal;
-	private double othF3Cal;
+	private double othFcal1;
+	private double othFcal2;
+	private double othFcal3;
 	private double conveyanceAllowanceCa;
 	private double hraCal;
 	private double medicalAllowanceCal;
@@ -64,7 +64,7 @@ public class SalaryCalc {
 	private double epfWagesEmployer;
 	private double esicWagesCal;
 	private double grossSalary;
-	private double  epsWges;
+	private double  epsWages;
 	private double esicWagesDec;
 	private float employeePf;
 	private double employerEps;
@@ -72,7 +72,7 @@ public class SalaryCalc {
  	private float esic;
 	private double employerEsic;
 	private int  esicStatus;
- 	private int  pfSatus;
+ 	private int  pfStatus;
  	private double mlwf;
 	private double tds;
 	private double itded;
@@ -207,24 +207,7 @@ public class SalaryCalc {
 	public void setAddWashingCal(double addWashingCal) {
 		this.addWashingCal = addWashingCal;
 	}
-	public double getOthF1Cal() {
-		return othF1Cal;
-	}
-	public void setOthF1Cal(double othF1Cal) {
-		this.othF1Cal = othF1Cal;
-	}
-	public double getOthF2Cal() {
-		return othF2Cal;
-	}
-	public void setOthF2Cal(double othF2Cal) {
-		this.othF2Cal = othF2Cal;
-	}
-	public double getOthF3Cal() {
-		return othF3Cal;
-	}
-	public void setOthF3Cal(double othF3Cal) {
-		this.othF3Cal = othF3Cal;
-	}
+ 
 	public double getConveyanceAllowanceCa() {
 		return conveyanceAllowanceCa;
 	}
@@ -405,11 +388,12 @@ public class SalaryCalc {
 	public void setGrossSalary(double grossSalary) {
 		this.grossSalary = grossSalary;
 	}
-	public double getEpsWges() {
-		return epsWges;
+	 
+	public double getEpsWages() {
+		return epsWages;
 	}
-	public void setEpsWges(double epsWges) {
-		this.epsWges = epsWges;
+	public void setEpsWages(double epsWages) {
+		this.epsWages = epsWages;
 	}
 	public double getEsicWagesDec() {
 		return esicWagesDec;
@@ -453,12 +437,7 @@ public class SalaryCalc {
 	public void setEsicStatus(int esicStatus) {
 		this.esicStatus = esicStatus;
 	}
-	public int getPfSatus() {
-		return pfSatus;
-	}
-	public void setPfSatus(int pfSatus) {
-		this.pfSatus = pfSatus;
-	}
+	 
 	public double getMlwf() {
 		return mlwf;
 	}
@@ -615,6 +594,30 @@ public class SalaryCalc {
 	public void setEmpCategory(String empCategory) {
 		this.empCategory = empCategory;
 	}
+	public double getOthFcal1() {
+		return othFcal1;
+	}
+	public void setOthFcal1(double othFcal1) {
+		this.othFcal1 = othFcal1;
+	}
+	public double getOthFcal2() {
+		return othFcal2;
+	}
+	public void setOthFcal2(double othFcal2) {
+		this.othFcal2 = othFcal2;
+	}
+	public double getOthFcal3() {
+		return othFcal3;
+	}
+	public void setOthFcal3(double othFcal3) {
+		this.othFcal3 = othFcal3;
+	}
+	public int getPfStatus() {
+		return pfStatus;
+	}
+	public void setPfStatus(int pfStatus) {
+		this.pfStatus = pfStatus;
+	}
 	@Override
 	public String toString() {
 		return "SalaryCalc [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode + ", empType="
@@ -622,7 +625,7 @@ public class SalaryCalc {
 				+ designationId + ", locationId=" + locationId + ", calcMonth=" + calcMonth + ", calcYear=" + calcYear
 				+ ", fYear=" + fYear + ", attSumId=" + attSumId + ", basicCal=" + basicCal + ", daCal=" + daCal
 				+ ", vdaCal=" + vdaCal + ", washingAllownceCal=" + washingAllownceCal + ", addWashingCal="
-				+ addWashingCal + ", othF1Cal=" + othF1Cal + ", othF2Cal=" + othF2Cal + ", othF3Cal=" + othF3Cal
+				+ addWashingCal + ", othFcal1=" + othFcal1 + ", othFcal2=" + othFcal2 + ", othFcal3=" + othFcal3
 				+ ", conveyanceAllowanceCa=" + conveyanceAllowanceCa + ", hraCal=" + hraCal + ", medicalAllowanceCal="
 				+ medicalAllowanceCal + ", performanceBounsCal=" + performanceBounsCal + ", educationAllowanceCal="
 				+ educationAllowanceCal + ", vehicleMaintenanceAllowanceCal=" + vehicleMaintenanceAllowanceCal
@@ -636,20 +639,22 @@ public class SalaryCalc {
 				+ miscExpAdd + ", bonusCal=" + bonusCal + ", exgretiaCal=" + exgretiaCal + ", daArreasCal="
 				+ daArreasCal + ", incrementArreasCal=" + incrementArreasCal + ", epfWages=" + epfWages
 				+ ", epfWagesEmployer=" + epfWagesEmployer + ", esicWagesCal=" + esicWagesCal + ", grossSalary="
-				+ grossSalary + ", epsWges=" + epsWges + ", esicWagesDec=" + esicWagesDec + ", employeePf=" + employeePf
-				+ ", employerEps=" + employerEps + ", employerPf=" + employerPf + ", esic=" + esic + ", employerEsic="
-				+ employerEsic + ", esicStatus=" + esicStatus + ", pfSatus=" + pfSatus + ", mlwf=" + mlwf + ", tds="
-				+ tds + ", itded=" + itded + ", fund=" + fund + ", totPfAdminCh=" + totPfAdminCh + ", totEdliCh="
-				+ totEdliCh + ", totEdliAdminCh=" + totEdliAdminCh + ", ncpDays=" + ncpDays + ", status=" + status
-				+ ", ptDed=" + ptDed + ", advanceDed=" + advanceDed + ", loanDed=" + loanDed + ", miscExpDed="
-				+ miscExpDed + ", miscExpDedDeduct=" + miscExpDedDeduct + ", netSalary=" + netSalary + ", isLocked="
-				+ isLocked + ", loginName=" + loginName + ", loginTime=" + loginTime + ", mlwfApplicable="
-				+ mlwfApplicable + ", ptApplicable=" + ptApplicable + ", payDed=" + payDed + ", defaultBasicSalary="
-				+ defaultBasicSalary + ", defaultGroassSalary=" + defaultGroassSalary + ", commentsForItBonus="
-				+ commentsForItBonus + ", societyContribution=" + societyContribution + ", empCategory=" + empCategory
-				+ "]";
+				+ grossSalary + ", epsWages=" + epsWages + ", esicWagesDec=" + esicWagesDec + ", employeePf="
+				+ employeePf + ", employerEps=" + employerEps + ", employerPf=" + employerPf + ", esic=" + esic
+				+ ", employerEsic=" + employerEsic + ", esicStatus=" + esicStatus + ", pfStatus=" + pfStatus + ", mlwf="
+				+ mlwf + ", tds=" + tds + ", itded=" + itded + ", fund=" + fund + ", totPfAdminCh=" + totPfAdminCh
+				+ ", totEdliCh=" + totEdliCh + ", totEdliAdminCh=" + totEdliAdminCh + ", ncpDays=" + ncpDays
+				+ ", status=" + status + ", ptDed=" + ptDed + ", advanceDed=" + advanceDed + ", loanDed=" + loanDed
+				+ ", miscExpDed=" + miscExpDed + ", miscExpDedDeduct=" + miscExpDedDeduct + ", netSalary=" + netSalary
+				+ ", isLocked=" + isLocked + ", loginName=" + loginName + ", loginTime=" + loginTime
+				+ ", mlwfApplicable=" + mlwfApplicable + ", ptApplicable=" + ptApplicable + ", payDed=" + payDed
+				+ ", defaultBasicSalary=" + defaultBasicSalary + ", defaultGroassSalary=" + defaultGroassSalary
+				+ ", commentsForItBonus=" + commentsForItBonus + ", societyContribution=" + societyContribution
+				+ ", empCategory=" + empCategory + "]";
 	}
+	 
 	
-	
+	 
+	 
 
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.Allowances;
- import com.ats.hrmgt.model.EmpSalAllowance;
+import com.ats.hrmgt.model.EmpSalAllowance;
 import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.SalaryCalc;
@@ -25,10 +25,12 @@ import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.repo.bonus.BonusCalcRepo;
 import com.ats.hrmgt.repo.bonus.BonusMasterRepo;
 import com.ats.hrmgt.repository.AllowancesRepo;
- import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
+import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
 import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
 import com.ats.hrmgt.repository.SalaryCalcRepo;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 @RestController
 public class BonusApiController {
@@ -189,9 +191,9 @@ public class BonusApiController {
 		Info info = new Info();
 		Date date = new Date();
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Allowances allw = AalowancesRepo.findByShortNameAndDelStatus("DA", 1);
 		try {
 			for (int i = 0; i < empIdList.size(); i++) {
-
 				int empId = empIdList.get(i);
 
 				SummaryDailyAttendance summary = summaryDailyAttendanceRepository.findByCompanyIdAndEmpId(companyId,
@@ -199,31 +201,39 @@ public class BonusApiController {
 				float payDays = summary.getPayableDays();
 				float ncpDays = summary.getNcpDays();
 
-
-				Allowances allw = AalowancesRepo.findByShortNameAndDelStatus("DA", 1);
-
-				EmpSalAllowance allCalc = empAllowanceSalCalRepo.findByAllowanceId(allw.getAllowanceId());
 				GetEmployeeDetails list = getEmployeeDetailsRepo.getEmpDetailList(empId);
 
 				BonusMaster bonus = new BonusMaster();
 				bonus = bonusMasterRepo.findByBonusIdAndDelStatus(bonusId, empId);
 				double bonusPrcnt = bonus.getBonusPercentage();
+				double basic_calc = 0;
 
-				
-			
-				
-				SalaryCalc salCal=salaryCalcRepo.findByEmpId(empId);
-				double basic_calc = salCal.getBasicCal(); // get it from sal_calc tbl
+				SalaryCalc salCal = salaryCalcRepo.findByEmpId(empId);
+				if (salCal != null) {
+					basic_calc = salCal.getBasicCal(); // get it from
+				} else {
+					basic_calc = 0;
+ 
+				}
 
-				
-				double bonusAmt = ((allCalc.getAllowanceValue() + basic_calc) * bonusPrcnt) / 100;
+				double bonusAmt = 0;
+				try {
+					EmpSalAllowance allCalc = empAllowanceSalCalRepo.findByAllowanceIdAndEmpId(allw.getAllowanceId(),
+							empId);
+					bonusAmt = ((allCalc.getAllowanceValue() + basic_calc) * bonusPrcnt) / 100;
+				} catch (Exception e) {
+
+					bonusAmt = ((0 + basic_calc) * bonusPrcnt) / 100;
+				}
+
 				BonusCalc calcSave = new BonusCalc();
 
 				calcSave.setBonusId(bonusId);
-				calcSave.setCompanyEmpCode(calcSave.getCompanyEmpCode());
+
+				calcSave.setCompanyEmpCode(list.getEmpCode());
 				calcSave.setCompanyId(companyId);
 				calcSave.setCurrAge(0);
-				calcSave.setCurrDesignation(calcSave.getCurrDesignation());
+				calcSave.setCurrDesignation(list.getEmpDesgn());
 				calcSave.setEmpId(empId);
 				calcSave.setEmpName(list.getFirstName().concat("").concat(list.getSurname()));
 				calcSave.setNetBonusAmt(bonusAmt);
@@ -234,7 +244,37 @@ public class BonusApiController {
 				calcSave.setExVar1("NA");
 				calcSave.setLoginIdBonus(userId);
 				calcSave.setLoginTimeBonus(sf.format(date));
+				calcSave.setBonusApplicable("No");
+				calcSave.setBonusCalcId(0);
+				calcSave.setDedBonusAdvAmt(0);
+				calcSave.setDedBonusLossAmt(0);
+				calcSave.setDedBonusPujaAmt(0);
+				calcSave.setDedExgretiaAmt(0);
+				calcSave.setDedReason("");
+				calcSave.setExgretiaApplicable("No");
+				calcSave.setExgretiaDetails("");
+				calcSave.setfYear(2020);
+				calcSave.setGrossBonusAmt(0);
+				calcSave.setIsBonussheetFinalized("0");
+				calcSave.setIsExgretiaFinalized("0");
+				calcSave.setLoginIdExgretia(0);
+				calcSave.setLoginTimeExgretia("0000-00-00 00:00:00");
+				calcSave.setNetExgretiaAmt(0);
+				calcSave.setPaidBonusAmt(0);
+				// calcSave.setPaidBonusDate(0000-00-00);
+				calcSave.setPaidExgretiaAmt(0);
+				// calcSave.setPaidExgretiaDate(paidExgretiaDate);
+				calcSave.setRecStatus(0);
+				calcSave.setTotalBonusWages(0);
+				calcSave.setTotalExgretiaDays(0);
+				calcSave.setTotalExgretiaWages("0");
+				calcSave.setTotalBonusDays(0);
 
+				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				String json = ow.writeValueAsString(calcSave);
+
+				calcSave.setBonusDetails(json);
+				BonusCalc calcSave1 = bonusCalcRepo.save(calcSave);
 			}
 
 			int res = 0;
