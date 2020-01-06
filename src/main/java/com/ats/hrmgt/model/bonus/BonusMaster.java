@@ -36,6 +36,8 @@ public class BonusMaster {
 
 	private String exVar1;;
 	private String exVar2;
+	
+	private int minDays ;
 
 	@Transient
 	private boolean error;
@@ -146,13 +148,25 @@ public class BonusMaster {
 	public void setError(boolean error) {
 		this.error = error;
 	}
+	
+	
+	
+
+	public int getMinDays() {
+		return minDays;
+	}
+
+	public void setMinDays(int minDays) {
+		this.minDays = minDays;
+	}
 
 	@Override
 	public String toString() {
 		return "BonusMaster [bonusId=" + bonusId + ", fyTitle=" + fyTitle + ", fyFromdt=" + fyFromdt + ", fyTodt="
 				+ fyTodt + ", isCurrent=" + isCurrent + ", remark=" + remark + ", bonusPercentage=" + bonusPercentage
 				+ ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1
-				+ ", exVar2=" + exVar2 + ", error=" + error + "]";
+				+ ", exVar2=" + exVar2 + ", minDays=" + minDays + ", error=" + error + "]";
 	}
 
+	 
 }

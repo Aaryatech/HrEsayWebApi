@@ -19,13 +19,14 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    con.org_name,\n" + 
 			"    sht.shiftname,\n" + 
 			"    emptyp.name AS emp_type_name,\n" + 
-			"    saltype.sal_type_name\n" + 
-			"    \n" + 
+			"    saltype.sal_type_name,\n" + 
+			"    bonus.fy_title\n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
-			"inner JOIN tbl_emp_salary_info  salinfo ON\n" + 
+			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
 			"    emp.emp_id = salinfo.emp_id\n" + 
-			"    \n" + 
+			"INNER JOIN t_bonus_calc bonusinfo ON\n" + 
+			"    emp.emp_id = bonusinfo.emp_id\n" + 
 			"LEFT JOIN m_designation dg ON\n" + 
 			"    emp.designation_id = dg.desig_id\n" + 
 			"LEFT JOIN m_department dep ON\n" + 
@@ -38,11 +39,10 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    emp.emp_type = emptyp.emp_type_id\n" + 
 			"LEFT JOIN tbl_shift_timming sht ON\n" + 
 			"    emp.current_shiftid = sht.id\n" + 
-			"\n" + 
-			"LEFT JOIN mst_salary_types saltype  ON\n" + 
+			"LEFT JOIN mst_salary_types saltype ON\n" + 
 			"    salinfo.salary_type_id = saltype.sal_type_id\n" + 
-			"    \n" + 
-			"    \n" + 
+			"LEFT JOIN m_bonus_fy bonus ON\n" + 
+			"    bonus.bonus_id = bonus.bonus_id\n" + 
 			"WHERE\n" + 
 			"    emp.del_status = 1 AND emp.is_emp = 1", nativeQuery = true)
 
@@ -56,13 +56,14 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    con.org_name,\n" + 
 			"    sht.shiftname,\n" + 
 			"    emptyp.name AS emp_type_name,\n" + 
-			"    saltype.sal_type_name\n" + 
-			"    \n" + 
+			"    saltype.sal_type_name,\n" + 
+			"    bonus.fy_title\n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
-			"inner JOIN tbl_emp_salary_info  salinfo ON\n" + 
+			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
 			"    emp.emp_id = salinfo.emp_id\n" + 
-			"    \n" + 
+			"INNER JOIN t_bonus_calc bonusinfo ON\n" + 
+			"    emp.emp_id = bonusinfo.emp_id\n" + 
 			"LEFT JOIN m_designation dg ON\n" + 
 			"    emp.designation_id = dg.desig_id\n" + 
 			"LEFT JOIN m_department dep ON\n" + 
@@ -75,11 +76,10 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    emp.emp_type = emptyp.emp_type_id\n" + 
 			"LEFT JOIN tbl_shift_timming sht ON\n" + 
 			"    emp.current_shiftid = sht.id\n" + 
-			"\n" + 
-			"LEFT JOIN mst_salary_types saltype  ON\n" + 
+			"LEFT JOIN mst_salary_types saltype ON\n" + 
 			"    salinfo.salary_type_id = saltype.sal_type_id\n" + 
-			"    \n" + 
-			"    \n" + 
+			"LEFT JOIN m_bonus_fy bonus ON\n" + 
+			"    bonus.bonus_id = bonus.bonus_id\n" + 
 			"WHERE\n" + 
 			"    emp.del_status = 1 AND emp.is_emp = 1 AND emp.emp_id=:empId", nativeQuery = true)
 
@@ -95,13 +95,14 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    con.org_name,\n" + 
 			"    sht.shiftname,\n" + 
 			"    emptyp.name AS emp_type_name,\n" + 
-			"    saltype.sal_type_name\n" + 
-			"    \n" + 
+			"    saltype.sal_type_name,\n" + 
+			"    bonus.fy_title\n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
-			"inner JOIN tbl_emp_salary_info  salinfo ON\n" + 
+			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
 			"    emp.emp_id = salinfo.emp_id\n" + 
-			"    \n" + 
+			"INNER JOIN t_bonus_calc bonusinfo ON\n" + 
+			"    emp.emp_id = bonusinfo.emp_id\n" + 
 			"LEFT JOIN m_designation dg ON\n" + 
 			"    emp.designation_id = dg.desig_id\n" + 
 			"LEFT JOIN m_department dep ON\n" + 
@@ -114,13 +115,12 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    emp.emp_type = emptyp.emp_type_id\n" + 
 			"LEFT JOIN tbl_shift_timming sht ON\n" + 
 			"    emp.current_shiftid = sht.id\n" + 
-			"\n" + 
-			"LEFT JOIN mst_salary_types saltype  ON\n" + 
+			"LEFT JOIN mst_salary_types saltype ON\n" + 
 			"    salinfo.salary_type_id = saltype.sal_type_id\n" + 
-			"    \n" + 
-			"    \n" + 
+			"LEFT JOIN m_bonus_fy bonus ON\n" + 
+			"    bonus.bonus_id = bonus.bonus_id\n" + 
 			"WHERE\n" + 
-			"    emp.del_status = 1 AND emp.is_emp = 1 and emp.location_id in (:locId)", nativeQuery = true) 
+			"    emp.del_status = 1 AND emp.is_emp = 1 AND emp.location_id IN(:locId)", nativeQuery = true) 
 	List<GetEmployeeDetails> getEmpDetailListByLocId(@Param("locId") List<Integer> locId);
 
 	

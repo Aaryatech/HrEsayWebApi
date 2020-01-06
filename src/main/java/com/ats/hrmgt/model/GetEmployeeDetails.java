@@ -17,6 +17,12 @@ public class GetEmployeeDetails {
 
 	@Column(name = "cmp_code")
 	private String cmpCode;
+	
+	
+	@Column(name = "fy_title")
+	private String fyTitle;
+	
+	
 
 	@Column(name = "emp_type")
 	private int empType;
@@ -160,6 +166,12 @@ public class GetEmployeeDetails {
 	
 	
 	
+	public String getFyTitle() {
+		return fyTitle;
+	}
+	public void setFyTitle(String fyTitle) {
+		this.fyTitle = fyTitle;
+	}
 	public String getSalTypeName() {
 		return salTypeName;
 	}
@@ -480,14 +492,14 @@ public class GetEmployeeDetails {
 	}
 	@Override
 	public String toString() {
-		return "GetEmployeeDetails [empId=" + empId + ", empCode=" + empCode + ", cmpCode=" + cmpCode + ", empType="
-				+ empType + ", mobileNo1=" + mobileNo1 + ", mobileNo2=" + mobileNo2 + ", residenceLandNo="
-				+ residenceLandNo + ", contractorId=" + contractorId + ", departId=" + departId + ", designationId="
-				+ designationId + ", locationId=" + locationId + ", firstName=" + firstName + ", middleName="
-				+ middleName + ", surname=" + surname + ", motherName=" + motherName + ", societySerialNo="
-				+ societySerialNo + ", panCardNo=" + panCardNo + ", pfNo=" + pfNo + ", esicNo=" + esicNo + ", aadharNo="
-				+ aadharNo + ", uan=" + uan + ", leavingReason=" + leavingReason + ", isEmp=" + isEmp
-				+ ", currentShiftid=" + currentShiftid + ", nextShiftid=" + nextShiftid + ", grossSalaryEst="
+		return "GetEmployeeDetails [empId=" + empId + ", empCode=" + empCode + ", cmpCode=" + cmpCode + ", fyTitle="
+				+ fyTitle + ", empType=" + empType + ", mobileNo1=" + mobileNo1 + ", mobileNo2=" + mobileNo2
+				+ ", residenceLandNo=" + residenceLandNo + ", contractorId=" + contractorId + ", departId=" + departId
+				+ ", designationId=" + designationId + ", locationId=" + locationId + ", firstName=" + firstName
+				+ ", middleName=" + middleName + ", surname=" + surname + ", motherName=" + motherName
+				+ ", societySerialNo=" + societySerialNo + ", panCardNo=" + panCardNo + ", pfNo=" + pfNo + ", esicNo="
+				+ esicNo + ", aadharNo=" + aadharNo + ", uan=" + uan + ", leavingReason=" + leavingReason + ", isEmp="
+				+ isEmp + ", currentShiftid=" + currentShiftid + ", nextShiftid=" + nextShiftid + ", grossSalaryEst="
 				+ grossSalaryEst + ", emailId=" + emailId + ", noticePayAmount=" + noticePayAmount
 				+ ", salDedAtFullandfinal=" + salDedAtFullandfinal + ", addedFrom=" + addedFrom + ", rawData=" + rawData
 				+ ", addedBySupervisorId=" + addedBySupervisorId + ", loginName=" + loginName + ", loginTime="
@@ -498,7 +510,6 @@ public class GetEmployeeDetails {
 				+ ", empDesgn=" + empDesgn + ", locName=" + locName + ", orgName=" + orgName + ", shiftname="
 				+ shiftname + ", empTypeName=" + empTypeName + ", salTypeName=" + salTypeName + "]";
 	}
-	 
 	 
 	 
 	

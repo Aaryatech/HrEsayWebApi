@@ -11,4 +11,6 @@ public interface AllowancesRepo extends JpaRepository<Allowances, Integer> {
 	List<Allowances> findBydelStatus(int del);
 	
 	List<Allowances> findBydelStatusAndIsActive(int del, int active);
+
+	Allowances findByShortNameAndDelStatus(String string, int i);
 }
