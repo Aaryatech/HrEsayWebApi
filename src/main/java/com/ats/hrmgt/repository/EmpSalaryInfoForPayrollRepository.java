@@ -104,10 +104,10 @@ public interface EmpSalaryInfoForPayrollRepository extends JpaRepository<EmpSala
 			"            where\n" + 
 			"                calc_month=:month \n" + 
 			"                and calc_year=:year\n" + 
-			"        ) \n" + 
+			"        ) and e.emp_id in (:empIds) \n" + 
 			"    order by\n" + 
 			"        e.emp_id", nativeQuery = true)
 	List<EmpSalaryInfoForPayroll> getEmployeeListWithEmpSalEnfoForPayRollForTempInsert(@Param("month") int month,
-			@Param("year") int year);
+			@Param("year") int year, List<Integer> empIds);
 
 }

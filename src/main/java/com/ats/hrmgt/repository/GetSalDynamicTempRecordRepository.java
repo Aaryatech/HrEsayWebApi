@@ -25,11 +25,11 @@ public interface GetSalDynamicTempRecordRepository extends JpaRepository<GetSalD
 			"          sdt.calc_month=:month and sdt.calc_year=:year\n" + 
 			"          and e.emp_id=sdt.emp_id\n" + 
 			"          and de.desig_id=e.designation_id\n" + 
-			"          and st.sal_type_id=sdt.sal_type_id\n" + 
+			"          and st.sal_type_id=sdt.sal_type_id and sdt.emp_id in (:empIds)\n" + 
 			"    order by\n" + 
 			"        sdt.emp_id", nativeQuery = true)
 	List<GetSalDynamicTempRecord> getSalDynamicTempRecord(@Param("month") int month,
-			@Param("year") int year);
+			@Param("year") int year, @Param("empIds") List<Integer> empIds);
 
 	@Query(value = "select \n" + 
 			"        sdt.*,\n" + 

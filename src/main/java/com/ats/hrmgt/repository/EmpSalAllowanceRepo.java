@@ -25,6 +25,10 @@ public interface EmpSalAllowanceRepo extends JpaRepository<EmpSalAllowance, Inte
  
 	EmpSalAllowance findByAllowanceIdAndEmpId(int allowanceId, int empId);
 
+	@Query(value = "select * from emp_sal_allowance where del_status=:delStatus and emp_id in (:empIds)", nativeQuery = true)
+	List<EmpSalAllowance> findByDelStatusAndEmpId(@Param("delStatus") int delStatus, @Param("empIds")  List<Integer> empIds);
+ 
+
 	
 
 }

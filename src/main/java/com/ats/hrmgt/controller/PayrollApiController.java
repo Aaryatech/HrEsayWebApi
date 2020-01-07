@@ -105,17 +105,17 @@ public class PayrollApiController {
 	}
 
 	@RequestMapping(value = { "/insertPayrollIntempTable" }, method = RequestMethod.POST)
-	public Info insertPayrollIntempTable(@RequestParam("month") int month, @RequestParam("year") int year) {
+	public Info insertPayrollIntempTable(@RequestParam("month") int month, @RequestParam("year") int year,
+			@RequestParam("empIds") List<Integer> empIds) {
 
 		Info info = new Info();
 
 		try {
 			List<EmpSalaryInfoForPayroll> list = empSalaryInfoForPayrollRepository
-					.getEmployeeListWithEmpSalEnfoForPayRollForTempInsert(month, year);
+					.getEmployeeListWithEmpSalEnfoForPayRollForTempInsert(month, year, empIds);
 			List<Allowances> allowancelist = allowanceRepo.findBydelStatusAndIsActive(0, 1);
-			List<EmpSalAllowance> empAllowanceList = empSalAllowanceRepo.findByDelStatus(1);
-
-			// List<SalaryCalc> tempInsert = new ArrayList<>();
+			List<EmpSalAllowance> empAllowanceList = empSalAllowanceRepo.findByDelStatusAndEmpId(1,empIds);
+ 
 
 			for (int i = 0; i < list.size(); i++) {
 
@@ -179,12 +179,12 @@ public class PayrollApiController {
 
 	@RequestMapping(value = { "/getSalDynamicTempRecord" }, method = RequestMethod.POST)
 	public List<GetSalDynamicTempRecord> getSalDynamicTempRecord(@RequestParam("month") int month,
-			@RequestParam("year") int year) {
+			@RequestParam("year") int year,@RequestParam("empIds") List<Integer> empIds) {
 
 		List<GetSalDynamicTempRecord> list = new ArrayList<>();
 
 		try {
-			list = getSalDynamicTempRecordRepository.getSalDynamicTempRecord(month, year);
+			list = getSalDynamicTempRecordRepository.getSalDynamicTempRecord(month, year ,empIds);
 
 		} catch (Exception e) {
 
@@ -219,7 +219,7 @@ public class PayrollApiController {
 		Info info = new Info();
 
 		try {
-			int update =  salaryCalcTempRepo.updateBonusAmt(tempSalDaynamicId, itAmt, perBonus); 
+			int update = salaryCalcTempRepo.updateBonusAmt(tempSalDaynamicId, itAmt, perBonus);
 			info.setError(false);
 			info.setMsg("success");
 
