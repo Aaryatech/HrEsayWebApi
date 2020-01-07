@@ -43,7 +43,7 @@ public class PayrollApiController {
 
 	@Autowired
 	SalAllownceTempRepo salAllownceTempRepo;
-	
+
 	@Autowired
 	GetSalDynamicTempRecordRepository getSalDynamicTempRecordRepository;
 
@@ -193,14 +193,16 @@ public class PayrollApiController {
 
 		return list;
 	}
-	
+
 	@RequestMapping(value = { "/getSalDynamicTempRecordById" }, method = RequestMethod.POST)
-	public GetSalDynamicTempRecord getSalDynamicTempRecordById(@RequestParam("tempSalDaynamicId") int tempSalDaynamicId) {
+	public GetSalDynamicTempRecord getSalDynamicTempRecordById(
+			@RequestParam("tempSalDaynamicId") int tempSalDaynamicId) {
 
 		GetSalDynamicTempRecord getSalDynamicTempRecordById = new GetSalDynamicTempRecord();
 
 		try {
-			getSalDynamicTempRecordById = getSalDynamicTempRecordRepository.getSalDynamicTempRecordById(tempSalDaynamicId);
+			getSalDynamicTempRecordById = getSalDynamicTempRecordRepository
+					.getSalDynamicTempRecordById(tempSalDaynamicId);
 
 		} catch (Exception e) {
 
@@ -208,6 +210,26 @@ public class PayrollApiController {
 		}
 
 		return getSalDynamicTempRecordById;
+	}
+
+	@RequestMapping(value = { "/updateBonusAmt" }, method = RequestMethod.POST)
+	public Info updateBonusAmt(@RequestParam("tempSalDaynamicId") int tempSalDaynamicId,
+			@RequestParam("itAmt") float itAmt, @RequestParam("perBonus") float perBonus) {
+
+		Info info = new Info();
+
+		try {
+			int update =  salaryCalcTempRepo.updateBonusAmt(tempSalDaynamicId, itAmt, perBonus); 
+			info.setError(false);
+			info.setMsg("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("failed");
+			e.printStackTrace();
+		}
+
+		return info;
 	}
 
 }
