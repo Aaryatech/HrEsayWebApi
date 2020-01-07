@@ -25,6 +25,12 @@ public interface ClaimHeaderRepo extends JpaRepository<ClaimApplyHeader, Integer
 	@Modifying
 	@Query("update ClaimApplyHeader set claim_status=:status  WHERE ca_head_id=:claimId")
 	int updateClaimStatus(int claimId,int status);
+	
+	
+	@Transactional
+	@Modifying
+	@Query("update ClaimApplyHeader set claim_status=:status,year=:year,month=:month  WHERE ca_head_id=:claimId")
+	int updateClaimStatusWithDate(int claimId,int status,int month,int year);
 
 	 
 }

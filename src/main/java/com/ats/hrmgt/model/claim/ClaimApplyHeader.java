@@ -78,8 +78,48 @@ public class ClaimApplyHeader {
 	private String exVar3;
 	
 	
+	@Column(name = "month ")
+	private int month;
+ 	
+	@Column(name = "year")
+	private int year; 
+ 	
+	@Column(name = "is_paid")
+	private int isPaid; 
+	
+	
 	@Transient
 	List<ClaimApply> detailList;
+
+
+	public int getMonth() {
+		return month;
+	}
+
+
+	public void setMonth(int month) {
+		this.month = month;
+	}
+
+
+	public int getYear() {
+		return year;
+	}
+
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+
+	public int getIsPaid() {
+		return isPaid;
+	}
+
+
+	public void setIsPaid(int isPaid) {
+		this.isPaid = isPaid;
+	}
 
 
 	public int getCaHeadId() {
@@ -287,18 +327,11 @@ public class ClaimApplyHeader {
 				+ claimStatus + ", claimAmount=" + claimAmount + ", circulatedTo=" + circulatedTo + ", makerUserId="
 				+ makerUserId + ", makerEnterDatetime=" + makerEnterDatetime + ", delStatus=" + delStatus
 				+ ", isActive=" + isActive + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3
-				+ ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3 + ", detailList=" + detailList
-				+ ", getCaHeadId()=" + getCaHeadId() + ", getCafromDt()=" + getCafromDt() + ", getCaToDt()="
-				+ getCaToDt() + ", getClaimTitle()=" + getClaimTitle() + ", getProjId()=" + getProjId()
-				+ ", getEmpId()=" + getEmpId() + ", getClaimStatus()=" + getClaimStatus() + ", getClaimAmount()="
-				+ getClaimAmount() + ", getCirculatedTo()=" + getCirculatedTo() + ", getMakerUserId()="
-				+ getMakerUserId() + ", getMakerEnterDatetime()=" + getMakerEnterDatetime() + ", getDelStatus()="
-				+ getDelStatus() + ", getIsActive()=" + getIsActive() + ", getExInt1()=" + getExInt1()
-				+ ", getExInt2()=" + getExInt2() + ", getExInt3()=" + getExInt3() + ", getExVar1()=" + getExVar1()
-				+ ", getExVar2()=" + getExVar2() + ", getExVar3()=" + getExVar3() + ", getDetailList()="
-				+ getDetailList() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
-				+ super.toString() + "]";
+				+ ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3 + ", month=" + month + ", year="
+				+ year + ", isPaid=" + isPaid + ", detailList=" + detailList + "]";
 	}
+
+ 
 	
 	
 	
