@@ -13,6 +13,7 @@ import com.ats.hrmgt.model.Allowances;
 import com.ats.hrmgt.model.EmpAllowanceList;
 import com.ats.hrmgt.model.EmpSalAllowance;
 import com.ats.hrmgt.model.EmpSalaryInfoForPayroll;
+import com.ats.hrmgt.model.GetAdvanceList;
 import com.ats.hrmgt.model.GetSalDynamicTempRecord;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.PayRollDataForProcessing;
@@ -22,6 +23,7 @@ import com.ats.hrmgt.model.SalaryCalcTemp;
 import com.ats.hrmgt.repository.AllowancesRepo;
 import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
 import com.ats.hrmgt.repository.EmpSalaryInfoForPayrollRepository;
+import com.ats.hrmgt.repository.GetAdvanceListRepo;
 import com.ats.hrmgt.repository.GetSalDynamicTempRecordRepository;
 import com.ats.hrmgt.repository.SalAllownceTempRepo;
 import com.ats.hrmgt.repository.SalaryCalcTempRepo;
@@ -46,6 +48,9 @@ public class PayrollApiController {
 
 	@Autowired
 	GetSalDynamicTempRecordRepository getSalDynamicTempRecordRepository;
+
+	@Autowired
+	GetAdvanceListRepo getAdvanceListRepo;
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -114,8 +119,8 @@ public class PayrollApiController {
 			List<EmpSalaryInfoForPayroll> list = empSalaryInfoForPayrollRepository
 					.getEmployeeListWithEmpSalEnfoForPayRollForTempInsert(month, year, empIds);
 			List<Allowances> allowancelist = allowanceRepo.findBydelStatusAndIsActive(0, 1);
-			List<EmpSalAllowance> empAllowanceList = empSalAllowanceRepo.findByDelStatusAndEmpId(1,empIds);
- 
+			List<EmpSalAllowance> empAllowanceList = empSalAllowanceRepo.findByDelStatusAndEmpId(1, empIds);
+			List<GetAdvanceList> getAdvanceList = getAdvanceListRepo.getAdvanceList(month, year, empIds);
 
 			for (int i = 0; i < list.size(); i++) {
 
@@ -166,6 +171,29 @@ public class PayrollApiController {
 				}
 				List<SalAllownceTemp> saveAllores = salAllownceTempRepo.saveAll(allowlist);
 			}
+
+			List<SalaryCalcTemp> listForUpdatedValue = salaryCalcTempRepo.listForUpdatedValue(month, year, empIds);
+
+			for (int i = 0; i < listForUpdatedValue.size(); i++) {
+
+				int flag=0;
+				for (int j = 0; j < getAdvanceList.size(); j++) {
+
+					if (getAdvanceList.get(j).getEmpId() == listForUpdatedValue.get(i).getEmpId()) {
+						listForUpdatedValue.get(i).setAdvanceDed(getAdvanceList.get(j).getAdvAmount());
+						flag=1;
+						break;
+					}
+
+				}
+				
+				if (flag==0) {
+					listForUpdatedValue.get(i).setAdvanceDed(0);
+				}
+			}
+			
+			List<SalaryCalcTemp> savereslist = salaryCalcTempRepo.saveAll(listForUpdatedValue);
+			 
 			info.setError(false);
 			info.setMsg("success");
 		} catch (Exception e) {
@@ -179,12 +207,12 @@ public class PayrollApiController {
 
 	@RequestMapping(value = { "/getSalDynamicTempRecord" }, method = RequestMethod.POST)
 	public List<GetSalDynamicTempRecord> getSalDynamicTempRecord(@RequestParam("month") int month,
-			@RequestParam("year") int year,@RequestParam("empIds") List<Integer> empIds) {
+			@RequestParam("year") int year, @RequestParam("empIds") List<Integer> empIds) {
 
 		List<GetSalDynamicTempRecord> list = new ArrayList<>();
 
 		try {
-			list = getSalDynamicTempRecordRepository.getSalDynamicTempRecord(month, year ,empIds);
+			list = getSalDynamicTempRecordRepository.getSalDynamicTempRecord(month, year, empIds);
 
 		} catch (Exception e) {
 
