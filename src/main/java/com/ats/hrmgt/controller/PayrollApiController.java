@@ -13,6 +13,7 @@ import com.ats.hrmgt.model.Allowances;
 import com.ats.hrmgt.model.EmpAllowanceList;
 import com.ats.hrmgt.model.EmpSalAllowance;
 import com.ats.hrmgt.model.EmpSalaryInfoForPayroll;
+import com.ats.hrmgt.model.GetSalDynamicTempRecord;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.PayRollDataForProcessing;
 import com.ats.hrmgt.model.SalAllownceTemp;
@@ -21,6 +22,7 @@ import com.ats.hrmgt.model.SalaryCalcTemp;
 import com.ats.hrmgt.repository.AllowancesRepo;
 import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
 import com.ats.hrmgt.repository.EmpSalaryInfoForPayrollRepository;
+import com.ats.hrmgt.repository.GetSalDynamicTempRecordRepository;
 import com.ats.hrmgt.repository.SalAllownceTempRepo;
 import com.ats.hrmgt.repository.SalaryCalcTempRepo;
 
@@ -41,6 +43,9 @@ public class PayrollApiController {
 
 	@Autowired
 	SalAllownceTempRepo salAllownceTempRepo;
+	
+	@Autowired
+	GetSalDynamicTempRecordRepository getSalDynamicTempRecordRepository;
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -170,6 +175,39 @@ public class PayrollApiController {
 		}
 
 		return info;
+	}
+
+	@RequestMapping(value = { "/getSalDynamicTempRecord" }, method = RequestMethod.POST)
+	public List<GetSalDynamicTempRecord> getSalDynamicTempRecord(@RequestParam("month") int month,
+			@RequestParam("year") int year) {
+
+		List<GetSalDynamicTempRecord> list = new ArrayList<>();
+
+		try {
+			list = getSalDynamicTempRecordRepository.getSalDynamicTempRecord(month, year);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+	
+	@RequestMapping(value = { "/getSalDynamicTempRecordById" }, method = RequestMethod.POST)
+	public GetSalDynamicTempRecord getSalDynamicTempRecordById(@RequestParam("tempSalDaynamicId") int tempSalDaynamicId) {
+
+		GetSalDynamicTempRecord getSalDynamicTempRecordById = new GetSalDynamicTempRecord();
+
+		try {
+			getSalDynamicTempRecordById = getSalDynamicTempRecordRepository.getSalDynamicTempRecordById(tempSalDaynamicId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return getSalDynamicTempRecordById;
 	}
 
 }
