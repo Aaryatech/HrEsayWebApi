@@ -240,13 +240,24 @@ public class BonusApiController {
 			info.setMsg("failed");
 
 		}
+		
+		double advPrcnt=0.0;
+		double pujaPrcnt=0.0;
+		double lossPrcnt=0.0;
+		Setting setting = new Setting();
+		setting = settingRepo.findByKey("ded_bonus_adv_amt_percentage");
+		advPrcnt=Double.parseDouble(setting.getValue());
+		setting = settingRepo.findByKey("ded_bonus_puja_amt_percentage");
+		pujaPrcnt=Double.parseDouble(setting.getValue());
+		setting = settingRepo.findByKey("ded_bonus_loss_amt_percentage");
+		lossPrcnt=Double.parseDouble(setting.getValue());
 		String[] forList = bonusFormula.split("\\+");
 		List<String> formulaList = new ArrayList<String>(Arrays.asList(forList));
 		// System.err.println("formulaList before**" + formulaList.toString());
 		for (int j = 0; j < formulaList.size(); j++) {
 
 			if ((formulaList.get(j).trim()).equals("basic_cal")) {
-				formulaList.remove(0);
+				formulaList.remove(j);
 				break;
 			}
 
