@@ -1,5 +1,7 @@
 package com.ats.hrmgt.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +19,7 @@ public interface SettingRepo extends JpaRepository<Setting, Integer>{
 	@Modifying
 	@Query("update Setting set value=:val  WHERE setting_id=:settingId")
 	int settingUpdate(@Param("settingId") String settingId,@Param("val") String val);
+
+	List<Setting> findByGroup(String string);
 
 }

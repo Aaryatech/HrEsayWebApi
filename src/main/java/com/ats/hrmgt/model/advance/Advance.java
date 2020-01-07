@@ -30,7 +30,7 @@ public class Advance {
  	
 	private String advRemarks;
  	
-	private String dedMonth ;
+	private int dedMonth ;
  	
  	private int isDed ;
  	
@@ -46,7 +46,7 @@ public class Advance {
  	
  	private String skipLoginTime ;
  	
-	private String dedYear ;
+	private int dedYear ;
  	
  	private String skipRemarks ;
  	
@@ -74,14 +74,7 @@ public class Advance {
 	}
 
 
-	public String getDedYear() {
-		return dedYear;
-	}
-
-
-	public void setDedYear(String dedYear) {
-		this.dedYear = dedYear;
-	}
+ 
 
 
 	public int getExInt1() {
@@ -203,15 +196,7 @@ public class Advance {
 		this.advRemarks = advRemarks;
 	}
 
-
-	public String getDedMonth() {
-		return dedMonth;
-	}
-
-
-	public void setDedMonth(String dedMonth) {
-		this.dedMonth = dedMonth;
-	}
+ 
 
 
 	public int getIsDed() {
@@ -291,6 +276,26 @@ public class Advance {
 
 	public void setSkipRemarks(String skipRemarks) {
 		this.skipRemarks = skipRemarks;
+	}
+
+
+	public int getDedMonth() {
+		return dedMonth;
+	}
+
+
+	public void setDedMonth(int dedMonth) {
+		this.dedMonth = dedMonth;
+	}
+
+
+	public int getDedYear() {
+		return dedYear;
+	}
+
+
+	public void setDedYear(int dedYear) {
+		this.dedYear = dedYear;
 	}
 
 
