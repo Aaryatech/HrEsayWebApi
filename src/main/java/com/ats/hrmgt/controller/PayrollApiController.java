@@ -14,6 +14,7 @@ import com.ats.hrmgt.model.EmpAllowanceList;
 import com.ats.hrmgt.model.EmpSalAllowance;
 import com.ats.hrmgt.model.EmpSalaryInfoForPayroll;
 import com.ats.hrmgt.model.GetAdvanceList;
+import com.ats.hrmgt.model.GetClaimList;
 import com.ats.hrmgt.model.GetSalDynamicTempRecord;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.PayRollDataForProcessing;
@@ -24,6 +25,7 @@ import com.ats.hrmgt.repository.AllowancesRepo;
 import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
 import com.ats.hrmgt.repository.EmpSalaryInfoForPayrollRepository;
 import com.ats.hrmgt.repository.GetAdvanceListRepo;
+import com.ats.hrmgt.repository.GetClaimListRepo;
 import com.ats.hrmgt.repository.GetSalDynamicTempRecordRepository;
 import com.ats.hrmgt.repository.SalAllownceTempRepo;
 import com.ats.hrmgt.repository.SalaryCalcTempRepo;
@@ -51,6 +53,9 @@ public class PayrollApiController {
 
 	@Autowired
 	GetAdvanceListRepo getAdvanceListRepo;
+
+	@Autowired
+	GetClaimListRepo getClaimListRepo;
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -120,8 +125,8 @@ public class PayrollApiController {
 					.getEmployeeListWithEmpSalEnfoForPayRollForTempInsert(month, year, empIds);
 			List<Allowances> allowancelist = allowanceRepo.findBydelStatusAndIsActive(0, 1);
 			List<EmpSalAllowance> empAllowanceList = empSalAllowanceRepo.findByDelStatusAndEmpId(1, empIds);
-			List<GetAdvanceList> getAdvanceList = getAdvanceListRepo.getAdvanceList(month, year, empIds);
 
+			// insert code if record not inserted in temp table
 			for (int i = 0; i < list.size(); i++) {
 
 				SalaryCalcTemp salaryCalcTempsave = new SalaryCalcTemp();
@@ -172,28 +177,44 @@ public class PayrollApiController {
 				List<SalAllownceTemp> saveAllores = salAllownceTempRepo.saveAll(allowlist);
 			}
 
+			// update record if some ammount insert after insert temp record
 			List<SalaryCalcTemp> listForUpdatedValue = salaryCalcTempRepo.listForUpdatedValue(month, year, empIds);
+			List<GetAdvanceList> getAdvanceList = getAdvanceListRepo.getAdvanceList(month, year, empIds);
+			List<GetClaimList> getClaimList = getClaimListRepo.getClaimList(month, year, empIds);
 
 			for (int i = 0; i < listForUpdatedValue.size(); i++) {
 
-				int flag=0;
+				int flag = 0;
 				for (int j = 0; j < getAdvanceList.size(); j++) {
 
 					if (getAdvanceList.get(j).getEmpId() == listForUpdatedValue.get(i).getEmpId()) {
 						listForUpdatedValue.get(i).setAdvanceDed(getAdvanceList.get(j).getAdvAmount());
-						flag=1;
+						flag = 1;
 						break;
 					}
 
 				}
-				
-				if (flag==0) {
+				if (flag == 0) {
 					listForUpdatedValue.get(i).setAdvanceDed(0);
 				}
+
+				flag = 0;
+				for (int j = 0; j < getClaimList.size(); j++) {
+
+					if (getClaimList.get(j).getEmpId() == listForUpdatedValue.get(i).getEmpId()) {
+						listForUpdatedValue.get(i).setMiscExpAdd(getClaimList.get(j).getClaimAmount());
+						flag = 1;
+						break;
+					}
+
+				}
+				if (flag == 0) {
+					listForUpdatedValue.get(i).setMiscExpAdd(0);
+				}
 			}
-			
+
 			List<SalaryCalcTemp> savereslist = salaryCalcTempRepo.saveAll(listForUpdatedValue);
-			 
+
 			info.setError(false);
 			info.setMsg("success");
 		} catch (Exception e) {
