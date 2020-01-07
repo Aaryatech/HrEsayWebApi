@@ -143,7 +143,25 @@ public class EmpSalaryInfoForPayroll {
 	
 	@Column(name="loc_name")	
 	private String locName;
-
+ 
+	@Column(name="emp_type_id")
+	private int empTypeId;
+	
+	@Column(name="loc_id")
+	private int locId;
+	
+	@Column(name="depart_id")
+	private int departId;
+	
+	@Column(name="contractor_id")
+	private int contractorId;
+	
+	@Column(name="desig_id")
+	private int desigId;
+	
+	@Column(name="sum_id")
+	private int sumId;
+	
 	@Transient
 	List<EmpAllowanceList> empAllowanceList;
 	
@@ -491,6 +509,54 @@ public class EmpSalaryInfoForPayroll {
 		this.empAllowanceList = empAllowanceList;
 	}
 
+	public int getEmpTypeId() {
+		return empTypeId;
+	}
+
+	public void setEmpTypeId(int empTypeId) {
+		this.empTypeId = empTypeId;
+	}
+
+	public int getLocId() {
+		return locId;
+	}
+
+	public void setLocId(int locId) {
+		this.locId = locId;
+	}
+
+	public int getDepartId() {
+		return departId;
+	}
+
+	public void setDepartId(int departId) {
+		this.departId = departId;
+	}
+
+	public int getContractorId() {
+		return contractorId;
+	}
+
+	public void setContractorId(int contractorId) {
+		this.contractorId = contractorId;
+	}
+
+	public int getDesigId() {
+		return desigId;
+	}
+
+	public void setDesigId(int desigId) {
+		this.desigId = desigId;
+	}
+
+	public int getSumId() {
+		return sumId;
+	}
+
+	public void setSumId(int sumId) {
+		this.sumId = sumId;
+	}
+
 	@Override
 	public String toString() {
 		return "EmpSalaryInfoForPayroll [empId=" + empId + ", salaryInfoId=" + salaryInfoId + ", salaryTypeId="
@@ -507,7 +573,9 @@ public class EmpSalaryInfoForPayroll {
 				+ employerEsicPercentage + ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2
 				+ ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", empCode=" + empCode + ", empTypeName=" + empTypeName
 				+ ", salTypeName=" + salTypeName + ", designation=" + designation + ", deptName=" + deptName
-				+ ", empName=" + empName + ", locName=" + locName + ", empAllowanceList=" + empAllowanceList + "]";
+				+ ", empName=" + empName + ", locName=" + locName + ", empTypeId=" + empTypeId + ", locId=" + locId
+				+ ", departId=" + departId + ", contractorId=" + contractorId + ", desigId=" + desigId + ", sumId="
+				+ sumId + ", empAllowanceList=" + empAllowanceList + "]";
 	}
 	
 	

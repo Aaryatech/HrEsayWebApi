@@ -7,9 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_salary_calc")
-public class SalaryCalc {
-	
+@Table(name = "tbl_salary_dynamic_temp")
+public class SalaryCalcTemp {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -138,6 +137,7 @@ public class SalaryCalc {
 	public void setCalcYear(int calcYear) {
 		this.calcYear = calcYear;
 	}
+	 
 	public int getSalTypeId() {
 		return salTypeId;
 	}
@@ -156,6 +156,7 @@ public class SalaryCalc {
 	public void setBasicCal(double basicCal) {
 		this.basicCal = basicCal;
 	}
+	 
 	public double getPerformanceBonus() {
 		return performanceBonus;
 	}
@@ -221,7 +222,7 @@ public class SalaryCalc {
 	}
 	public void setGrossSalary(double grossSalary) {
 		this.grossSalary = grossSalary;
-	}
+	} 
 	public double getEpsWages() {
 		return epsWages;
 	}
@@ -269,7 +270,7 @@ public class SalaryCalc {
 	}
 	public void setEsicStatus(int esicStatus) {
 		this.esicStatus = esicStatus;
-	}
+	} 
 	public int getPfStatus() {
 		return pfStatus;
 	}
@@ -428,27 +429,25 @@ public class SalaryCalc {
 	}
 	@Override
 	public String toString() {
-		return "SalaryCalc [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode + ", empType="
-				+ empType + ", contractorId=" + contractorId + ", departId=" + departId + ", designationId="
-				+ designationId + ", locationId=" + locationId + ", calcMonth=" + calcMonth + ", calcYear=" + calcYear
-				+ ", salTypeId=" + salTypeId + ", attSumId=" + attSumId + ", basicCal=" + basicCal
-				+ ", performanceBonus=" + performanceBonus + ", otWages=" + otWages + ", miscExpAdd=" + miscExpAdd
-				+ ", bonusCal=" + bonusCal + ", exgretiaCal=" + exgretiaCal + ", daArreasCal=" + daArreasCal
-				+ ", incrementArreasCal=" + incrementArreasCal + ", epfWages=" + epfWages + ", epfWagesEmployer="
-				+ epfWagesEmployer + ", esicWagesCal=" + esicWagesCal + ", grossSalary=" + grossSalary + ", epsWages="
-				+ epsWages + ", esicWagesDec=" + esicWagesDec + ", employeePf=" + employeePf + ", employerEps="
-				+ employerEps + ", employerPf=" + employerPf + ", esic=" + esic + ", employerEsic=" + employerEsic
-				+ ", esicStatus=" + esicStatus + ", pfStatus=" + pfStatus + ", mlwf=" + mlwf + ", tds=" + tds
-				+ ", itded=" + itded + ", fund=" + fund + ", totPfAdminCh=" + totPfAdminCh + ", totEdliCh=" + totEdliCh
-				+ ", totEdliAdminCh=" + totEdliAdminCh + ", ncpDays=" + ncpDays + ", status=" + status + ", ptDed="
-				+ ptDed + ", advanceDed=" + advanceDed + ", loanDed=" + loanDed + ", miscExpDed=" + miscExpDed
-				+ ", miscExpDedDeduct=" + miscExpDedDeduct + ", netSalary=" + netSalary + ", isLocked=" + isLocked
-				+ ", loginName=" + loginName + ", loginTime=" + loginTime + ", mlwfApplicable=" + mlwfApplicable
-				+ ", ptApplicable=" + ptApplicable + ", payDed=" + payDed + ", commentsForItBonus=" + commentsForItBonus
-				+ ", societyContribution=" + societyContribution + ", empCategory=" + empCategory + ", basicDefault="
-				+ basicDefault + "]";
+		return "SalaryCalcTemp [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode
+				+ ", empType=" + empType + ", contractorId=" + contractorId + ", departId=" + departId
+				+ ", designationId=" + designationId + ", locationId=" + locationId + ", calcMonth=" + calcMonth
+				+ ", calcYear=" + calcYear + ", salTypeId=" + salTypeId + ", attSumId=" + attSumId + ", basicCal="
+				+ basicCal + ", performanceBonus=" + performanceBonus + ", otWages=" + otWages + ", miscExpAdd="
+				+ miscExpAdd + ", bonusCal=" + bonusCal + ", exgretiaCal=" + exgretiaCal + ", daArreasCal="
+				+ daArreasCal + ", incrementArreasCal=" + incrementArreasCal + ", epfWages=" + epfWages
+				+ ", epfWagesEmployer=" + epfWagesEmployer + ", esicWagesCal=" + esicWagesCal + ", grossSalary="
+				+ grossSalary + ", epsWages=" + epsWages + ", esicWagesDec=" + esicWagesDec + ", employeePf="
+				+ employeePf + ", employerEps=" + employerEps + ", employerPf=" + employerPf + ", esic=" + esic
+				+ ", employerEsic=" + employerEsic + ", esicStatus=" + esicStatus + ", pfStatus=" + pfStatus + ", mlwf="
+				+ mlwf + ", tds=" + tds + ", itded=" + itded + ", fund=" + fund + ", totPfAdminCh=" + totPfAdminCh
+				+ ", totEdliCh=" + totEdliCh + ", totEdliAdminCh=" + totEdliAdminCh + ", ncpDays=" + ncpDays
+				+ ", status=" + status + ", ptDed=" + ptDed + ", advanceDed=" + advanceDed + ", loanDed=" + loanDed
+				+ ", miscExpDed=" + miscExpDed + ", miscExpDedDeduct=" + miscExpDedDeduct + ", netSalary=" + netSalary
+				+ ", isLocked=" + isLocked + ", loginName=" + loginName + ", loginTime=" + loginTime
+				+ ", mlwfApplicable=" + mlwfApplicable + ", ptApplicable=" + ptApplicable + ", payDed=" + payDed
+				+ ", commentsForItBonus=" + commentsForItBonus + ", societyContribution=" + societyContribution
+				+ ", empCategory=" + empCategory + ", basicDefault=" + basicDefault + "]";
 	}
 	 
-	 
-
 }
