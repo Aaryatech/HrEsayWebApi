@@ -24,7 +24,7 @@ public interface BonusParamRepo extends JpaRepository<BonusParam, String> {
 
 	
 
-	@Query(value = " SELECT\n" + 
+	@Query(value = " SELECT UUID() as uid, \n" + 
 			"    SUM(\n" + 
 			"        tbl_attt_summary_daily.payable_days\n" + 
 			"    ) AS total_basic_cal,\n" + 

@@ -43,6 +43,47 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    emp.del_status = 1 AND emp.is_emp = 1", nativeQuery = true)
 
 	List<GetEmployeeDetails> getEmpDetailList();
+	@Query(value = "SELECT\n" + 
+			"        emp.*,\n" + 
+			"        dep.name AS dept_name,\n" + 
+			"        dg.name AS emp_desgn,\n" + 
+			"        loc.loc_name,\n" + 
+			"        con.org_name,\n" + 
+			"        sht.shiftname,\n" + 
+			"        emptyp.name AS emp_type_name,\n" + 
+			"        saltype.sal_type_name,\n" + 
+			"        'NA' AS fy_title \n" + 
+			"    FROM\n" + 
+			"        m_employees emp \n" + 
+			"    INNER JOIN\n" + 
+			"        tbl_emp_salary_info salinfo \n" + 
+			"            ON     emp.emp_id = salinfo.emp_id \n" + 
+			"    LEFT JOIN\n" + 
+			"        m_designation dg \n" + 
+			"            ON     emp.designation_id = dg.desig_id \n" + 
+			"    LEFT JOIN\n" + 
+			"        m_department dep \n" + 
+			"            ON     emp.depart_id = dep.depart_id \n" + 
+			"    LEFT JOIN\n" + 
+			"        m_contractor con \n" + 
+			"            ON     emp.contractor_id = con.contractor_id \n" + 
+			"    LEFT JOIN\n" + 
+			"        m_location loc \n" + 
+			"            ON     emp.location_id = loc.loc_id \n" + 
+			"    LEFT JOIN\n" + 
+			"        tbl_mst_emp_types emptyp \n" + 
+			"            ON     emp.emp_type = emptyp.emp_type_id \n" + 
+			"    LEFT JOIN\n" + 
+			"        tbl_shift_timming sht \n" + 
+			"            ON     emp.current_shiftid = sht.id \n" + 
+			"    LEFT JOIN\n" + 
+			"        mst_salary_types saltype \n" + 
+			"            ON     salinfo.salary_type_id = saltype.sal_type_id \n" + 
+			"    WHERE\n" + 
+			"        emp.del_status = 1 \n" + 
+			"        AND emp.is_emp = 1 AND emp.emp_id NOT IN(SELECT  DISTINCT t_bonus_calc.emp_id FROM t_bonus_calc WHERE t_bonus_calc.del_status=1)", nativeQuery = true)
+
+	List<GetEmployeeDetails> getEmpDetailListForBonus();
 	
 	@Query(value = "SELECT\n" + 
 			"    emp.*,\n" + 

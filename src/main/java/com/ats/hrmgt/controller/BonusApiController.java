@@ -177,6 +177,33 @@ public class BonusApiController {
 
 	}
 
+	
+	@RequestMapping(value = { "/getAllEmployeeDetailForBonus" }, method = RequestMethod.GET)
+	public List<GetEmployeeDetails> getAllEmployeeDetailForBonus() {
+		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
+		try {
+			list = getEmployeeDetailsRepo.getEmpDetailListForBonus();
+		} catch (Exception e) {
+			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+	
+	@RequestMapping(value = { "/getAllEmployeeDetailForBonusUpdate" }, method = RequestMethod.POST)
+	public List<GetEmployeeDetails> getAllEmployeeDetailForBonusUpdate(@RequestParam("bonusId") int bonusId) {
+		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
+		try {
+			list = getEmployeeDetailsRepo.getEmpDetailListForBonus();
+		} catch (Exception e) {
+			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
 	// Bonus Main WS
 
 	@Autowired
@@ -203,7 +230,7 @@ public class BonusApiController {
 			@RequestParam("bonusId") int bonusId, @RequestParam("companyId") int companyId,
 			@RequestParam("userId") int userId) {
 
-		// Note : bonus_sealing_limit_amount_per_month & bonus_app_below_amount remaning
+		// Note : bonus_sealing_limit_amount_per_month & bonus_app_below_amount are  remaning
 		Info info = new Info();
 		Date date = new Date();
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -240,17 +267,38 @@ public class BonusApiController {
 			info.setMsg("failed");
 
 		}
-		
-		double advPrcnt=0.0;
-		double pujaPrcnt=0.0;
-		double lossPrcnt=0.0;
+
+		double advPrcnt = 0.0;
+		double pujaPrcnt = 0.0;
+		double lossPrcnt = 0.0;
+
 		Setting setting = new Setting();
-		setting = settingRepo.findByKey("ded_bonus_adv_amt_percentage");
-		advPrcnt=Double.parseDouble(setting.getValue());
-		setting = settingRepo.findByKey("ded_bonus_puja_amt_percentage");
-		pujaPrcnt=Double.parseDouble(setting.getValue());
-		setting = settingRepo.findByKey("ded_bonus_loss_amt_percentage");
-		lossPrcnt=Double.parseDouble(setting.getValue());
+
+		try {
+			setting = settingRepo.findByKey("ded_bonus_adv_amt_percentage");
+			advPrcnt = Double.parseDouble(setting.getValue());
+		} catch (Exception e) {
+
+			advPrcnt = 0;
+
+		}
+		try {
+
+			setting = settingRepo.findByKey("ded_bonus_puja_amt_percentage");
+			pujaPrcnt = Double.parseDouble(setting.getValue());
+		} catch (Exception e) {
+
+			pujaPrcnt = 0;
+
+		}
+		try {
+			setting = settingRepo.findByKey("ded_bonus_loss_amt_percentage");
+			lossPrcnt = Double.parseDouble(setting.getValue());
+		} catch (Exception e) {
+
+			lossPrcnt = 0;
+
+		}
 		String[] forList = bonusFormula.split("\\+");
 		List<String> formulaList = new ArrayList<String>(Arrays.asList(forList));
 		// System.err.println("formulaList before**" + formulaList.toString());
@@ -267,25 +315,36 @@ public class BonusApiController {
 		try {
 			for (int i = 0; i < empIdList.size(); i++) {
 				int empId = empIdList.get(i);
+				double payableDay=0.0;
+				try {
+					BonusParam salDays = bonusParamRepo.getDays(empId, datesDet.getMonthFrom(), datesDet.getMonthTo(),
+							datesDet.getYearFrom(), datesDet.getYearTo());
+					payableDay=salDays.getTotalBasicCal();
+				} catch (Exception e) {
 
-				BonusParam salDays = bonusParamRepo.getDays(empId, datesDet.getMonthFrom(), datesDet.getMonthTo(),
-						datesDet.getYearFrom(), datesDet.getYearTo());
+					payableDay = 0;
+
+				}
+ 
 				double bonusAmt = 0;
 				double grossBonus = 0;
-				String isApplicable=null;
-
-				if (salDays.getTotalBasicCal() <= bonus.getMinDays()) {
-					isApplicable="Yes";
+				String isApplicable = null;
+				double advPrcntAmt = 0.0;
+				double pujaPrcntAmt = 0.0;
+				double lossPrcntAmt = 0.0;
+				double formTot = 0.0;
+				if (payableDay <= bonus.getMinDays()) {
+					isApplicable = "Yes";
 
 					System.err.println("Applicable");
 					double basic_calc = 0;
 
 					// to get total from formula
-					double formTot = 0.0;
+
 					List<Integer> allIdList = new ArrayList<Integer>();
 					for (int j = 0; j < formulaList.size(); j++) {
 
-						//System.err.println("formulaList for  **" + formulaList.get(j));
+						// System.err.println("formulaList for **" + formulaList.get(j));
 						Allowances ac = new Allowances();
 						try {
 							ac = AalowancesRepo.findByShortNameAndDelStatus(formulaList.get(j).trim(), 1);
@@ -298,19 +357,30 @@ public class BonusApiController {
 							datesDet.getMonthTo(), datesDet.getYearFrom(), datesDet.getYearTo(), allIdList);
 
 					formTot = salCal.getTotalAllowance() + salCal.getTotalBasicCal();
-
+				
 					try {
 
 						bonusAmt = (formTot * bonusPrcnt) / 100;
 						grossBonus = formTot + bonusAmt;
-
+						
 					} catch (Exception e) {
 						grossBonus = formTot;
 						bonusAmt = (0 * bonusPrcnt) / 100;
 					}
-
+					System.err.println("grossBonus"+grossBonus);
+					System.err.println("formTot"+formTot);
+					advPrcntAmt = (grossBonus * advPrcnt) * 100;
+					advPrcntAmt = advPrcntAmt + grossBonus;
+					pujaPrcntAmt = (grossBonus * pujaPrcnt) * 100;
+					pujaPrcntAmt = pujaPrcntAmt + grossBonus;
+					lossPrcntAmt = (grossBonus * lossPrcnt) * 100;
+					lossPrcntAmt = lossPrcntAmt + grossBonus;
+					
+					System.err.println("advPrcntAmt"+advPrcntAmt);
+					System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
+					System.err.println("lossPrcntAmt"+lossPrcntAmt);
 				} else {
-					isApplicable="No";
+					isApplicable = "No";
 					System.err.println("not Applicable");
 				}
 
@@ -324,6 +394,7 @@ public class BonusApiController {
 
 				calcSave.setCompanyEmpCode(list.getEmpCode());
 				calcSave.setCompanyId(companyId);
+				calcSave.setLocation(list.getLocName());
 				calcSave.setCurrAge(0);
 				calcSave.setCurrDesignation(list.getEmpDesgn());
 				calcSave.setEmpId(empId);
@@ -338,16 +409,16 @@ public class BonusApiController {
 				calcSave.setLoginTimeBonus(sf.format(date));
 				calcSave.setBonusApplicable(isApplicable);
 				calcSave.setGrossBonusAmt(grossBonus);
- 
- 				calcSave.setDedBonusAdvAmt(0);
-				calcSave.setDedBonusLossAmt(0);
-				calcSave.setDedBonusPujaAmt(0);
+
+				calcSave.setDedBonusAdvAmt(advPrcntAmt);
+				calcSave.setDedBonusLossAmt(lossPrcntAmt);
+				calcSave.setDedBonusPujaAmt(pujaPrcntAmt);
 				calcSave.setDedExgretiaAmt(0);
 				calcSave.setDedReason("");
 				calcSave.setExgretiaApplicable("No");
 				calcSave.setExgretiaDetails("");
-				calcSave.setfYear(2020);
-				calcSave.setIsBonussheetFinalized("0");
+			 
+				calcSave.setIsBonussheetFinalized("0");//****
 				calcSave.setIsExgretiaFinalized("0");
 				calcSave.setLoginIdExgretia(0);
 				calcSave.setLoginTimeExgretia("0000-00-00 00:00:00");
@@ -356,11 +427,11 @@ public class BonusApiController {
 				// calcSave.setPaidBonusDate(0000-00-00);
 				calcSave.setPaidExgretiaAmt(0);
 				// calcSave.setPaidExgretiaDate(paidExgretiaDate);
-				calcSave.setRecStatus(0);
-				calcSave.setTotalBonusWages(0);
+				calcSave.setRecStatus(0);//***
+				calcSave.setTotalBonusWages((int)(formTot));//******
 				calcSave.setTotalExgretiaDays(0);
 				calcSave.setTotalExgretiaWages("0");
-				calcSave.setTotalBonusDays(0);
+				calcSave.setTotalBonusDays((int)payableDay);//***
 
 				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 				String json = ow.writeValueAsString(calcSave);
@@ -392,5 +463,6 @@ public class BonusApiController {
 		return info;
 
 	}
-
+	
+	
 }

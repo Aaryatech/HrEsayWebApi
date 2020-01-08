@@ -23,8 +23,7 @@ public class BonusCalc {
 
 	private int bonusId;
 
-	private int fYear;
-
+ 
 	private int empId;
 
 	private String companyEmpCode;
@@ -124,14 +123,7 @@ public class BonusCalc {
 	public void setBonusId(int bonusId) {
 		this.bonusId = bonusId;
 	}
-
-	public int getfYear() {
-		return fYear;
-	}
-
-	public void setfYear(int fYear) {
-		this.fYear = fYear;
-	}
+ 
 
 	public int getEmpId() {
 		return empId;
@@ -459,23 +451,23 @@ public class BonusCalc {
 	@Override
 	public String toString() {
 		return "BonusCalc [bonusCalcId=" + bonusCalcId + ", companyId=" + companyId + ", bonusId=" + bonusId
-				+ ", fYear=" + fYear + ", empId=" + empId + ", companyEmpCode=" + companyEmpCode + ", location="
-				+ location + ", empName=" + empName + ", currAge=" + currAge + ", currDesignation=" + currDesignation
-				+ ", bonusDetails=" + bonusDetails + ", totalBonusDays=" + totalBonusDays + ", totalBonusWages="
-				+ totalBonusWages + ", bonusApplicable=" + bonusApplicable + ", grossBonusAmt=" + grossBonusAmt
-				+ ", dedBonusPujaAmt=" + dedBonusPujaAmt + ", dedBonusAdvAmt=" + dedBonusAdvAmt + ", dedBonusLossAmt="
-				+ dedBonusLossAmt + ", netBonusAmt=" + netBonusAmt + ", paidBonusAmt=" + paidBonusAmt
-				+ ", paidBonusDate=" + paidBonusDate + ", isBonussheetFinalized=" + isBonussheetFinalized
-				+ ", exgretiaDetails=" + exgretiaDetails + ", totalExgretiaDays=" + totalExgretiaDays
-				+ ", totalExgretiaWages=" + totalExgretiaWages + ", exgretiaApplicable=" + exgretiaApplicable
-				+ ", exgretiaAmt=" + exgretiaAmt + ", dedExgretiaAmt=" + dedExgretiaAmt + ", dedReason=" + dedReason
-				+ ", netExgretiaAmt=" + netExgretiaAmt + ", paidExgretiaAmt=" + paidExgretiaAmt + ", paidExgretiaDate="
-				+ paidExgretiaDate + ", isExgretiaFinalized=" + isExgretiaFinalized + ", recStatus=" + recStatus
-				+ ", loginIdBonus=" + loginIdBonus + ", loginIdExgretia=" + loginIdExgretia + ", loginTimeBonus="
-				+ loginTimeBonus + ", loginTimeExgretia=" + loginTimeExgretia + ", delStatus=" + delStatus + ", exInt1="
-				+ exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
+				+ ", empId=" + empId + ", companyEmpCode=" + companyEmpCode + ", location=" + location + ", empName="
+				+ empName + ", currAge=" + currAge + ", currDesignation=" + currDesignation + ", bonusDetails="
+				+ bonusDetails + ", totalBonusDays=" + totalBonusDays + ", totalBonusWages=" + totalBonusWages
+				+ ", bonusApplicable=" + bonusApplicable + ", grossBonusAmt=" + grossBonusAmt + ", dedBonusPujaAmt="
+				+ dedBonusPujaAmt + ", dedBonusAdvAmt=" + dedBonusAdvAmt + ", dedBonusLossAmt=" + dedBonusLossAmt
+				+ ", netBonusAmt=" + netBonusAmt + ", paidBonusAmt=" + paidBonusAmt + ", paidBonusDate=" + paidBonusDate
+				+ ", isBonussheetFinalized=" + isBonussheetFinalized + ", exgretiaDetails=" + exgretiaDetails
+				+ ", totalExgretiaDays=" + totalExgretiaDays + ", totalExgretiaWages=" + totalExgretiaWages
+				+ ", exgretiaApplicable=" + exgretiaApplicable + ", exgretiaAmt=" + exgretiaAmt + ", dedExgretiaAmt="
+				+ dedExgretiaAmt + ", dedReason=" + dedReason + ", netExgretiaAmt=" + netExgretiaAmt
+				+ ", paidExgretiaAmt=" + paidExgretiaAmt + ", paidExgretiaDate=" + paidExgretiaDate
+				+ ", isExgretiaFinalized=" + isExgretiaFinalized + ", recStatus=" + recStatus + ", loginIdBonus="
+				+ loginIdBonus + ", loginIdExgretia=" + loginIdExgretia + ", loginTimeBonus=" + loginTimeBonus
+				+ ", loginTimeExgretia=" + loginTimeExgretia + ", delStatus=" + delStatus + ", exInt1=" + exInt1
+				+ ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
 	}
-
+ 
 	 
 	 
 }
