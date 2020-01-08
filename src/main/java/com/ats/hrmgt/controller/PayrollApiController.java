@@ -15,6 +15,7 @@ import com.ats.hrmgt.model.EmpSalAllowance;
 import com.ats.hrmgt.model.EmpSalaryInfoForPayroll;
 import com.ats.hrmgt.model.GetAdvanceList;
 import com.ats.hrmgt.model.GetClaimList;
+import com.ats.hrmgt.model.GetPayDedList;
 import com.ats.hrmgt.model.GetSalDynamicTempRecord;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.PayRollDataForProcessing;
@@ -26,6 +27,7 @@ import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
 import com.ats.hrmgt.repository.EmpSalaryInfoForPayrollRepository;
 import com.ats.hrmgt.repository.GetAdvanceListRepo;
 import com.ats.hrmgt.repository.GetClaimListRepo;
+import com.ats.hrmgt.repository.GetPayDedListRepo;
 import com.ats.hrmgt.repository.GetSalDynamicTempRecordRepository;
 import com.ats.hrmgt.repository.SalAllownceTempRepo;
 import com.ats.hrmgt.repository.SalaryCalcTempRepo;
@@ -56,6 +58,10 @@ public class PayrollApiController {
 
 	@Autowired
 	GetClaimListRepo getClaimListRepo;
+	
+	@Autowired
+	GetPayDedListRepo getPayDedListRepo;
+	
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -181,6 +187,8 @@ public class PayrollApiController {
 			List<SalaryCalcTemp> listForUpdatedValue = salaryCalcTempRepo.listForUpdatedValue(month, year, empIds);
 			List<GetAdvanceList> getAdvanceList = getAdvanceListRepo.getAdvanceList(month, year, empIds);
 			List<GetClaimList> getClaimList = getClaimListRepo.getClaimList(month, year, empIds);
+			List<GetPayDedList> getPayDedList = getPayDedListRepo.getPayDedList(month, year, empIds);
+			List<GetPayDedList> getLoanList = getPayDedListRepo.getLoanList(year+"-"+month+"-01" , empIds);
 
 			for (int i = 0; i < listForUpdatedValue.size(); i++) {
 
@@ -210,6 +218,34 @@ public class PayrollApiController {
 				}
 				if (flag == 0) {
 					listForUpdatedValue.get(i).setMiscExpAdd(0);
+				}
+				
+				flag = 0;
+				for (int j = 0; j < getPayDedList.size(); j++) {
+
+					if (getPayDedList.get(j).getEmpId() == listForUpdatedValue.get(i).getEmpId()) {
+						listForUpdatedValue.get(i).setPayDed(getPayDedList.get(j).getAmt());
+						flag = 1;
+						break;
+					}
+
+				}
+				if (flag == 0) {
+					listForUpdatedValue.get(i).setPayDed(0);
+				}
+				
+				flag = 0;
+				for (int j = 0; j < getLoanList.size(); j++) {
+
+					if (getLoanList.get(j).getEmpId() == listForUpdatedValue.get(i).getEmpId()) {
+						listForUpdatedValue.get(i).setLoanDed(getLoanList.get(j).getAmt());
+						flag = 1;
+						break;
+					}
+
+				}
+				if (flag == 0) {
+					listForUpdatedValue.get(i).setLoanDed(0);
 				}
 			}
 
