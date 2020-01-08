@@ -2,8 +2,8 @@ package com.ats.hrmgt.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,25 +12,41 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.hrmgt.model.Allowances;
 import com.ats.hrmgt.model.EmpAllowanceList;
 import com.ats.hrmgt.model.EmpSalAllowance;
+import com.ats.hrmgt.model.EmpSalInfoDaiyInfoTempInfo;
+import com.ats.hrmgt.model.EmpSalaryInfo;
 import com.ats.hrmgt.model.EmpSalaryInfoForPayroll;
 import com.ats.hrmgt.model.GetAdvanceList;
 import com.ats.hrmgt.model.GetClaimList;
 import com.ats.hrmgt.model.GetPayDedList;
 import com.ats.hrmgt.model.GetSalDynamicTempRecord;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.model.MstEmpType;
 import com.ats.hrmgt.model.PayRollDataForProcessing;
 import com.ats.hrmgt.model.SalAllownceTemp;
-import com.ats.hrmgt.model.SalaryCalc;
 import com.ats.hrmgt.model.SalaryCalcTemp;
+import com.ats.hrmgt.model.SalaryTerm;
+import com.ats.hrmgt.model.SalaryTypesMaster;
+import com.ats.hrmgt.model.SampleClass;
+import com.ats.hrmgt.model.Setting;
+import com.ats.hrmgt.model.SlabMaster;
 import com.ats.hrmgt.repository.AllowancesRepo;
 import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
+import com.ats.hrmgt.repository.EmpSalInfoDaiyInfoTempInfoRepo;
 import com.ats.hrmgt.repository.EmpSalaryInfoForPayrollRepository;
+import com.ats.hrmgt.repository.EmpSalaryInfoRepo;
 import com.ats.hrmgt.repository.GetAdvanceListRepo;
 import com.ats.hrmgt.repository.GetClaimListRepo;
 import com.ats.hrmgt.repository.GetPayDedListRepo;
 import com.ats.hrmgt.repository.GetSalDynamicTempRecordRepository;
+import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.SalAllownceTempRepo;
 import com.ats.hrmgt.repository.SalaryCalcTempRepo;
+import com.ats.hrmgt.repository.SalaryTermRepository;
+import com.ats.hrmgt.repository.SalaryTypesMasterRepo;
+import com.ats.hrmgt.repository.SettingRepo;
+import com.ats.hrmgt.repository.SlabMasterRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 @RestController
 public class PayrollApiController {
@@ -58,10 +74,30 @@ public class PayrollApiController {
 
 	@Autowired
 	GetClaimListRepo getClaimListRepo;
-	
+
 	@Autowired
 	GetPayDedListRepo getPayDedListRepo;
+
+	@Autowired
+	MstEmpTypeRepository mstEmpTypeRepository;
+
+	@Autowired
+	SalaryTypesMasterRepo salaryTypesMasterRepo;
+
+	@Autowired
+	SlabMasterRepository slabMasterRepository;
+
+	@Autowired
+	SalaryTermRepository salaryTermRepository;
+
+	@Autowired
+	SettingRepo settingRepo;
+
+	@Autowired
+	EmpSalaryInfoRepo empSalaryInfoRepo;
 	
+	@Autowired
+	EmpSalInfoDaiyInfoTempInfoRepo empSalInfoDaiyInfoTempInfoRepo;
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -188,7 +224,7 @@ public class PayrollApiController {
 			List<GetAdvanceList> getAdvanceList = getAdvanceListRepo.getAdvanceList(month, year, empIds);
 			List<GetClaimList> getClaimList = getClaimListRepo.getClaimList(month, year, empIds);
 			List<GetPayDedList> getPayDedList = getPayDedListRepo.getPayDedList(month, year, empIds);
-			List<GetPayDedList> getLoanList = getPayDedListRepo.getLoanList(year+"-"+month+"-01" , empIds);
+			List<GetPayDedList> getLoanList = getPayDedListRepo.getLoanList(year + "-" + month + "-01", empIds);
 
 			for (int i = 0; i < listForUpdatedValue.size(); i++) {
 
@@ -219,7 +255,7 @@ public class PayrollApiController {
 				if (flag == 0) {
 					listForUpdatedValue.get(i).setMiscExpAdd(0);
 				}
-				
+
 				flag = 0;
 				for (int j = 0; j < getPayDedList.size(); j++) {
 
@@ -233,7 +269,7 @@ public class PayrollApiController {
 				if (flag == 0) {
 					listForUpdatedValue.get(i).setPayDed(0);
 				}
-				
+
 				flag = 0;
 				for (int j = 0; j < getLoanList.size(); j++) {
 
@@ -308,6 +344,102 @@ public class PayrollApiController {
 			info.setError(false);
 			info.setMsg("success");
 
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("failed");
+			e.printStackTrace();
+		}
+
+		return info;
+	}
+
+	@RequestMapping(value = { "/sampleWebservice" }, method = RequestMethod.GET)
+	public List<SampleClass> sampleWebservice() {
+
+		List<SampleClass> list = new ArrayList<>();
+
+		try {
+			SampleClass sampleClass = new SampleClass();
+			sampleClass.setValue(10);
+			sampleClass.setName("akshay");
+			list.add(sampleClass);
+
+			sampleClass = new SampleClass();
+			sampleClass.setValue(12);
+			sampleClass.setName("kishore");
+			list.add(sampleClass);
+
+			for (int i = 0; i < list.size(); i++) {
+
+				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				String json = ow.writeValueAsString(list.get(i));
+				String[] splt = json.substring(1, json.length() - 1).split(",");
+
+				for (int j = 0; j < splt.length; j++) {
+					if (splt[j].contains("value")) {
+						String[] value = splt[j].split(":");
+						System.out.println(value[1].trim());
+						break;
+					}
+				}
+
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
+	@RequestMapping(value = { "/calculateSalary" }, method = RequestMethod.POST)
+	public Info calculateSalary(@RequestParam("month") int month, @RequestParam("year") int year,
+			@RequestParam("empIds") List<Integer> empIds) {
+
+		Info info = new Info();
+
+		try {
+			
+			List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList = empSalInfoDaiyInfoTempInfoRepo.getSalaryTempList(month, year, empIds);
+			List<SalaryTypesMaster> salaryTypeList = salaryTypesMasterRepo.findAllByDelStatus(1);
+			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
+			List<SlabMaster> slabMasterList = slabMasterRepository.findAll();// slab
+			List<SalaryTerm> salaryTermList = salaryTermRepository.getSalaryTermList();// salary tem
+			List<Setting> settingList = settingRepo.findByGroup("PAYROLL");
+			 
+
+			MstEmpType mstEmpType = new MstEmpType();
+			SalaryTypesMaster salaryType = new SalaryTypesMaster();
+			 
+
+			for (int i = 0; i < getSalaryTempList.size(); i++) {
+
+				for (int j = 0; j < mstEmpTypeList.size(); j++) {
+
+					if (mstEmpTypeList.get(j).getEmpTypeId() == getSalaryTempList.get(i).getEmpType()) {
+						mstEmpType = mstEmpTypeList.get(j);
+						break;
+					}
+
+				}
+
+				for (int j = 0; j < salaryTypeList.size(); j++) {
+
+					if (salaryTypeList.get(j).getSalTypeId() == getSalaryTempList.get(i).getSalTypeId()) {
+						salaryType = salaryTypeList.get(j);
+						break;
+					}
+
+				}
+
+				 
+			}
+			
+			System.out.println(getSalaryTempList);
+
+			info.setError(false);
+			info.setMsg("success");
 		} catch (Exception e) {
 			info.setError(true);
 			info.setMsg("failed");

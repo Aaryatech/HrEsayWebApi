@@ -22,7 +22,10 @@ public interface EmpSalaryInfoRepo extends JpaRepository<EmpSalaryInfo, Integer>
 
 	@Transactional
 	@Modifying
-	@Query(value="UPDATE `tbl_emp_salary_info` SET del_status=0 WHERE emp_id=:empId",nativeQuery=true)
+	@Query(value = "UPDATE `tbl_emp_salary_info` SET del_status=0 WHERE emp_id=:empId", nativeQuery = true)
 	int deleteEmpSalInfo(@Param("empId") int empId);
+
+	@Query(value = "select * from tbl_emp_salary_info  where emp_id in (:empIds)", nativeQuery = true)
+	List<EmpSalaryInfo> getSalaryInfoList(@Param("empIds") List<Integer> empIds);
 
 }
