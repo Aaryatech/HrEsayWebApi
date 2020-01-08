@@ -95,7 +95,7 @@ public class PayrollApiController {
 
 	@Autowired
 	EmpSalaryInfoRepo empSalaryInfoRepo;
-	
+
 	@Autowired
 	EmpSalInfoDaiyInfoTempInfoRepo empSalInfoDaiyInfoTempInfoRepo;
 
@@ -432,6 +432,57 @@ public class PayrollApiController {
 					}
 
 				}
+				
+				
+				for (int j = 0; j < salaryTermList.size(); j++) {
+					
+					 if(salaryTermList.get(j).getSalTypeId()==salaryType.getSalTypeId()) {
+						 
+						 double ammt = 0;
+						 
+						 if(salaryTermList.get(j).getFromColumn().equals("basic")) {
+							 ammt=getSalaryTempList.get(i).getBasic();
+						 }else if(salaryTermList.get(j).getFromColumn().equals("performance_bouns_cal")) {
+							 ammt=getSalaryTempList.get(i).getPerformanceBonus();
+						 }else if(salaryTermList.get(j).getFromColumn().equals("society_contribution")) {
+							 ammt=getSalaryTempList.get(i).getSocietyContribution();
+						 }else if(salaryTermList.get(j).getFromColumn().equals("add_washing")) {
+							 
+						 }
+							 
+						 if(salaryTermList.get(j).getFormulaType().equals("F")) {
+							  
+						 }else if(salaryTermList.get(j).getFormulaType().equals("A")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("A1")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("S")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("X")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("P")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("D")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("Y")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("C1")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("OT")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("OTN")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("OT1")) {
+							 
+						 }else if(salaryTermList.get(j).getFormulaType().equals("FD")) {
+							 
+						 }
+						 
+						 
+					 }
+					
+				}
+				
 
 				 
 			}
