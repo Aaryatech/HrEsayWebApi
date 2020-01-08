@@ -10,7 +10,7 @@ import com.ats.hrmgt.model.EmpSalInfoDaiyInfoTempInfo;
 
 public interface EmpSalInfoDaiyInfoTempInfoRepo extends JpaRepository<EmpSalInfoDaiyInfoTempInfo, Integer>{
 
-	@Query(value = "select sdt.id, sdt.cmp_id, sdt.emp_id, sdt.emp_code,sdt.emp_type,sdt.contractor_id,sdt.depart_id,sdt.designation_id,sdt.location_id, sdt.calc_month, "
+	@Query(value = "select uuid() as uuid , sdt.id, sdt.cmp_id, sdt.emp_id, sdt.emp_code,sdt.emp_type,sdt.contractor_id,sdt.depart_id,sdt.designation_id,sdt.location_id, sdt.calc_month, "
 			+ "sdt.calc_year, sdt.sal_type_id, sdt.att_sum_id, sdt.basic_cal, sdt.performance_bonus, sdt.ot_wages, sdt.misc_exp_add, sdt.bonus_cal, sdt.exgretia_cal, "
 			+ "sdt.da_arreas_cal, sdt.increment_arreas_cal, sdt.epf_wages, sdt.epf_wages_employer, sdt.esic_wages_cal, sdt.gross_salary as gross_salary_dytemp, "
 			+ "sdt.eps_wages, sdt.esic_wages_dec, sdt.employee_pf, sdt.employer_eps, sdt.employer_pf, sdt.esic, sdt.employer_esic, sdt.esic_status, sdt.pf_status, "
@@ -35,7 +35,7 @@ public interface EmpSalInfoDaiyInfoTempInfoRepo extends JpaRepository<EmpSalInfo
 			"        and sd.year=:year  \n" + 
 			"        and sd.month=sdt.calc_month \n" + 
 			"        and sd.year=sdt.calc_year\n" + 
-			"        and sd.emp_id in (:empIds)      \n" + 
+			"        and sdt.emp_id in (:empIds)      \n" + 
 			"    order by\n" + 
 			"        sd.emp_id", nativeQuery = true)
 	List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList(@Param("month") int month, @Param("year") int year,
