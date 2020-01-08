@@ -77,7 +77,7 @@ public class BonusApiController {
 		List<BonusMaster> list = new ArrayList<BonusMaster>();
 		try {
 
-			list = bonusMasterRepo.findByDelStatus(1);
+			list = bonusMasterRepo.findByDelStatus();
 
 		} catch (Exception e) {
 
@@ -177,12 +177,11 @@ public class BonusApiController {
 
 	}
 
-	
-	@RequestMapping(value = { "/getAllEmployeeDetailForBonus" }, method = RequestMethod.GET)
-	public List<GetEmployeeDetails> getAllEmployeeDetailForBonus() {
-		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
+	@RequestMapping(value = { "/getBonusCalcList" }, method = RequestMethod.POST)
+	public List<BonusCalc> getAllEmployeeDetailForBonus(@RequestParam("bonusId")int bonusId) {
+		List<BonusCalc> list = new ArrayList<BonusCalc>();
 		try {
-			list = getEmployeeDetailsRepo.getEmpDetailListForBonus();
+			list = bonusCalcRepo.getEmpDetailListForBonus(bonusId);
 		} catch (Exception e) {
 			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
 			e.printStackTrace();
@@ -190,19 +189,18 @@ public class BonusApiController {
 
 		return list;
 	}
-	
-	@RequestMapping(value = { "/getAllEmployeeDetailForBonusUpdate" }, method = RequestMethod.POST)
-	public List<GetEmployeeDetails> getAllEmployeeDetailForBonusUpdate(@RequestParam("bonusId") int bonusId) {
-		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
-		try {
-			list = getEmployeeDetailsRepo.getEmpDetailListForBonus();
-		} catch (Exception e) {
-			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
-			e.printStackTrace();
-		}
 
-		return list;
-	}
+	/*
+	 * @RequestMapping(value = { "/getAllEmployeeDetailForBonusUpdate" }, method =
+	 * RequestMethod.POST) public List<GetEmployeeDetails>
+	 * getAllEmployeeDetailForBonusUpdate(@RequestParam("bonusId") int bonusId) {
+	 * List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>(); try {
+	 * list = getEmployeeDetailsRepo.getEmpDetailListForBonus(); } catch (Exception
+	 * e) { System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
+	 * e.printStackTrace(); }
+	 * 
+	 * return list; }
+	 */
 
 	// Bonus Main WS
 
@@ -230,10 +228,12 @@ public class BonusApiController {
 			@RequestParam("bonusId") int bonusId, @RequestParam("companyId") int companyId,
 			@RequestParam("userId") int userId) {
 
-		// Note : bonus_sealing_limit_amount_per_month & bonus_app_below_amount are  remaning
+		// Note : bonus_sealing_limit_amount_per_month & bonus_app_below_amount are
+		// remaning
 		Info info = new Info();
 		Date date = new Date();
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//String retString = new String();
 
 		// To get bonus details
 		BonusMaster bonus = new BonusMaster();
@@ -314,18 +314,35 @@ public class BonusApiController {
 		// System.err.println("empIdList **" + empIdList.toString());
 		try {
 			for (int i = 0; i < empIdList.size(); i++) {
+
 				int empId = empIdList.get(i);
-				double payableDay=0.0;
+				int isAdd = 0;
+				try {
+
+					BonusCalc ispresen = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
+					if (ispresen == null) {
+						isAdd = 1;
+					} else {
+						isAdd = 2;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+
+				}
+
+				// System.err.println("is Add" + isAdd);
+				double payableDay = 0.0;
 				try {
 					BonusParam salDays = bonusParamRepo.getDays(empId, datesDet.getMonthFrom(), datesDet.getMonthTo(),
 							datesDet.getYearFrom(), datesDet.getYearTo());
-					payableDay=salDays.getTotalBasicCal();
+					payableDay = Double.parseDouble(salDays.getTotalBasicCal());
+
 				} catch (Exception e) {
 
 					payableDay = 0;
 
 				}
- 
+
 				double bonusAmt = 0;
 				double grossBonus = 0;
 				String isApplicable = null;
@@ -333,125 +350,154 @@ public class BonusApiController {
 				double pujaPrcntAmt = 0.0;
 				double lossPrcntAmt = 0.0;
 				double formTot = 0.0;
-				if (payableDay <= bonus.getMinDays()) {
-					isApplicable = "Yes";
 
-					System.err.println("Applicable");
-					double basic_calc = 0;
+				if (isAdd == 1) {
+					// System.err.println("isert process");
 
-					// to get total from formula
+					if (payableDay <= bonus.getMinDays()) {
+						isApplicable = "Yes";
 
-					List<Integer> allIdList = new ArrayList<Integer>();
-					for (int j = 0; j < formulaList.size(); j++) {
+						System.err.println("Applicable");
+						double basic_calc = 0;
 
-						// System.err.println("formulaList for **" + formulaList.get(j));
-						Allowances ac = new Allowances();
-						try {
-							ac = AalowancesRepo.findByShortNameAndDelStatus(formulaList.get(j).trim(), 1);
-							allIdList.add(ac.getAllowanceId());
-						} catch (Exception e) {
+						// to get total from formula
 
+						List<Integer> allIdList = new ArrayList<Integer>();
+						for (int j = 0; j < formulaList.size(); j++) {
+
+							// System.err.println("formulaList for **" + formulaList.get(j));
+							Allowances ac = new Allowances();
+							try {
+								ac = AalowancesRepo.findByShortNameAndDelStatus(formulaList.get(j).trim(), 1);
+								allIdList.add(ac.getAllowanceId());
+							} catch (Exception e) {
+
+							}
 						}
-					}
-					BonusParam salCal = bonusParamRepo.getBonusParameters(empId, datesDet.getMonthFrom(),
-							datesDet.getMonthTo(), datesDet.getYearFrom(), datesDet.getYearTo(), allIdList);
 
-					formTot = salCal.getTotalAllowance() + salCal.getTotalBasicCal();
-				
-					try {
+						try {
+							BonusParam salCal = bonusParamRepo.getBonusParameters(empId, datesDet.getMonthFrom(),
+									datesDet.getMonthTo(), datesDet.getYearFrom(), datesDet.getYearTo(), allIdList);
+							// System.err.println("BonusParam**" + salCal.toString());
+							if (salCal.getTotalAllowance() == null) {
+								formTot = Double.parseDouble(salCal.getTotalBasicCal());
 
-						bonusAmt = (formTot * bonusPrcnt) / 100;
-						grossBonus = formTot + bonusAmt;
-						
-					} catch (Exception e) {
-						grossBonus = formTot;
-						bonusAmt = (0 * bonusPrcnt) / 100;
+							} else if (salCal.getTotalBasicCal() == null) {
+								formTot = 0;
+							} else {
+								formTot = Double.parseDouble(salCal.getTotalBasicCal())
+										+ Double.parseDouble(salCal.getTotalAllowance());
+							}
+						} catch (Exception e) {
+							formTot = 0;
+						}
+
+						try {
+
+							bonusAmt = (formTot * bonusPrcnt) / 100;
+							grossBonus = formTot + bonusAmt;
+
+						} catch (Exception e) {
+							grossBonus = formTot;
+							bonusAmt = (0 * bonusPrcnt) / 100;
+						}
+						// System.err.println("grossBonus"+grossBonus);
+						// System.err.println("formTot"+formTot);
+						advPrcntAmt = (grossBonus * advPrcnt) * 100;
+						advPrcntAmt = advPrcntAmt + grossBonus;
+						pujaPrcntAmt = (grossBonus * pujaPrcnt) * 100;
+						pujaPrcntAmt = pujaPrcntAmt + grossBonus;
+						lossPrcntAmt = (grossBonus * lossPrcnt) * 100;
+						lossPrcntAmt = lossPrcntAmt + grossBonus;
+
+						// System.err.println("advPrcntAmt"+advPrcntAmt);
+						// System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
+						// System.err.println("lossPrcntAmt"+lossPrcntAmt);
+					} else {
+						isApplicable = "No";
+						System.err.println("not Applicable");
 					}
-					System.err.println("grossBonus"+grossBonus);
-					System.err.println("formTot"+formTot);
-					advPrcntAmt = (grossBonus * advPrcnt) * 100;
-					advPrcntAmt = advPrcntAmt + grossBonus;
-					pujaPrcntAmt = (grossBonus * pujaPrcnt) * 100;
-					pujaPrcntAmt = pujaPrcntAmt + grossBonus;
-					lossPrcntAmt = (grossBonus * lossPrcnt) * 100;
-					lossPrcntAmt = lossPrcntAmt + grossBonus;
-					
-					System.err.println("advPrcntAmt"+advPrcntAmt);
-					System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
-					System.err.println("lossPrcntAmt"+lossPrcntAmt);
-				} else {
-					isApplicable = "No";
-					System.err.println("not Applicable");
+
+					// System.err.println("param **" + salCal.toString());
+
+					GetEmployeeDetails list = getEmployeeDetailsRepo.getEmpDetailList(empId);
+
+					BonusCalc calcSave = new BonusCalc();
+
+					calcSave.setBonusId(bonusId);
+
+					calcSave.setCompanyEmpCode(list.getEmpCode());
+					calcSave.setCompanyId(companyId);
+					calcSave.setLocation(list.getLocName());
+					calcSave.setCurrAge(0);
+					calcSave.setCurrDesignation(list.getEmpDesgn());
+					calcSave.setEmpId(empId);
+					calcSave.setEmpName(list.getFirstName().concat("").concat(list.getMiddleName().concat("").concat(list.getSurname())));
+					calcSave.setNetBonusAmt(bonusAmt);
+					calcSave.setDelStatus(1);
+					calcSave.setExVar2("NA");
+					calcSave.setExInt1(0);
+					calcSave.setExInt2(0);
+					calcSave.setExVar1("NA");
+					calcSave.setLoginIdBonus(userId);
+					calcSave.setLoginTimeBonus(sf.format(date));
+					calcSave.setBonusApplicable(isApplicable);
+					calcSave.setGrossBonusAmt(grossBonus);
+
+					calcSave.setDedBonusAdvAmt(advPrcntAmt);
+					calcSave.setDedBonusLossAmt(lossPrcntAmt);
+					calcSave.setDedBonusPujaAmt(pujaPrcntAmt);
+					calcSave.setDedExgretiaAmt(0);
+					calcSave.setDedReason("");
+					calcSave.setExgretiaApplicable("No");
+					calcSave.setExgretiaDetails("");
+
+					calcSave.setIsBonussheetFinalized("0");// ****
+					calcSave.setIsExgretiaFinalized("0");
+					calcSave.setLoginIdExgretia(0);
+					calcSave.setLoginTimeExgretia("0000-00-00 00:00:00");
+					calcSave.setNetExgretiaAmt(0);
+					calcSave.setPaidBonusAmt(0);
+					// calcSave.setPaidBonusDate(0000-00-00);
+					calcSave.setPaidExgretiaAmt(0);
+					// calcSave.setPaidExgretiaDate(paidExgretiaDate);
+					calcSave.setRecStatus(0);// ***
+					calcSave.setTotalBonusWages((int) (formTot));// ******
+					calcSave.setTotalExgretiaDays(0);
+					calcSave.setTotalExgretiaWages("0");
+					calcSave.setTotalBonusDays((int) payableDay);// ***
+
+					ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+					String json = ow.writeValueAsString(calcSave);
+
+					calcSave.setBonusDetails(json);
+					BonusCalc calcSave1 = bonusCalcRepo.save(calcSave);
+
+					if (calcSave1 != null) {
+
+						/*
+						 * if (retString.length() == 0) { retString =
+						 * (String.valueOf(calcSave1.getBonusCalcId()));
+						 * 
+						 * } else { retString =
+						 * retString.concat(",").concat(String.valueOf(calcSave1.getBonusCalcId()));
+						 * 
+						 * }
+						 */
+
+						info.setError(false);
+						info.setMsg("success");
+
+					} else {
+						info.setError(true);
+						info.setMsg("failed");
+
+					}
+
+					//System.err.println("retString**" + retString);
 				}
-
-				// System.err.println("param **" + salCal.toString());
-
-				GetEmployeeDetails list = getEmployeeDetailsRepo.getEmpDetailList(empId);
-
-				BonusCalc calcSave = new BonusCalc();
-
-				calcSave.setBonusId(bonusId);
-
-				calcSave.setCompanyEmpCode(list.getEmpCode());
-				calcSave.setCompanyId(companyId);
-				calcSave.setLocation(list.getLocName());
-				calcSave.setCurrAge(0);
-				calcSave.setCurrDesignation(list.getEmpDesgn());
-				calcSave.setEmpId(empId);
-				calcSave.setEmpName(list.getFirstName().concat("").concat(list.getSurname()));
-				calcSave.setNetBonusAmt(bonusAmt);
-				calcSave.setDelStatus(1);
-				calcSave.setExVar2("NA");
-				calcSave.setExInt1(0);
-				calcSave.setExInt2(0);
-				calcSave.setExVar1("NA");
-				calcSave.setLoginIdBonus(userId);
-				calcSave.setLoginTimeBonus(sf.format(date));
-				calcSave.setBonusApplicable(isApplicable);
-				calcSave.setGrossBonusAmt(grossBonus);
-
-				calcSave.setDedBonusAdvAmt(advPrcntAmt);
-				calcSave.setDedBonusLossAmt(lossPrcntAmt);
-				calcSave.setDedBonusPujaAmt(pujaPrcntAmt);
-				calcSave.setDedExgretiaAmt(0);
-				calcSave.setDedReason("");
-				calcSave.setExgretiaApplicable("No");
-				calcSave.setExgretiaDetails("");
-			 
-				calcSave.setIsBonussheetFinalized("0");//****
-				calcSave.setIsExgretiaFinalized("0");
-				calcSave.setLoginIdExgretia(0);
-				calcSave.setLoginTimeExgretia("0000-00-00 00:00:00");
-				calcSave.setNetExgretiaAmt(0);
-				calcSave.setPaidBonusAmt(0);
-				// calcSave.setPaidBonusDate(0000-00-00);
-				calcSave.setPaidExgretiaAmt(0);
-				// calcSave.setPaidExgretiaDate(paidExgretiaDate);
-				calcSave.setRecStatus(0);//***
-				calcSave.setTotalBonusWages((int)(formTot));//******
-				calcSave.setTotalExgretiaDays(0);
-				calcSave.setTotalExgretiaWages("0");
-				calcSave.setTotalBonusDays((int)payableDay);//***
-
-				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-				String json = ow.writeValueAsString(calcSave);
-
-				calcSave.setBonusDetails(json);
-				BonusCalc calcSave1 = bonusCalcRepo.save(calcSave);
-
 			}
 
-			int res = 0;
-
-			if (res > 0) {
-				info.setError(false);
-				info.setMsg("success");
-
-			} else {
-				info.setError(true);
-				info.setMsg("failed");
-
-			}
 		} catch (Exception e) {
 
 			System.err.println("Exce in deleteService  " + e.getMessage());
@@ -463,6 +509,5 @@ public class BonusApiController {
 		return info;
 
 	}
-	
-	
+
 }

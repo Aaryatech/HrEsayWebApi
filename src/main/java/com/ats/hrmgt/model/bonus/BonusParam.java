@@ -10,9 +10,9 @@ public class BonusParam {
 	@Id
 	private String uid;
 
-	private double totalBasicCal;
+	private String totalBasicCal;
 
-	private double totalAllowance;
+	private String totalAllowance;
 
 	public String getUid() {
 		return uid;
@@ -22,19 +22,20 @@ public class BonusParam {
 		this.uid = uid;
 	}
 
-	public double getTotalBasicCal() {
+ 
+	public String getTotalBasicCal() {
 		return totalBasicCal;
 	}
 
-	public void setTotalBasicCal(double totalBasicCal) {
+	public void setTotalBasicCal(String totalBasicCal) {
 		this.totalBasicCal = totalBasicCal;
 	}
 
-	public double getTotalAllowance() {
+	public String getTotalAllowance() {
 		return totalAllowance;
 	}
 
-	public void setTotalAllowance(double totalAllowance) {
+	public void setTotalAllowance(String totalAllowance) {
 		this.totalAllowance = totalAllowance;
 	}
 
