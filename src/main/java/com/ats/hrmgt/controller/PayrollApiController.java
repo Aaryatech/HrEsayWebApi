@@ -1,5 +1,7 @@
 package com.ats.hrmgt.controller;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -398,15 +400,14 @@ public class PayrollApiController {
 	}
 
 	@RequestMapping(value = { "/calculateSalary" }, method = RequestMethod.POST)
-	public Info calculateSalary(@RequestParam("month") int month, @RequestParam("year") int year,
-			@RequestParam("empIds") List<Integer> empIds) {
+	public List<EmpSalInfoDaiyInfoTempInfo> calculateSalary(@RequestParam("month") int month,
+			@RequestParam("year") int year, @RequestParam("empIds") List<Integer> empIds) {
 
 		Info info = new Info();
-
+		List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList = new ArrayList<>();
 		try {
 
-			List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList = empSalInfoDaiyInfoTempInfoRepo.getSalaryTempList(month,
-					year, empIds);
+			getSalaryTempList = empSalInfoDaiyInfoTempInfoRepo.getSalaryTempList(month, year, empIds);
 			List<SalaryTypesMaster> salaryTypeList = salaryTypesMasterRepo.findAllByDelStatus(1);
 			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
 			List<SlabMaster> slabMasterList = slabMasterRepository.findAll();// slab
@@ -424,7 +425,7 @@ public class PayrollApiController {
 					}
 
 				}
-				getSalaryTempList.get(i).setGetAllowanceTempList(getAllowanceTempList);
+				getSalaryTempList.get(i).setGetAllowanceTempList(list);
 			}
 
 			MstEmpType mstEmpType = new MstEmpType();
@@ -457,7 +458,7 @@ public class PayrollApiController {
 						double ammt = 0;
 						int index = 0;
 
-						if (!salaryTermList.get(j).getFromColumn().equals("")) { 
+						if (!salaryTermList.get(j).getFromColumn().equals("")) {
 							if (salaryTermList.get(j).getFromColumn().equals("basic")) {
 								ammt = getSalaryTempList.get(i).getBasic();
 							} else if (salaryTermList.get(j).getFromColumn().equals("performance_bouns_cal")) {
@@ -601,6 +602,191 @@ public class PayrollApiController {
 
 				}
 
+				if (!getSalaryTempList.get(i).getMlwfApplicable().equalsIgnoreCase("yes")) {
+					getSalaryTempList.get(i).setMlwf(0);
+				}
+
+				float epf_wages_employee = 0;
+				float epf_wages_employeR = 0;
+				float eps_Cal = 0;
+				float epf_percentage = 0;
+				float cealing_limit_eps_wages = 0;
+				float eps_percentage = 0;
+				float ceiling_limit = 0;
+				float eps_age_limit = 0;
+				float esic_limit = 0;
+				float tot_pf_admin_ch_percentage = 0;
+				float tot_edli_ch_percentage = 0;
+				float tot_edli_admin_ch_percentage = 0;
+
+				for (int k = 0; k < settingList.size(); k++) {
+					if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit_eps_wages")) {
+						cealing_limit_eps_wages = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("eps_percentage")) {
+						eps_percentage = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("epf_percentage")) {
+						epf_percentage = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit")) {
+						ceiling_limit = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("eps_age_limit")) {
+						eps_age_limit = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("esic_limit")) {
+						esic_limit = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_pf_admin_ch")) {
+						tot_pf_admin_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_edli_ch")) {
+						tot_edli_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_edli_admin_ch")) {
+						tot_edli_admin_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
+					}
+				}
+
+				try {
+					if (getSalaryTempList.get(i).getCeilingLimitEmpApplicable().equalsIgnoreCase("yes")
+							&& getSalaryTempList.get(i).getEpfWages() > ceiling_limit) {
+						epf_wages_employee = ceiling_limit;
+					} else {
+						epf_wages_employee = (float) getSalaryTempList.get(i).getEpfWages();
+					}
+				} catch (Exception e) {
+
+				}
+
+				try {
+					if (getSalaryTempList.get(i).getCeilingLimitEmployerApplicable().equalsIgnoreCase("yes")
+							&& getSalaryTempList.get(i).getEpfWages() > ceiling_limit) {
+						epf_wages_employeR = ceiling_limit;
+
+					} else {
+						epf_wages_employeR = (float) getSalaryTempList.get(i).getEpfWages();
+					}
+				} catch (Exception e) {
+
+				}
+				getSalaryTempList.get(i).setEpfWagesEmployer(epf_wages_employeR);
+
+				try {
+					if (getSalaryTempList.get(i).getEpsWages() > cealing_limit_eps_wages) {
+						eps_Cal = cealing_limit_eps_wages;
+					} // $this->emp_sal_terms_col[$emp_id]['eps_wages'] > $sealing_limit_eps_wages
+					else {
+						eps_Cal = (float) getSalaryTempList.get(i).getEpsWages();
+					}
+				} catch (Exception e) {
+
+				}
+
+				try {
+					if (getSalaryTempList.get(i).getPfApplicable().equalsIgnoreCase("yes")) {
+
+						getSalaryTempList.get(i).setPfStatus(1);
+						// ok
+						// echo $value->pf_type;
+						try {
+							if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("statutory")) {
+								getSalaryTempList.get(i).setEmployeePf(epf_wages_employee * epf_percentage);
+
+							} // strtolower($value->pf_type) == 'statutory'
+							else if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("voluntary")) {
+								getSalaryTempList.get(i).setEmployeePf(
+										(float) (epf_wages_employee * getSalaryTempList.get(i).getPfEmpPer()));
+							} // strtolower($value->pf_type) == 'voluntary'
+								// ok
+								// eps_age_limit
+								// $age = $this->mpayroll->calculateAge($value->dob);
+
+							/*
+							 * LocalDate birthDate = LocalDate.of(1961, 5, 17); int age =
+							 * calculateAge(birthDate, LocalDate.of(2016, 7, 12));
+							 */
+						} catch (Exception e) {
+
+						}
+						int age = 60;
+						if (age <= eps_age_limit) {
+							// employer_eps
+							float EPS = eps_Cal;
+							float employer_eps = eps_Cal * eps_percentage;
+							getSalaryTempList.get(i).setEmployerEps(employer_eps);
+							getSalaryTempList.get(i).setEpsWages(eps_Cal);
+							/*
+							 * $this->emp_sal_terms_col[$emp_id]['employer_eps'] = round($employer_eps);
+							 * $this->emp_sal_terms_col[$emp_id]['eps_wages'] = $eps_Cal;
+							 */
+							// ok
+						} // $age <= $eps_age_limit
+						else {
+							getSalaryTempList.get(i).setEmployerEps(0);
+							getSalaryTempList.get(i).setEpsWages(0);
+
+						}
+						// employer_pf calculation
+						getSalaryTempList.get(i).setEmployerPf(
+								(epf_wages_employeR * epf_percentage) - getSalaryTempList.get(i).getEmployerEps());
+
+					} // strtolower($value->pf_applicable) == 'yes'
+					else // $emp->pf_applicable)=='no'
+					{
+						getSalaryTempList.get(i).setEmployerPf(0);
+						getSalaryTempList.get(i).setPfStatus(0);
+						getSalaryTempList.get(i).setEmployerEps(0);
+						getSalaryTempList.get(i).setEmployeePf(0);
+						getSalaryTempList.get(i).setEpfWages(0);
+						getSalaryTempList.get(i).setEpsWages(0);
+					}
+				} catch (Exception e) {
+
+				}
+				try {
+					// esic cal start
+					if (getSalaryTempList.get(i).getEsicApplicable().equalsIgnoreCase("no")) {
+						// $records['esic_wages_cal'] = 0;
+
+						getSalaryTempList.get(i).setEmployerEsic(0);
+						getSalaryTempList.get(i).setEsic(0);
+						getSalaryTempList.get(i).setEsicWagesCal(0);
+						getSalaryTempList.get(i).setPfStatus(0);
+						getSalaryTempList.get(i).setEsicStatus(0);
+					} // strtolower($value->esic_applicable) == 'no'
+					else {
+						getSalaryTempList.get(i).setPfStatus(1);
+						getSalaryTempList.get(i).setEsicStatus(1);
+
+						double employee_esic_percentage = getSalaryTempList.get(i).getEmployeeEsicPercentage();
+						double employer_esic_percentage = getSalaryTempList.get(i).getEmployerEsicPercentage();
+
+						// we have not add any code to avoid esci deduction. as it mendatory to deduct
+						// esic till some month, but kishore has changed the code to cut the esic
+						if (getSalaryTempList.get(i).getEsicWagesDec() >= esic_limit) {
+							getSalaryTempList.get(i).setEmployerEsic(0);
+							getSalaryTempList.get(i).setEsic(0);
+						} else {
+
+							getSalaryTempList.get(i).setEmployerEsic(
+									getSalaryTempList.get(i).getEsicWagesCal() * employee_esic_percentage);
+							getSalaryTempList.get(i).setEsic(
+									(float) (getSalaryTempList.get(i).getEsicWagesCal() * employer_esic_percentage));
+						}
+
+						// $records['esic_wages_dec'] = 0;
+					}
+				} catch (Exception e) {
+
+				}
+				getSalaryTempList.get(i)
+						.setTotPfAdminCh(getSalaryTempList.get(i).getEpsWages() * tot_pf_admin_ch_percentage);
+				getSalaryTempList.get(i).setTotEdliCh(getSalaryTempList.get(i).getEpsWages() * tot_edli_ch_percentage);
+				getSalaryTempList.get(i)
+						.setTotEdliAdminCh(getSalaryTempList.get(i).getEpsWages() * tot_edli_admin_ch_percentage);
+				getSalaryTempList.get(i).setStatusDytemp(1);
+				getSalaryTempList.get(i).setNetSalary((getSalaryTempList.get(i).getGrossSalaryDytemp()
+						+ getSalaryTempList.get(i).getPerformanceBonus())
+						- (getSalaryTempList.get(i).getEsic() + getSalaryTempList.get(i).getTds()
+								+ getSalaryTempList.get(i).getItded() + getSalaryTempList.get(i).getPtDed()
+								+ getSalaryTempList.get(i).getAdvanceDed() + getSalaryTempList.get(i).getLoanDed()
+								+ getSalaryTempList.get(i).getMiscExpAdd() + getSalaryTempList.get(i).getEmployeePf()
+								+ getSalaryTempList.get(i).getPayDed()
+								+ getSalaryTempList.get(i).getSocietyContributionDytemp()));
 			}
 
 			// System.out.println(getSalaryTempList);
@@ -613,7 +799,7 @@ public class PayrollApiController {
 			e.printStackTrace();
 		}
 
-		return info;
+		return getSalaryTempList;
 	}
 
 	public float calculateFdata(float percentage, String salBasis, int totalDaysInMonth, float payableDays,
@@ -773,12 +959,19 @@ public class PayrollApiController {
 		// val = castNumber(val);
 		return val;
 	}
+
+	public static int calculateAge(LocalDate birthDate, LocalDate currentDate) {
+		if ((birthDate != null) && (currentDate != null)) {
+			return Period.between(birthDate, currentDate).getYears();
+		} else {
+			return 0;
+		}
+	}
 	/*
 	 * public float castNumber(float val) { switch
 	 * ($this->sallary_term_cal_amount_setting) { case 1: $number = round($number);
 	 * break; case 2: $number = number_format($number, 2, '.', ''); break; case 3:
 	 * $number = ceil($number); break; case 4: $number = floor($number); break; }
 	 * //$this->sallary_term_cal_amount_setting return $number; }
-	 */
-
+	 */ 
 }
