@@ -30,4 +30,10 @@ public interface BonusCalcRepo extends JpaRepository<BonusCalc, Integer> {
 	@Query("update BonusCalc set del_status=0  WHERE bonus_calc_id=:bonusCalcId")
 	int deleteBonus(int bonusCalcId);
 
+	BonusCalc findByBonusIdAndEmpIdAndDelStatus();
+
+	BonusCalc findByBonusIdAndEmpIdAndDelStatus(int bonusId, int empId, int i);
+
+	int updateExgratia(double formTot, double grossExgratiaAmt, double exgratiaAmt, double dedExgratiaAmt);
+
 }
