@@ -1,9 +1,12 @@
 package com.ats.hrmgt.model;
  
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class EmpSalInfoDaiyInfoTempInfo {
@@ -147,7 +150,11 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	private float hdpresentHdleave;
 	private int totEarlyGoing;
 	private String atsummUid;
-	private int calculationDone;
+	private int calculationDone; 
+	
+	@Transient
+	private List<SalAllownceTemp> getAllowanceTempList;
+	
 	public int getId() {
 		return id;
 	}
@@ -946,6 +953,12 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
+	public List<SalAllownceTemp> getGetAllowanceTempList() {
+		return getAllowanceTempList;
+	}
+	public void setGetAllowanceTempList(List<SalAllownceTemp> getAllowanceTempList) {
+		this.getAllowanceTempList = getAllowanceTempList;
+	}
 	@Override
 	public String toString() {
 		return "EmpSalInfoDaiyInfoTempInfo [uuid=" + uuid + ", id=" + id + ", cmpId=" + cmpId + ", empId=" + empId
@@ -993,7 +1006,8 @@ public class EmpSalInfoDaiyInfoTempInfo {
 				+ ", weeklyOffPresentHalf=" + weeklyOffPresentHalf + ", weeklyOffHolidayOff=" + weeklyOffHolidayOff
 				+ ", weeklyOffHolidayOffPresent=" + weeklyOffHolidayOffPresent + ", weeklyOffHolidayOffPresentHalfday="
 				+ weeklyOffHolidayOffPresentHalfday + ", hdpresentHdleave=" + hdpresentHdleave + ", totEarlyGoing="
-				+ totEarlyGoing + ", atsummUid=" + atsummUid + ", calculationDone=" + calculationDone + "]";
+				+ totEarlyGoing + ", atsummUid=" + atsummUid + ", calculationDone=" + calculationDone
+				+ ", getAllowanceTempList=" + getAllowanceTempList + "]";
 	}
 	
 	

@@ -201,6 +201,8 @@ public class PayrollApiController {
 							empAllowance.setAllowanceValue(empAllowanceList.get(k).getAllowanceValue());
 							empAllowance.setTblSalaryDynamicTempId(saveres.getId());
 							empAllowance.setEmpId(saveres.getEmpId());
+							empAllowance.setDelStatus(1);
+							empAllowance.setShortName(allowancelist.get(j).getShortName());
 							allowlist.add(empAllowance);
 							flag = 1;
 							break;
@@ -213,6 +215,8 @@ public class PayrollApiController {
 						empAllowance.setAllowanceValue(0);
 						empAllowance.setTblSalaryDynamicTempId(saveres.getId());
 						empAllowance.setEmpId(saveres.getEmpId());
+						empAllowance.setDelStatus(1);
+						empAllowance.setShortName(allowancelist.get(j).getShortName());
 						allowlist.add(empAllowance);
 					}
 				}
@@ -400,18 +404,31 @@ public class PayrollApiController {
 		Info info = new Info();
 
 		try {
-			
-			List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList = empSalInfoDaiyInfoTempInfoRepo.getSalaryTempList(month, year, empIds);
+
+			List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList = empSalInfoDaiyInfoTempInfoRepo.getSalaryTempList(month,
+					year, empIds);
 			List<SalaryTypesMaster> salaryTypeList = salaryTypesMasterRepo.findAllByDelStatus(1);
 			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
 			List<SlabMaster> slabMasterList = slabMasterRepository.findAll();// slab
 			List<SalaryTerm> salaryTermList = salaryTermRepository.getSalaryTermList();// salary tem
 			List<Setting> settingList = settingRepo.findByGroup("PAYROLL");
-			 
+			List<SalAllownceTemp> getAllowanceTempList = salAllownceTempRepo.getAllowanceTempList(month, year, empIds);
+
+			for (int i = 0; i < getSalaryTempList.size(); i++) {
+				List<SalAllownceTemp> list = new ArrayList<>();
+
+				for (int j = 0; j < getAllowanceTempList.size(); j++) {
+
+					if (getAllowanceTempList.get(j).getTblSalaryDynamicTempId() == getSalaryTempList.get(i).getId()) {
+						list.add(getAllowanceTempList.get(j));
+					}
+
+				}
+				getSalaryTempList.get(i).setGetAllowanceTempList(getAllowanceTempList);
+			}
 
 			MstEmpType mstEmpType = new MstEmpType();
 			SalaryTypesMaster salaryType = new SalaryTypesMaster();
-			 
 
 			for (int i = 0; i < getSalaryTempList.size(); i++) {
 
@@ -432,62 +449,161 @@ public class PayrollApiController {
 					}
 
 				}
-				
-				
-				for (int j = 0; j < salaryTermList.size(); j++) {
-					
-					 if(salaryTermList.get(j).getSalTypeId()==salaryType.getSalTypeId()) {
-						 
-						 double ammt = 0;
-						 
-						 if(salaryTermList.get(j).getFromColumn().equals("basic")) {
-							 ammt=getSalaryTempList.get(i).getBasic();
-						 }else if(salaryTermList.get(j).getFromColumn().equals("performance_bouns_cal")) {
-							 ammt=getSalaryTempList.get(i).getPerformanceBonus();
-						 }else if(salaryTermList.get(j).getFromColumn().equals("society_contribution")) {
-							 ammt=getSalaryTempList.get(i).getSocietyContribution();
-						 }else if(salaryTermList.get(j).getFromColumn().equals("add_washing")) {
-							 
-						 }
-							 
-						 if(salaryTermList.get(j).getFormulaType().equals("F")) {
-							  
-						 }else if(salaryTermList.get(j).getFormulaType().equals("A")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("A1")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("S")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("X")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("P")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("D")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("Y")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("C1")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("OT")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("OTN")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("OT1")) {
-							 
-						 }else if(salaryTermList.get(j).getFormulaType().equals("FD")) {
-							 
-						 }
-						 
-						 
-					 }
-					
-				}
-				
 
-				 
+				for (int j = 0; j < salaryTermList.size(); j++) {
+
+					if (salaryTermList.get(j).getSalTypeId() == salaryType.getSalTypeId()) {
+
+						double ammt = 0;
+						int index = 0;
+
+						if (!salaryTermList.get(j).getFromColumn().equals("")) { 
+							if (salaryTermList.get(j).getFromColumn().equals("basic")) {
+								ammt = getSalaryTempList.get(i).getBasic();
+							} else if (salaryTermList.get(j).getFromColumn().equals("performance_bouns_cal")) {
+								ammt = getSalaryTempList.get(i).getSocietyContribution();
+							} else if (salaryTermList.get(j).getFromColumn().equals("society_contribution")) {
+								ammt = getSalaryTempList.get(i).getSocietyContribution();
+							} else {
+
+								for (int k = 0; k < getSalaryTempList.get(i).getGetAllowanceTempList().size(); k++) {
+
+									if (getSalaryTempList.get(i).getGetAllowanceTempList().get(k).getShortName()
+											.equals(salaryTermList.get(j).getFromColumn())) {
+										index = k;
+										ammt = getSalaryTempList.get(i).getGetAllowanceTempList().get(k)
+												.getAllowanceValue();
+									}
+
+								}
+
+							}
+						}
+						switch (salaryTermList.get(j).getFormulaType()) {
+						case "F":
+							float calculatedValue = calculateFdata(salaryTermList.get(j).getPercentage(),
+									getSalaryTempList.get(i).getSalBasis(),
+									getSalaryTempList.get(i).getTotalDaysInmonth(),
+									getSalaryTempList.get(i).getPayableDays(),
+									getSalaryTempList.get(i).getWorkingDays(), ammt,
+									getSalaryTempList.get(i).getPresentDays());
+							getSalaryTempList.get(i).setBasicCal(calculatedValue);
+							salaryTermList.get(j).setValue(calculatedValue);
+
+							break;
+						case "A":
+							float tempVal = calculateAllowancedata(salaryTermList.get(j).getPercentage(),
+									getSalaryTempList.get(i).getSalBasis(),
+									getSalaryTempList.get(i).getTotalDaysInmonth(),
+									getSalaryTempList.get(i).getPayableDays(),
+									getSalaryTempList.get(i).getWorkingDays(), ammt,
+									getSalaryTempList.get(i).getPresentDays());
+							getSalaryTempList.get(i).getGetAllowanceTempList().get(index).setAllowanceValueCal(tempVal);
+							salaryTermList.get(j).setValue(tempVal);
+							break;
+						case "S":
+							float tempValNew = 0;
+							tempVal = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i));
+
+							if (getSalaryTempList.get(i).getPtApplicable().equalsIgnoreCase("yes")) {
+
+								for (int k = 0; k < slabMasterList.size(); k++) {
+
+									if (slabMasterList.get(k).getSalTermId() == salaryTermList.get(j).getSalTermId()) {
+
+										if (tempVal >= slabMasterList.get(k).getMinVal()
+												&& tempVal <= slabMasterList.get(k).getMaxVal()) {
+
+											if (getSalaryTempList.get(i).getMonth() == 2
+													&& slabMasterList.get(k).getAmount() == 200) {
+												tempValNew = 300;
+											} // $calc_month == "2" && $amt == "200"
+											else {
+												tempValNew = slabMasterList.get(k).getAmount();
+											}
+										}
+									}
+
+								}
+							}
+
+							getSalaryTempList.get(i).setPtDed(tempValNew);
+							salaryTermList.get(j).setValue(tempValNew);
+
+							break;
+						case "X":
+							tempVal = calculateXdata(salaryTermList.get(j).getPercentage(),
+									getSalaryTempList.get(i).getSalBasis(),
+									getSalaryTempList.get(i).getTotalDaysInmonth(),
+									getSalaryTempList.get(i).getPayableDays(),
+									getSalaryTempList.get(i).getWorkingDays(), ammt,
+									getSalaryTempList.get(i).getPresentDays());
+							getSalaryTempList.get(i).setBasicDefault(tempVal);
+							salaryTermList.get(j).setValue(tempVal);
+							break;
+						case "P":
+							float temp = calculatePdata(salaryTermList.get(j), salaryTermList,
+									getSalaryTempList.get(i));
+							if (salaryTermList.get(j).getFieldName().equals("gross_salary")) {
+								getSalaryTempList.get(i).setGrossSalaryDytemp(temp);
+							} else if (salaryTermList.get(j).getFieldName().equals("epf_wages")) {
+								getSalaryTempList.get(i).setEpfWages(temp);
+							} else if (salaryTermList.get(j).getFieldName().equals("esic_wages_cal")) {
+								getSalaryTempList.get(i).setEsicWagesCal(temp);
+							} else if (salaryTermList.get(j).getFieldName().equals("eps_wages_cal")) {
+								getSalaryTempList.get(i).setEpsWages(temp);
+							} else if (salaryTermList.get(j).getFieldName().equals("esic_wages_dec_cal")) {
+								getSalaryTempList.get(i).setEsicWagesDec(temp);
+							}
+							salaryTermList.get(j).setValue(temp);
+							break;
+						case "Y":
+							// tempVal = castNumber(ammt);
+
+							if (salaryTermList.get(j).getFieldName().equals("performance_bouns_cal")) {
+								getSalaryTempList.get(i).setPerformanceBonus(ammt);
+							} else if (salaryTermList.get(j).getFieldName().equals("basic")) {
+								getSalaryTempList.get(i).setBasicDefault(ammt);
+							} else if (salaryTermList.get(j).getFieldName().equals("society_contribution")) {
+								getSalaryTempList.get(i).setSocietyContributionDytemp(ammt);
+							}
+							salaryTermList.get(j).setValue(ammt);
+							break;
+						case "C1":
+
+							break;
+						case "OT":
+							tempVal = otwages(salaryTermList.get(j).getPercentage(),
+									getSalaryTempList.get(i).getSalBasis(),
+									getSalaryTempList.get(i).getTotalDaysInmonth(),
+									getSalaryTempList.get(i).getPayableDays(),
+									getSalaryTempList.get(i).getWorkingDays(),
+									getSalaryTempList.get(i).getTotworkingHrs(), getSalaryTempList.get(i).getTotOthr(),
+									ammt);
+							getSalaryTempList.get(i).setOtWages(tempVal);
+							salaryTermList.get(j).setValue(tempVal);
+							break;
+						case "OTFD":
+
+							break;
+						case "FD":
+							tempVal = fundwages(salaryTermList.get(j).getPercentage(),
+									getSalaryTempList.get(i).getSalBasis(), ammt);
+							salaryTermList.get(j).setValue(tempVal);
+							break;
+						default:
+
+							break;
+
+						}
+
+					}
+
+				}
+
 			}
-			
-			System.out.println(getSalaryTempList);
+
+			// System.out.println(getSalaryTempList);
 
 			info.setError(false);
 			info.setMsg("success");
@@ -499,5 +615,170 @@ public class PayrollApiController {
 
 		return info;
 	}
+
+	public float calculateFdata(float percentage, String salBasis, int totalDaysInMonth, float payableDays,
+			float workingDays, double ammt, float presentDays) {
+
+		float val = 0;
+
+		if (percentage == 1) {
+			float totalPayableDaysTemp = Math.min(payableDays, totalDaysInMonth);
+
+			if (salBasis.equalsIgnoreCase("monthly")) {
+				val = (float) ((ammt / totalDaysInMonth) * totalPayableDaysTemp);
+			} // $sal_basis == "monthly"
+			else {
+				// $val = ($amount / $working_days ) * $total_payable_days;
+				val = (float) ((ammt) * totalPayableDaysTemp);
+			}
+		} // $percentage == 1
+		else if (percentage == 2) {
+			float totalPayableDaysTemp = Math.min(payableDays, totalDaysInMonth);
+			if (salBasis.equalsIgnoreCase("monthly")) {
+				val = (float) ((ammt / totalDaysInMonth) * totalPayableDaysTemp);
+			} // $sal_basis == "monthly"
+			else {
+				// $val = ($amount / $working_days ) * $total_payable_days;
+				val = (float) ((ammt / workingDays) * totalPayableDaysTemp);
+			}
+		} // $percentage == 2
+			// val = castNumber(val);
+		return val;
+	}
+
+	public float calculateAllowancedata(float percentage, String salBasis, int totalDays, float totalPayableDays,
+			float workingDays, double amount, float presentDays) {
+		float val = 0;
+
+		if (percentage == 0) {
+			// val = castNumber(amount);
+		} // $percentage == "0"
+		else if (percentage == 1) {
+			if (salBasis.equalsIgnoreCase("monthly")) {
+				val = (float) ((amount / totalDays) * totalPayableDays);
+			} // $sal_basis == "monthly"
+			else {
+				val = (float) (amount * totalPayableDays);
+			}
+
+			// val = castNumber(val);
+		} // $percentage == 1
+		else if (percentage == 2) {
+			if (salBasis.equalsIgnoreCase("monthly")) {
+				val = (float) ((amount / totalDays) * presentDays);
+			} // $sal_basis == "monthly"
+			else {
+				// $val = ($amount / $working_days ) * $total_payable_days;
+				val = (float) (amount * totalPayableDays);
+			}
+			// val = castNumber(val);
+		} // $percentage == 2
+		else if (percentage == 3) {
+			float totalPayableDaysTemp = Math.min(totalPayableDays, totalDays);
+			if (salBasis.equalsIgnoreCase("monthly")) {
+				val = (float) ((amount / totalDays) * totalPayableDaysTemp);
+			} // $sal_basis == "monthly"
+			else {
+				// $val = ($amount / $working_days ) * $total_payable_days;
+				val = (float) ((amount) * totalPayableDaysTemp);
+			}
+			// val = castNumber(val);
+		} // $percentage == 3
+
+		return val;
+	}
+
+	public float calculateXdata(float percentage, String salBasis, int totalDays, float totalPayableDays,
+			float workingDays, double amount, float presentDays) {
+
+		float val = 0;
+		if (salBasis.equalsIgnoreCase("monthly")) {
+			val = (float) amount;
+		} // $sal_basis == "monthly"
+		else {
+			// $val = ($amount / $working_days ) * $total_payable_days;
+			val = (float) (amount / totalDays);
+		}
+		return val;
+
+	}
+
+	public float calculatePdata(SalaryTerm salaryTerm, List<SalaryTerm> salaryTermList,
+			EmpSalInfoDaiyInfoTempInfo empSalInfoDaiyInfoTempInfo) {
+
+		String formula = salaryTerm.getFormula();
+		String[] plus = formula.split("\\+");
+		String[] minus = formula.split("\\-");
+
+		float value = 0;
+
+		if (plus.length > 1) {
+
+			for (int i = 0; i < plus.length; i++) {
+				for (int j = 0; j < salaryTermList.size(); j++) {
+					if (Integer.parseInt(plus[i]) == salaryTermList.get(j).getSalTermId()) {
+						value = (float) (value + salaryTermList.get(j).getValue());
+						break;
+					}
+				}
+
+			}
+		} else if (minus.length > 1) {
+			for (int i = 0; i < minus.length; i++) {
+				for (int j = 0; j < salaryTermList.size(); j++) {
+					if (Integer.parseInt(minus[i]) == salaryTermList.get(j).getSalTermId() && i == 0) {
+						value = (float) (salaryTermList.get(j).getValue());
+						break;
+					} else {
+						value = (float) (value - salaryTermList.get(j).getValue());
+					}
+				}
+
+			}
+		} else {
+			for (int j = 0; j < salaryTermList.size(); j++) {
+				if (Integer.parseInt(minus[0]) == salaryTermList.get(j).getSalTermId()) {
+					value = (float) (salaryTermList.get(j).getValue());
+					break;
+				}
+			}
+		}
+
+		return value;
+	}
+
+	public float otwages(float percentage, String salBasis, int totalDays, float totalPayableDays, float workingDays,
+			float workingHour, float otHr, double ammt) {
+
+		workingHour = workingHour / 60;
+		otHr = otHr / 60;
+		// basic+DAy
+		// metaf: amount / month_day
+		float val = 0;
+
+		if (salBasis.equalsIgnoreCase("monthly")) {
+			val = (float) ((ammt / workingDays) / (workingHour * (otHr * percentage)));
+		} // $sal_basis == "monthly"
+		else {
+			val = (float) ((ammt / workingHour) * (otHr * percentage));
+		}
+		// val = castNumber(val);
+		return val;
+	}
+
+	public float fundwages(float percentage, String salBasis, double ammt) {
+		float val = 0;
+		float per = percentage / 100;
+		val = (float) (ammt * per);
+		// val = castNumber(val);
+		return val;
+	}
+	/*
+	 * public float castNumber(float val) { switch
+	 * ($this->sallary_term_cal_amount_setting) { case 1: $number = round($number);
+	 * break; case 2: $number = number_format($number, 2, '.', ''); break; case 3:
+	 * $number = ceil($number); break; case 4: $number = floor($number); break; }
+	 * //$this->sallary_term_cal_amount_setting return $number; }
+	 */
 
 }

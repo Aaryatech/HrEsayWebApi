@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "tbl_sal_terms")
@@ -61,6 +62,9 @@ public class SalaryTerm {
 	@Column(name="remarks")
 	private String remarks;
 
+	@Transient
+	double value; 
+	
 	public int getSalTermId() {
 		return salTermId;
 	}
@@ -195,7 +199,15 @@ public class SalaryTerm {
 				+ ", name=" + name + ", description=" + description + ", formulaType=" + formulaType + ", formula="
 				+ formula + ", percentage=" + percentage + ", tableName=" + tableName + ", fieldName=" + fieldName
 				+ ", showGrid=" + showGrid + ", fromTable=" + fromTable + ", fromColumn=" + fromColumn + ", isApplied="
-				+ isApplied + ", sortOrder=" + sortOrder + ", remarks=" + remarks + "]";
+				+ isApplied + ", sortOrder=" + sortOrder + ", remarks=" + remarks + ", value=" + value + "]";
+	}
+
+	public double getValue() {
+		return value;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
 	}
 	 
 

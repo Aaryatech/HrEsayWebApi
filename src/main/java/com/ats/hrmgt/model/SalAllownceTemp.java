@@ -25,6 +25,9 @@ public class SalAllownceTemp {
 	@Column(name="allowance_id")
 	private int allowanceId;
 	
+	@Column(name="short_name")
+	private String shortName;
+	
 	@Column(name="allowance_value")
 	private double allowanceValue;
 	
@@ -145,13 +148,21 @@ public class SalAllownceTemp {
 		this.exVar2 = exVar2;
 	}
 
+	public String getShortName() {
+		return shortName;
+	}
+
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
+
 	@Override
 	public String toString() {
 		return "SalAllownceTemp [empSalAllowanceId=" + empSalAllowanceId + ", tblSalaryDynamicTempId="
-				+ tblSalaryDynamicTempId + ", empId=" + empId + ", allowanceId=" + allowanceId + ", allowanceValue="
-				+ allowanceValue + ", allowanceValueCal=" + allowanceValueCal + ", makerEnterDatetime="
-				+ makerEnterDatetime + ", delStatus=" + delStatus + ", exInt1=" + exInt1 + ", exInt2=" + exInt2
-				+ ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
+				+ tblSalaryDynamicTempId + ", empId=" + empId + ", allowanceId=" + allowanceId + ", shortName="
+				+ shortName + ", allowanceValue=" + allowanceValue + ", allowanceValueCal=" + allowanceValueCal
+				+ ", makerEnterDatetime=" + makerEnterDatetime + ", delStatus=" + delStatus + ", exInt1=" + exInt1
+				+ ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
 	}
 	
 	
