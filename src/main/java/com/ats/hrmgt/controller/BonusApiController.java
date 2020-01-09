@@ -607,7 +607,7 @@ public class BonusApiController {
 						try {
 
 							bonusAmt = (formTot * bonusPrcnt) / 100;
-							 = formTot + bonugrossBonussAmt;
+							grossBonus = formTot + bonusAmt;
 
 						} catch (Exception e) {
 							grossBonus = formTot;

@@ -10,12 +10,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ats.hrmgt.common.DateConvertor;
-import com.ats.hrmgt.model.GetEmployeeDetails;
+ import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
-import com.ats.hrmgt.model.bonus.BonusApplicable;
-import com.ats.hrmgt.model.bonus.BonusCalc;
+ import com.ats.hrmgt.model.bonus.BonusCalc;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.repo.bonus.BonusApplicableRepo;
 import com.ats.hrmgt.repo.bonus.BonusCalcRepo;
