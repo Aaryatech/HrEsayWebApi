@@ -16,7 +16,7 @@ public interface BonusMasterRepo extends JpaRepository<BonusMaster, Integer> {
 
 	/*
 	 * List<BonusMaster> findByDelStatus(int i);
-	 */
+	 */ 
 	BonusMaster findByBonusIdAndDelStatus(int bonusId, int i);
 
 	@Transactional
