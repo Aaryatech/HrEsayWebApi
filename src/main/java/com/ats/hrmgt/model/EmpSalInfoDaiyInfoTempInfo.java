@@ -151,6 +151,7 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	private int totEarlyGoing;
 	private String atsummUid;
 	private int calculationDone; 
+	private String dob;
 	
 	@Transient
 	private List<SalAllownceTemp> getAllowanceTempList;
@@ -959,6 +960,12 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	public void setGetAllowanceTempList(List<SalAllownceTemp> getAllowanceTempList) {
 		this.getAllowanceTempList = getAllowanceTempList;
 	}
+	public String getDob() {
+		return dob;
+	}
+	public void setDob(String dob) {
+		this.dob = dob;
+	}
 	@Override
 	public String toString() {
 		return "EmpSalInfoDaiyInfoTempInfo [uuid=" + uuid + ", id=" + id + ", cmpId=" + cmpId + ", empId=" + empId
@@ -1006,7 +1013,7 @@ public class EmpSalInfoDaiyInfoTempInfo {
 				+ ", weeklyOffPresentHalf=" + weeklyOffPresentHalf + ", weeklyOffHolidayOff=" + weeklyOffHolidayOff
 				+ ", weeklyOffHolidayOffPresent=" + weeklyOffHolidayOffPresent + ", weeklyOffHolidayOffPresentHalfday="
 				+ weeklyOffHolidayOffPresentHalfday + ", hdpresentHdleave=" + hdpresentHdleave + ", totEarlyGoing="
-				+ totEarlyGoing + ", atsummUid=" + atsummUid + ", calculationDone=" + calculationDone
+				+ totEarlyGoing + ", atsummUid=" + atsummUid + ", calculationDone=" + calculationDone + ", dob=" + dob
 				+ ", getAllowanceTempList=" + getAllowanceTempList + "]";
 	}
 	

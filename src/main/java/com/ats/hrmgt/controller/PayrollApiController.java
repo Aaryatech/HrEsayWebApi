@@ -1,8 +1,10 @@
 package com.ats.hrmgt.controller;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
@@ -407,6 +409,11 @@ public class PayrollApiController {
 		List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList = new ArrayList<>();
 		try {
 
+			Date dt = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+			String date = sf.format(dt);
+			String[] dates = date.split("-");
+
 			getSalaryTempList = empSalInfoDaiyInfoTempInfoRepo.getSalaryTempList(month, year, empIds);
 			List<SalaryTypesMaster> salaryTypeList = salaryTypesMasterRepo.findAllByDelStatus(1);
 			List<MstEmpType> mstEmpTypeList = mstEmpTypeRepository.findAll();
@@ -462,7 +469,7 @@ public class PayrollApiController {
 							if (salaryTermList.get(j).getFromColumn().equals("basic")) {
 								ammt = getSalaryTempList.get(i).getBasic();
 							} else if (salaryTermList.get(j).getFromColumn().equals("performance_bouns_cal")) {
-								ammt = getSalaryTempList.get(i).getSocietyContribution();
+								ammt = getSalaryTempList.get(i).getPerformanceBonus();
 							} else if (salaryTermList.get(j).getFromColumn().equals("society_contribution")) {
 								ammt = getSalaryTempList.get(i).getSocietyContribution();
 							} else {
@@ -649,7 +656,7 @@ public class PayrollApiController {
 						epf_wages_employee = (float) getSalaryTempList.get(i).getEpfWages();
 					}
 				} catch (Exception e) {
-
+					//e.printStackTrace();
 				}
 
 				try {
@@ -661,7 +668,7 @@ public class PayrollApiController {
 						epf_wages_employeR = (float) getSalaryTempList.get(i).getEpfWages();
 					}
 				} catch (Exception e) {
-
+					//e.printStackTrace();
 				}
 				getSalaryTempList.get(i).setEpfWagesEmployer(epf_wages_employeR);
 
@@ -673,10 +680,11 @@ public class PayrollApiController {
 						eps_Cal = (float) getSalaryTempList.get(i).getEpsWages();
 					}
 				} catch (Exception e) {
-
+					//e.printStackTrace();
 				}
 
 				try {
+					//System.out.println("age " +  getSalaryTempList.get(i).getPfApplicable());
 					if (getSalaryTempList.get(i).getPfApplicable().equalsIgnoreCase("yes")) {
 
 						getSalaryTempList.get(i).setPfStatus(1);
@@ -695,14 +703,17 @@ public class PayrollApiController {
 								// eps_age_limit
 								// $age = $this->mpayroll->calculateAge($value->dob);
 
-							/*
-							 * LocalDate birthDate = LocalDate.of(1961, 5, 17); int age =
-							 * calculateAge(birthDate, LocalDate.of(2016, 7, 12));
-							 */
 						} catch (Exception e) {
-
+							//e.printStackTrace();
 						}
-						int age = 60;
+
+						String[] dob = getSalaryTempList.get(i).getDob().split("-");
+						//System.out.println("dob[2]" + dob[2] +"dob[1]" + dob[1]+"dob[0]" + dob[0] );
+						LocalDate birthDate = LocalDate.of(Integer.parseInt(dob[0]), Integer.parseInt(dob[1]), Integer.parseInt(dob[2]));
+						int age = calculateAge(birthDate, LocalDate.of(Integer.parseInt(dates[0]), Integer.parseInt(dates[1]), Integer.parseInt(dates[2])));
+
+						System.out.println("age " +  age);
+						//int age = 60;
 						if (age <= eps_age_limit) {
 							// employer_eps
 							float EPS = eps_Cal;
@@ -735,7 +746,7 @@ public class PayrollApiController {
 						getSalaryTempList.get(i).setEpsWages(0);
 					}
 				} catch (Exception e) {
-
+					//e.printStackTrace();
 				}
 				try {
 					// esic cal start
@@ -771,7 +782,7 @@ public class PayrollApiController {
 						// $records['esic_wages_dec'] = 0;
 					}
 				} catch (Exception e) {
-
+					//e.printStackTrace();
 				}
 				getSalaryTempList.get(i)
 						.setTotPfAdminCh(getSalaryTempList.get(i).getEpsWages() * tot_pf_admin_ch_percentage);
@@ -973,5 +984,5 @@ public class PayrollApiController {
 	 * break; case 2: $number = number_format($number, 2, '.', ''); break; case 3:
 	 * $number = ceil($number); break; case 4: $number = floor($number); break; }
 	 * //$this->sallary_term_cal_amount_setting return $number; }
-	 */ 
+	 */
 }
