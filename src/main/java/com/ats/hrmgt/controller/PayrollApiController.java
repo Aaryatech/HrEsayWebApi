@@ -476,7 +476,7 @@ public class PayrollApiController {
 					febmonthptamount_condtioncheck = Integer.parseInt(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("febmonthptamount")) {
 					febmonthptamount = Float.parseFloat(settingList.get(k).getValue());
-				} else if (settingList.get(k).getKey().equalsIgnoreCase("amount_round")) {
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("ammount_format_Insert")) {
 					amount_round = Integer.parseInt(settingList.get(k).getValue());
 				}
 			}
