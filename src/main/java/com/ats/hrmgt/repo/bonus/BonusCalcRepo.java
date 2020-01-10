@@ -15,7 +15,9 @@ public interface BonusCalcRepo extends JpaRepository<BonusCalc, Integer> {
 
 	List<BonusCalc> findByDelStatus(int i);
 
-	BonusCalc findByEmpIdAndBonusIdAndDelStatus(int empId, int bonusId, int i);
+	
+	  BonusCalc findByEmpIdAndBonusIdAndDelStatus(int empId, int bonusId, int i);
+	 
 
 	@Query(value = "SELECT * from t_bonus_calc WHERE t_bonus_calc.del_status=1 AND t_bonus_calc.bonus_id=:bonusId", nativeQuery = true)
 	List<BonusCalc> getEmpDetailListForBonus(@Param("bonusId") int bonusId);
@@ -30,10 +32,11 @@ public interface BonusCalcRepo extends JpaRepository<BonusCalc, Integer> {
 	@Query("update BonusCalc set del_status=0  WHERE bonus_calc_id=:bonusCalcId")
 	int deleteBonus(int bonusCalcId);
 
-	BonusCalc findByBonusIdAndEmpIdAndDelStatus();
+ 
 
-	BonusCalc findByBonusIdAndEmpIdAndDelStatus(int bonusId, int empId, int i);
-
-	int updateExgratia(double formTot, double grossExgratiaAmt, double exgratiaAmt, double dedExgratiaAmt);
-
+	 
+	/*
+	 * int updateExgratia(double formTot, double grossExgratiaAmt, double
+	 * exgratiaAmt, double dedExgratiaAmt);
+	 */
 }

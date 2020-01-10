@@ -531,7 +531,12 @@ public class BonusApiController {
 				int isAdd = 0;
 				try {
 
-					BonusCalc ispresen = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
+					/*
+					 * BonusCalc ispresen = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId,
+					 * bonusId, 1);
+					 */				
+					
+					BonusCalc ispresen=null;
 					if (ispresen == null) {
 						isAdd = 1;
 					} else {

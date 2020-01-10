@@ -106,8 +106,11 @@ public class ExgratiaApiController {
 				double dedExgratiaAmt = 0;
 				double payableDays = 0;
 
-				BonusCalc bonusCalc = bonusCalcRepo.findByBonusIdAndEmpIdAndDelStatus(bonusId, empId, 1);
-
+				/*
+				 * BonusCalc bonusCalc =
+				 * bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId,bonusId,1);
+				 */
+				 BonusCalc bonusCalc=null;
 				if (bonusCalc != null) {
 					payableDays = bonusCalc.getTotalBonusDays();
 					double formTot = bonusCalc.getTotalBonusWages();
@@ -116,8 +119,10 @@ public class ExgratiaApiController {
 					dedExgratiaAmt = (grossExgratiaAmt * ded_exgretia_amt_percentage) / 100;
 					dedExgratiaAmt = dedExgratiaAmt + grossExgratiaAmt;
 
-					int n = bonusCalcRepo.updateExgratia(formTot, grossExgratiaAmt, exgratiaAmt, dedExgratiaAmt);
-
+					/*
+					 * int n = bonusCalcRepo.updateExgratia(formTot, grossExgratiaAmt, exgratiaAmt,
+					 * dedExgratiaAmt);
+					 */
 				}
 
 			}
