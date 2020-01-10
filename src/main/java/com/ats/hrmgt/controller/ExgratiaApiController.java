@@ -1,6 +1,8 @@
 package com.ats.hrmgt.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
+import com.ats.hrmgt.model.bonus.BonusApplicable;
 import com.ats.hrmgt.model.bonus.BonusCalc;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.repo.bonus.BonusApplicableRepo;
@@ -41,10 +45,16 @@ public class ExgratiaApiController {
 	BonusCalcRepo bonusCalcRepo;
 
 	@RequestMapping(value = { "/getAllEmployeeDetailForBonus" }, method = RequestMethod.POST)
-	public List<GetEmployeeDetails> getAllEmployeeDetailForBonusUpdate(@RequestParam("bonusId") int bonusId) {
+	public List<GetEmployeeDetails> getAllEmployeeDetailForBonusUpdate(@RequestParam("bonusId") int bonusId,@RequestParam("flag") int flag) {
 		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
 		try {
-			list = getEmployeeDetailsRepo.getEmpDetailListByBonusId(bonusId);
+			
+			if(flag==1) {
+				list = getEmployeeDetailsRepo.getEmpDetailListByBonusId(bonusId);
+
+			}else {
+				list = getEmployeeDetailsRepo.getEmpDetailListByBonusIdAssignedBonus(bonusId);
+			}
 		} catch (Exception e) {
 			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
 			e.printStackTrace();
@@ -56,10 +66,12 @@ public class ExgratiaApiController {
 	@RequestMapping(value = { "/empExgratiaUpdateToBonusSave" }, method = RequestMethod.POST)
 	public @ResponseBody Info empBonusAppSaveOrUpdate(@RequestParam("empIdList") List<Integer> empIdList,
 			@RequestParam("bonusId") int bonusId, @RequestParam("companyId") int companyId,
-			@RequestParam("dateTime") String dateTime, @RequestParam("userId") int userId) {
+			@RequestParam("userId") int userId) {
 
 		Info info = new Info();
 		int flag = 0;
+		Date date = new Date();
+		SimpleDateFormat yyDtTm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		try {
 
@@ -108,20 +120,20 @@ public class ExgratiaApiController {
 				double dedExgratiaAmt = 0;
 				double payableDays = 0;
 				String isApp = null;
-				double formTot=0;
+				double formTot = 0;
 				BonusCalc bonusCalc = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
 
 				if (bonusCalc != null) {
 					isApp = bonusCalc.getBonusApplicable();
 					if (isApp.equals("Yes")) {
 						payableDays = bonusCalc.getTotalBonusDays();
-						  formTot = bonusCalc.getTotalBonusWages();
+						formTot = bonusCalc.getTotalBonusWages();
 						exgratiaAmt = (formTot * exgretia_percentage) / 100;
 						grossExgratiaAmt = exgratiaAmt + grossExgratiaAmt;
 						dedExgratiaAmt = (grossExgratiaAmt * ded_exgretia_amt_percentage) / 100;
 						dedExgratiaAmt = dedExgratiaAmt + grossExgratiaAmt;
 					} else {
-						formTot=0;
+						formTot = 0;
 						exgratiaAmt = 0;
 						grossExgratiaAmt = 0;
 						dedExgratiaAmt = 0;
@@ -129,20 +141,18 @@ public class ExgratiaApiController {
 						isApp = "No";
 					}
 
-					/*
-					 * int n = bonusCalcRepo.updateExgratiaAmts(formTot, grossExgratiaAmt,
-					 * exgratiaAmt, dedExgratiaAmt, payableDays,dateTime,userId);
-					 */
-					/*if(n >0) {
-*/						BonusCalc bonusCalc1 = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
-					
+					int n = bonusCalcRepo.updateExgratiaAmts(formTot, grossExgratiaAmt, exgratiaAmt, dedExgratiaAmt,
+							payableDays, yyDtTm.format(date), userId, isApp, bonusCalc.getBonusCalcId(),exgretia_percentage);
+
+					if (n > 0) {
+						BonusCalc bonusCalc1 = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
+
 						ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 						String json = ow.writeValueAsString(bonusCalc1);
 
-						int p = bonusCalcRepo.updateExgratiaDetails(json,bonusCalc1.getBonusCalcId());
-					/*
-					 * }
-					 */
+						int p = bonusCalcRepo.updateExgratiaDetails(json, bonusCalc1.getBonusCalcId());
+
+					}
 
 				}
 
@@ -158,4 +168,107 @@ public class ExgratiaApiController {
 
 	}
 
+	@RequestMapping(value = { "/empBonusAppUpdateForExgratia" }, method = RequestMethod.POST)
+	public @ResponseBody Info empBonusAppSaveOrUpdate(@RequestParam("bonusAppId") int bonusAppId,
+			@RequestParam("startDate") String startDate, @RequestParam("isFinal") int isFinal,
+			@RequestParam("bonusId") int bonusId, @RequestParam("remark") String remark,
+			@RequestParam("companyId") int companyId, @RequestParam("dateTime") String dateTime,
+			@RequestParam("userId") int userId) {
+
+		Info info = new Info();
+
+		String paidDate = DateConvertor.convertToYMD(startDate);
+		String[] a = paidDate.split("-");
+
+		double ded_exgretia_amt_percentage = 0.0;
+		double exgretia_percentage = 0.0;
+		String bonus_formula = null;
+
+		Setting setting = new Setting();
+		BonusMaster bous = new BonusMaster();
+		try {
+
+			bous = bonusMasterRepo.findByBonusIdAndDelStatus(bonusId, 1);
+			exgretia_percentage = bous.getExgratiaPercentage();
+		} catch (Exception e) {
+
+			exgretia_percentage = 0.0;
+		}
+
+		try {
+			setting = settingRepo.findByKey("ded_exgretia_amt_percentage");
+			ded_exgretia_amt_percentage = Double.parseDouble(setting.getValue());
+		} catch (Exception e) {
+
+			ded_exgretia_amt_percentage = 0;
+
+		}
+
+		try {
+
+			setting = settingRepo.findByKey("bonus_formula");
+			bonus_formula = setting.getValue();
+		} catch (Exception e) {
+
+			bonus_formula = "";
+
+		}
+		try {
+
+			int n = bonusApplicableRepo.updateBonusExgratia(bonusAppId, bonus_formula, exgretia_percentage,
+					ded_exgretia_amt_percentage, userId, dateTime,remark);
+			int n1 = bonusCalcRepo.updateCalcFinalizeExgratia(bonusId, paidDate);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+
+		return info;
+
+	}
+	
+	
+	@RequestMapping(value = { "/deleteBonusCalcExratia" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteBonusCalcExratia(  @RequestParam("bonusCalcId") int bonusCalcId) {
+
+		Info info = new Info();
+
+	 
+		 
+		try {
+
+ 			int n1 = bonusCalcRepo.updateExgratiaAmtsDelete(bonusCalcId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+
+		return info;
+
+	}
+
+	
+	
+	
+	
+	@RequestMapping(value = { "/getBonusCalcByCalcId" }, method = RequestMethod.POST)
+	public @ResponseBody  BonusCalc getBonusCalcByCalcId(	@RequestParam("bonusCalcId") int bonusCalcId) {
+
+		BonusCalc list = new BonusCalc();
+		try {
+
+			list = bonusCalcRepo.findByDelStatusAndBonusCalcId(bonusCalcId,1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
 }

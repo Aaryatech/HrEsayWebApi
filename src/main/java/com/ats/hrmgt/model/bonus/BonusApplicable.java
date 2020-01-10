@@ -31,6 +31,7 @@ public class BonusApplicable {
 	private String exgretiaFormula;
 
 	private double exgretiaPercentage;
+	private double  dedExgretiaAmtPercentage;
 
 	private int payrollMonth;
 
@@ -241,6 +242,16 @@ public class BonusApplicable {
 	public void setExgretiaRemark(String exgretiaRemark) {
 		this.exgretiaRemark = exgretiaRemark;
 	}
+	
+	
+
+	public double getDedExgretiaAmtPercentage() {
+		return dedExgretiaAmtPercentage;
+	}
+
+	public void setDedExgretiaAmtPercentage(double dedExgretiaAmtPercentage) {
+		this.dedExgretiaAmtPercentage = dedExgretiaAmtPercentage;
+	}
 
 	@Override
 	public String toString() {
@@ -248,29 +259,15 @@ public class BonusApplicable {
 				+ ", bonusFormula=" + bonusFormula + ", bonusAppBelowAmount=" + bonusAppBelowAmount
 				+ ", bonusSealingLimitApplicable=" + bonusSealingLimitApplicable + ", bonusSealingLimitAmount="
 				+ bonusSealingLimitAmount + ", bonusPercentage=" + bonusPercentage + ", exgretiaFormula="
-				+ exgretiaFormula + ", exgretiaPercentage=" + exgretiaPercentage + ", payrollMonth=" + payrollMonth
-				+ ", payrollYear=" + payrollYear + ", isPayrollFinalized=" + isPayrollFinalized
-				+ ", isBonussheetFinalized=" + isBonussheetFinalized + ", isExgretiaFinalized=" + isExgretiaFinalized
-				+ ", bonusItSub=" + bonusItSub + ", exgretiaItSub=" + exgretiaItSub + ", loginIdBonus=" + loginIdBonus
-				+ ", loginIdExgretia=" + loginIdExgretia + ", loginTimeBonus=" + loginTimeBonus + ", loginTimeExgretia="
-				+ loginTimeExgretia + ", bonusRemark=" + bonusRemark + ", exgretiaRemark=" + exgretiaRemark
-				+ ", getBappNo()=" + getBappNo() + ", getCompanyId()=" + getCompanyId() + ", getBonusId()="
-				+ getBonusId() + ", getBonusFormula()=" + getBonusFormula() + ", getBonusAppBelowAmount()="
-				+ getBonusAppBelowAmount() + ", getBonusSealingLimitApplicable()=" + getBonusSealingLimitApplicable()
-				+ ", getBonusSealingLimitAmount()=" + getBonusSealingLimitAmount() + ", getBonusPercentage()="
-				+ getBonusPercentage() + ", getExgretiaFormula()=" + getExgretiaFormula() + ", getExgretiaPercentage()="
-				+ getExgretiaPercentage() + ", getPayrollMonth()=" + getPayrollMonth() + ", getPayrollYear()="
-				+ getPayrollYear() + ", getIsPayrollFinalized()=" + getIsPayrollFinalized()
-				+ ", getIsBonussheetFinalized()=" + getIsBonussheetFinalized() + ", getIsExgretiaFinalized()="
-				+ getIsExgretiaFinalized() + ", getBonusItSub()=" + getBonusItSub() + ", getExgretiaItSub()="
-				+ getExgretiaItSub() + ", getLoginIdBonus()=" + getLoginIdBonus() + ", getLoginIdExgretia()="
-				+ getLoginIdExgretia() + ", getLoginTimeBonus()=" + getLoginTimeBonus() + ", getLoginTimeExgretia()="
-				+ getLoginTimeExgretia() + ", getBonusRemark()=" + getBonusRemark() + ", getExgretiaRemark()="
-				+ getExgretiaRemark() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
-				+ super.toString() + "]";
+				+ exgretiaFormula + ", exgretiaPercentage=" + exgretiaPercentage + ", dedExgretiaAmtPercentage="
+				+ dedExgretiaAmtPercentage + ", payrollMonth=" + payrollMonth + ", payrollYear=" + payrollYear
+				+ ", isPayrollFinalized=" + isPayrollFinalized + ", isBonussheetFinalized=" + isBonussheetFinalized
+				+ ", isExgretiaFinalized=" + isExgretiaFinalized + ", bonusItSub=" + bonusItSub + ", exgretiaItSub="
+				+ exgretiaItSub + ", loginIdBonus=" + loginIdBonus + ", loginIdExgretia=" + loginIdExgretia
+				+ ", loginTimeBonus=" + loginTimeBonus + ", loginTimeExgretia=" + loginTimeExgretia + ", bonusRemark="
+				+ bonusRemark + ", exgretiaRemark=" + exgretiaRemark + "]";
 	}
-	
-	
-	
+
+	 
 
 }

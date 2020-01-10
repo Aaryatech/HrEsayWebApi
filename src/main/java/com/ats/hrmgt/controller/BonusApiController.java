@@ -184,10 +184,18 @@ public class BonusApiController {
 	}
 
 	@RequestMapping(value = { "/getBonusCalcList" }, method = RequestMethod.POST)
-	public List<BonusCalc> getAllEmployeeDetailForBonus(@RequestParam("bonusId") int bonusId) {
+	public List<BonusCalc> getAllEmployeeDetailForBonus(@RequestParam("bonusId") int bonusId,@RequestParam("flag") int flag) {
 		List<BonusCalc> list = new ArrayList<BonusCalc>();
 		try {
-			list = bonusCalcRepo.getEmpDetailListForBonus(bonusId);
+			 
+			if(flag==0) {
+				list = bonusCalcRepo.getEmpDetailListForBonus(bonusId);
+			}else {
+				list = bonusCalcRepo.getEmpDetailListForBonusEx(bonusId);
+			}
+				
+
+			 
 		} catch (Exception e) {
 			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
 			e.printStackTrace();
@@ -195,7 +203,7 @@ public class BonusApiController {
 
 		return list;
 	}
-
+	 
 	
 	@RequestMapping(value = { "/deleteBonusCalc" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteBonusCalc(@RequestParam("bonusCalcId") int bonusCalcId) {
@@ -242,6 +250,8 @@ public class BonusApiController {
 		return temp;
 
 	}
+	
+	 
 
 	@RequestMapping(value = { "/empBonusAppSaveOrUpdate" }, method = RequestMethod.POST)
 	public @ResponseBody Info empBonusAppSaveOrUpdate(@RequestParam("bonusAppId") int bonusAppId,
@@ -402,17 +412,7 @@ public class BonusApiController {
 
 	}
 
-	/*
-	 * @RequestMapping(value = { "/getAllEmployeeDetailForBonusUpdate" }, method =
-	 * RequestMethod.POST) public List<GetEmployeeDetails>
-	 * getAllEmployeeDetailForBonusUpdate(@RequestParam("bonusId") int bonusId) {
-	 * List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>(); try {
-	 * list = getEmployeeDetailsRepo.getEmpDetailListForBonus(); } catch (Exception
-	 * e) { System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
-	 * e.printStackTrace(); }
-	 * 
-	 * return list; }
-	 */
+	 
 
 	// Bonus Main WS
 
@@ -648,8 +648,8 @@ public class BonusApiController {
 					calcSave.setCurrAge(0);
 					calcSave.setCurrDesignation(list.getEmpDesgn());
 					calcSave.setEmpId(empId);
-					calcSave.setEmpName(list.getFirstName().concat("")
-							.concat(list.getMiddleName().concat("").concat(list.getSurname())));
+					calcSave.setEmpName(list.getFirstName().concat(" ")
+							.concat(list.getMiddleName().concat(" ").concat(list.getSurname())));
 					calcSave.setNetBonusAmt(bonusAmt);
 					calcSave.setDelStatus(1);
 					calcSave.setExVar2("NA");
@@ -660,6 +660,7 @@ public class BonusApiController {
 					calcSave.setLoginTimeBonus(sf.format(date));
 					calcSave.setBonusApplicable(isApplicable);
 					calcSave.setGrossBonusAmt(grossBonus);
+					calcSave.setExgratiaPrcnt(0);
 
 					calcSave.setDedBonusAdvAmt(advPrcntAmt);
 					calcSave.setDedBonusLossAmt(lossPrcntAmt);
