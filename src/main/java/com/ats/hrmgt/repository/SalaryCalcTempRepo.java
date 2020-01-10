@@ -23,4 +23,9 @@ public interface SalaryCalcTempRepo extends JpaRepository<SalaryCalcTemp, Intege
 	List<SalaryCalcTemp> listForUpdatedValue(@Param("month") int month, @Param("year") int year,
 			@Param("empIds") List<Integer> empIds);
 
+	@Transactional
+	@Modifying
+	@Query("delete from SalaryCalcTemp ")
+	int deleteFromTemp();
+
 }

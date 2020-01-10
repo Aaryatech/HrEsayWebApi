@@ -9,9 +9,11 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.Allowances;
@@ -27,7 +29,9 @@ import com.ats.hrmgt.model.GetSalDynamicTempRecord;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.MstEmpType;
 import com.ats.hrmgt.model.PayRollDataForProcessing;
+import com.ats.hrmgt.model.SalAllownceCal;
 import com.ats.hrmgt.model.SalAllownceTemp;
+import com.ats.hrmgt.model.SalaryCalc;
 import com.ats.hrmgt.model.SalaryCalcTemp;
 import com.ats.hrmgt.model.SalaryTerm;
 import com.ats.hrmgt.model.SalaryTypesMaster;
@@ -44,7 +48,9 @@ import com.ats.hrmgt.repository.GetClaimListRepo;
 import com.ats.hrmgt.repository.GetPayDedListRepo;
 import com.ats.hrmgt.repository.GetSalDynamicTempRecordRepository;
 import com.ats.hrmgt.repository.MstEmpTypeRepository;
+import com.ats.hrmgt.repository.SalAllownceCalRepo;
 import com.ats.hrmgt.repository.SalAllownceTempRepo;
+import com.ats.hrmgt.repository.SalaryCalcRepo;
 import com.ats.hrmgt.repository.SalaryCalcTempRepo;
 import com.ats.hrmgt.repository.SalaryTermRepository;
 import com.ats.hrmgt.repository.SalaryTypesMasterRepo;
@@ -103,6 +109,12 @@ public class PayrollApiController {
 
 	@Autowired
 	EmpSalInfoDaiyInfoTempInfoRepo empSalInfoDaiyInfoTempInfoRepo;
+
+	@Autowired
+	SalaryCalcRepo salaryCalcRepo;
+
+	@Autowired
+	SalAllownceCalRepo salAllownceCalRepo;
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -510,7 +522,7 @@ public class PayrollApiController {
 
 						double ammt = 0;
 						int index = 0;
-
+						int findAll = 0;
 						if (!salaryTermList.get(j).getFromColumn().equals("")) {
 							if (salaryTermList.get(j).getFromColumn().equals("basic")) {
 								ammt = getSalaryTempList.get(i).getBasic();
@@ -524,6 +536,7 @@ public class PayrollApiController {
 
 									if (getSalaryTempList.get(i).getGetAllowanceTempList().get(k).getShortName()
 											.equals(salaryTermList.get(j).getFromColumn())) {
+										findAll = 1;
 										index = k;
 										ammt = getSalaryTempList.get(i).getGetAllowanceTempList().get(k)
 												.getAllowanceValue();
@@ -546,14 +559,29 @@ public class PayrollApiController {
 
 							break;
 						case "A":
-							double tempVal = calculateAllowancedata(salaryTermList.get(j).getPercentage(),
-									getSalaryTempList.get(i).getSalBasis(),
-									getSalaryTempList.get(i).getTotalDaysInmonth(),
-									getSalaryTempList.get(i).getPayableDays(),
-									getSalaryTempList.get(i).getWorkingDays(), ammt,
-									getSalaryTempList.get(i).getPresentDays(), amount_round);
-							getSalaryTempList.get(i).getGetAllowanceTempList().get(index).setAllowanceValueCal(tempVal);
-							salaryTermList.get(j).setValue(tempVal);
+							double tempVal = 0;
+
+							if (findAll == 1) {
+								tempVal = calculateAllowancedata(salaryTermList.get(j).getPercentage(),
+										getSalaryTempList.get(i).getSalBasis(),
+										getSalaryTempList.get(i).getTotalDaysInmonth(),
+										getSalaryTempList.get(i).getPayableDays(),
+										getSalaryTempList.get(i).getWorkingDays(), ammt,
+										getSalaryTempList.get(i).getPresentDays(), amount_round);
+								getSalaryTempList.get(i).getGetAllowanceTempList().get(index)
+										.setAllowanceValueCal(tempVal);
+								salaryTermList.get(j).setValue(tempVal);
+
+								/*
+								 * if (getSalaryTempList.get(i).getEmpId() == 10) {
+								 * System.out.println(salaryTermList.get(j).getFromColumn() + " " + tempVal + ""
+								 * + getSalaryTempList.get(i).getGetAllowanceTempList().get(index)
+								 * .getShortName());
+								 * 
+								 * }
+								 */
+							}
+
 							break;
 						case "S":
 							double tempValNew = 0;
@@ -840,21 +868,21 @@ public class PayrollApiController {
 			float totalPayableDaysTemp = Math.min(payableDays, totalDaysInMonth);
 			// System.out.println(ammt);
 			if (salBasis.equalsIgnoreCase("monthly")) {
-				val = (float) ((ammt / totalDaysInMonth) * totalPayableDaysTemp);
+				val = (ammt / totalDaysInMonth) * totalPayableDaysTemp;
 			} // $sal_basis == "monthly"
 			else {
 				// $val = ($amount / $working_days ) * $total_payable_days;
-				val = (float) ((ammt) * totalPayableDaysTemp);
+				val = (ammt) * totalPayableDaysTemp;
 			}
 		} // $percentage == 1
 		else if (percentage == 2) {
 			float totalPayableDaysTemp = Math.min(payableDays, totalDaysInMonth);
 			if (salBasis.equalsIgnoreCase("monthly")) {
-				val = (float) ((ammt / totalDaysInMonth) * totalPayableDaysTemp);
+				val = (ammt / totalDaysInMonth) * totalPayableDaysTemp;
 			} // $sal_basis == "monthly"
 			else {
 				// $val = ($amount / $working_days ) * $total_payable_days;
-				val = (float) ((ammt / workingDays) * totalPayableDaysTemp);
+				val = (ammt / workingDays) * totalPayableDaysTemp;
 			}
 		} // $percentage == 2
 		val = castNumber(val, amount_round);
@@ -866,40 +894,42 @@ public class PayrollApiController {
 
 		double val = 0;
 		if (percentage == 0) {
+			val = castNumber(amount, amount_round);
 			// val = castNumber(amount);
 		} // $percentage == "0"
 		else if (percentage == 1) {
 			if (salBasis.equalsIgnoreCase("monthly")) {
-				val = (float) ((amount / totalDays) * totalPayableDays);
+				val = (amount / totalDays) * totalPayableDays;
 			} // $sal_basis == "monthly"
 			else {
-				val = (float) (amount * totalPayableDays);
+				val = amount * totalPayableDays;
 			}
 
 			// val = castNumber(val);
 		} // $percentage == 1
 		else if (percentage == 2) {
 			if (salBasis.equalsIgnoreCase("monthly")) {
-				val = (float) ((amount / totalDays) * presentDays);
+				val = (amount / totalDays) * presentDays;
 			} // $sal_basis == "monthly"
 			else {
 				// $val = ($amount / $working_days ) * $total_payable_days;
-				val = (float) (amount * totalPayableDays);
+				val = amount * totalPayableDays;
 			}
 			// val = castNumber(val);
 		} // $percentage == 2
 		else if (percentage == 3) {
 			float totalPayableDaysTemp = Math.min(totalPayableDays, totalDays);
 			if (salBasis.equalsIgnoreCase("monthly")) {
-				val = (float) ((amount / totalDays) * totalPayableDaysTemp);
+				val = (amount / totalDays) * totalPayableDaysTemp;
 			} // $sal_basis == "monthly"
 			else {
 				// $val = ($amount / $working_days ) * $total_payable_days;
-				val = (float) ((amount) * totalPayableDaysTemp);
+				val = (amount) * totalPayableDaysTemp;
 			}
 			// val = castNumber(val);
 		} // $percentage == 3
-		val = castNumber(amount, amount_round);
+
+		val = castNumber(val, amount_round);
 		return val;
 	}
 
@@ -908,11 +938,11 @@ public class PayrollApiController {
 
 		double val = 0;
 		if (salBasis.equalsIgnoreCase("monthly")) {
-			val = (float) amount;
+			val = amount;
 		} // $sal_basis == "monthly"
 		else {
 			// $val = ($amount / $working_days ) * $total_payable_days;
-			val = (float) (amount / totalDays);
+			val = (amount / totalDays);
 		}
 		val = castNumber(val, amount_round);
 		return val;
@@ -934,7 +964,7 @@ public class PayrollApiController {
 				for (int j = 0; j < salaryTermList.size(); j++) {
 					if (Integer.parseInt(plus[i]) == salaryTermList.get(j).getSalTermId()
 							&& salaryTermList.get(j).getSalTypeId() == salaryTerm.getSalTypeId()) {
-						value = (float) (value + salaryTermList.get(j).getValue());
+						value = value + salaryTermList.get(j).getValue();
 						/*
 						 * System.out .println(salaryTermList.get(j).getSalTermId() + " " +
 						 * salaryTermList.get(j).getValue() + " " +
@@ -951,9 +981,9 @@ public class PayrollApiController {
 					if (Integer.parseInt(minus[i]) == salaryTermList.get(j).getSalTermId()
 							&& salaryTermList.get(j).getSalTypeId() == salaryTerm.getSalTypeId()) {
 						if (i == 0) {
-							value = (float) (salaryTermList.get(j).getValue());
+							value = salaryTermList.get(j).getValue();
 						} else {
-							value = (float) (value - salaryTermList.get(j).getValue());
+							value = value - salaryTermList.get(j).getValue();
 						}
 						break;
 					}
@@ -963,7 +993,7 @@ public class PayrollApiController {
 		} else {
 			for (int j = 0; j < salaryTermList.size(); j++) {
 				if (Integer.parseInt(minus[0]) == salaryTermList.get(j).getSalTermId()) {
-					value = (float) (salaryTermList.get(j).getValue());
+					value = salaryTermList.get(j).getValue();
 					break;
 				}
 			}
@@ -982,10 +1012,10 @@ public class PayrollApiController {
 		double val = 0;
 
 		if (salBasis.equalsIgnoreCase("monthly")) {
-			val = (float) ((ammt / workingDays) / (workingHour * (otHr * percentage)));
+			val = (ammt / workingDays) / (workingHour * (otHr * percentage));
 		} // $sal_basis == "monthly"
 		else {
-			val = (float) ((ammt / workingHour) * (otHr * percentage));
+			val = (ammt / workingHour) * (otHr * percentage);
 		}
 		val = castNumber(val, amount_round);
 		return val;
@@ -1024,6 +1054,112 @@ public class PayrollApiController {
 			break;
 		}
 		return val;
+	}
+
+	@RequestMapping(value = { "/insertFinalPayRollAndDeleteFroTemp" }, method = RequestMethod.POST)
+	@ResponseBody
+	public Info insertFinalPayRollAndDeleteFroTemp(@RequestBody List<EmpSalInfoDaiyInfoTempInfo> salList) {
+
+		Info info = new Info();
+
+		try {
+
+			// System.out.println(salList);
+
+			for (int i = 0; i < salList.size(); i++) {
+
+				SalaryCalc SalaryCalc = new SalaryCalc();
+				SalaryCalc.setEmpId(salList.get(i).getEmpId());
+				SalaryCalc.setEmpCode(salList.get(i).getEmpCode());
+				SalaryCalc.setEmpType(salList.get(i).getEmpType());
+				SalaryCalc.setContractorId(salList.get(i).getContractorId());
+				SalaryCalc.setDepartId(salList.get(i).getDepartId());
+				SalaryCalc.setDesignationId(salList.get(i).getDesignationId());
+				SalaryCalc.setLocationId(salList.get(i).getLocationId());
+				SalaryCalc.setCalcMonth(salList.get(i).getMonth());
+				SalaryCalc.setCalcYear(salList.get(i).getYear());
+				SalaryCalc.setAttSumId(salList.get(i).getAttSumId());
+				SalaryCalc.setSalTypeId(salList.get(i).getSalaryTypeId());
+				SalaryCalc.setBasicCal(salList.get(i).getBasicCal());
+				SalaryCalc.setPerformanceBonus(salList.get(i).getPerformanceBonus());
+				SalaryCalc.setOtWages(salList.get(i).getOtWages());
+				SalaryCalc.setMiscExpAdd(salList.get(i).getMiscExpAdd());
+				SalaryCalc.setBonusCal(salList.get(i).getBonusCal());
+				SalaryCalc.setExgretiaCal(salList.get(i).getExgretiaCal());
+				SalaryCalc.setDaArreasCal(salList.get(i).getDaArreasCal());
+				SalaryCalc.setIncrementArreasCal(salList.get(i).getIncrementArreasCal());
+				SalaryCalc.setEpfWages(salList.get(i).getEpfWages());
+				SalaryCalc.setEpfWagesEmployer(salList.get(i).getEpfWagesEmployer());
+				SalaryCalc.setEsicWagesCal(salList.get(i).getEsicWagesCal());
+				SalaryCalc.setGrossSalary(salList.get(i).getGrossSalaryDytemp());
+				SalaryCalc.setEpsWages(salList.get(i).getEpsWages());
+				SalaryCalc.setEsicWagesDec(salList.get(i).getEsicWagesDec());
+				SalaryCalc.setEmployeePf((float) salList.get(i).getEmployeePf());
+				SalaryCalc.setEmployerPf(salList.get(i).getEmployerPf());
+				SalaryCalc.setEmployerEps(salList.get(i).getEmployerEps());
+				SalaryCalc.setEsic((float) salList.get(i).getEsic());
+				SalaryCalc.setEmployerEsic(salList.get(i).getEmployerEsic());
+				SalaryCalc.setEsicStatus(salList.get(i).getEsicStatus());
+				SalaryCalc.setPfStatus(salList.get(i).getPfStatus());
+				SalaryCalc.setMlwf(salList.get(i).getMlwf());
+				SalaryCalc.setTds(salList.get(i).getTds());
+				SalaryCalc.setItded(salList.get(i).getItded());
+				SalaryCalc.setFund(salList.get(i).getFund());
+				SalaryCalc.setTotPfAdminCh(salList.get(i).getTotPfAdminCh());
+				SalaryCalc.setTotEdliCh(salList.get(i).getTotEdliCh());
+				SalaryCalc.setTotEdliAdminCh(salList.get(i).getTotEdliAdminCh());
+				SalaryCalc.setNcpDays(salList.get(i).getNcpDaysDytemp());
+				SalaryCalc.setStatus(salList.get(i).getStatusDytemp());
+				SalaryCalc.setPtDed(salList.get(i).getPtDed());
+				SalaryCalc.setAdvanceDed(salList.get(i).getAdvanceDed());
+				SalaryCalc.setLoanDed(salList.get(i).getLoanDed());
+				SalaryCalc.setMiscExpDed(salList.get(i).getMiscExpDed());
+				SalaryCalc.setMiscExpDedDeduct(salList.get(i).getMiscExpDedDeduct());
+				SalaryCalc.setNetSalary(salList.get(i).getNetSalary());
+				SalaryCalc.setIsLocked(salList.get(i).getIsLocked());
+				SalaryCalc.setLoginName(salList.get(i).getLoginName());
+				SalaryCalc.setLoginTime(salList.get(i).getLoginTime());
+				SalaryCalc.setMlwfApplicable(salList.get(i).getMlwfApplicable());
+				SalaryCalc.setPtApplicable(salList.get(i).getPtApplicable());
+				SalaryCalc.setPayDed(salList.get(i).getPayDed());
+				SalaryCalc.setCommentsForItBonus(salList.get(i).getCommentsForItBonus());
+				SalaryCalc.setSocietyContribution(salList.get(i).getSocietyContributionDytemp());
+				SalaryCalc.setEmpCategory(salList.get(i).getEmpCategory());
+				SalaryCalc.setBasicDefault(salList.get(i).getBasicDefault());
+				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
+
+				List<SalAllownceCal> allowlist = new ArrayList<>();
+
+				for (int j = 0; j < salList.get(i).getGetAllowanceTempList().size(); j++) {
+
+					SalAllownceCal empAllowance = new SalAllownceCal();
+					empAllowance.setSalaryCalcId(saveres.getId());
+					empAllowance.setAllowanceId(salList.get(i).getGetAllowanceTempList().get(j).getAllowanceId());
+					empAllowance.setAllowanceValue(salList.get(i).getGetAllowanceTempList().get(j).getAllowanceValue());
+					empAllowance.setEmpId(salList.get(i).getGetAllowanceTempList().get(j).getEmpId());
+					empAllowance.setAllowanceValueCal(
+							salList.get(i).getGetAllowanceTempList().get(j).getAllowanceValueCal());
+					empAllowance.setShortName(salList.get(i).getGetAllowanceTempList().get(j).getShortName());
+					empAllowance.setDelStatus(1);
+					allowlist.add(empAllowance);
+
+				}
+				List<SalAllownceCal> saveAllores = salAllownceCalRepo.saveAll(allowlist);
+			}
+
+			int deleteFromTemp = salaryCalcTempRepo.deleteFromTemp();
+			int deleteFromTempAll = salAllownceTempRepo.deleteFromTempAll();
+
+			info.setError(false);
+			info.setMsg("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("failed");
+			e.printStackTrace();
+		}
+
+		return info;
 	}
 
 }
