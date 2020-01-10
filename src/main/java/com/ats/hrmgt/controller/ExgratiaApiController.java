@@ -10,16 +10,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
- import com.ats.hrmgt.model.GetEmployeeDetails;
+import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
- import com.ats.hrmgt.model.bonus.BonusCalc;
+import com.ats.hrmgt.model.bonus.BonusCalc;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.repo.bonus.BonusApplicableRepo;
 import com.ats.hrmgt.repo.bonus.BonusCalcRepo;
 import com.ats.hrmgt.repo.bonus.BonusMasterRepo;
 import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
 import com.ats.hrmgt.repository.SettingRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 @RestController
 public class ExgratiaApiController {
@@ -105,24 +107,43 @@ public class ExgratiaApiController {
 				double grossExgratiaAmt = 0;
 				double dedExgratiaAmt = 0;
 				double payableDays = 0;
+				String isApp = null;
+				double formTot=0;
+				BonusCalc bonusCalc = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
 
-				/*
-				 * BonusCalc bonusCalc =
-				 * bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId,bonusId,1);
-				 */
-				 BonusCalc bonusCalc=null;
 				if (bonusCalc != null) {
-					payableDays = bonusCalc.getTotalBonusDays();
-					double formTot = bonusCalc.getTotalBonusWages();
-					exgratiaAmt = (formTot * exgretia_percentage) / 100;
-					grossExgratiaAmt = exgratiaAmt + grossExgratiaAmt;
-					dedExgratiaAmt = (grossExgratiaAmt * ded_exgretia_amt_percentage) / 100;
-					dedExgratiaAmt = dedExgratiaAmt + grossExgratiaAmt;
+					isApp = bonusCalc.getBonusApplicable();
+					if (isApp.equals("Yes")) {
+						payableDays = bonusCalc.getTotalBonusDays();
+						  formTot = bonusCalc.getTotalBonusWages();
+						exgratiaAmt = (formTot * exgretia_percentage) / 100;
+						grossExgratiaAmt = exgratiaAmt + grossExgratiaAmt;
+						dedExgratiaAmt = (grossExgratiaAmt * ded_exgretia_amt_percentage) / 100;
+						dedExgratiaAmt = dedExgratiaAmt + grossExgratiaAmt;
+					} else {
+						formTot=0;
+						exgratiaAmt = 0;
+						grossExgratiaAmt = 0;
+						dedExgratiaAmt = 0;
+						payableDays = bonusCalc.getTotalBonusDays();
+						isApp = "No";
+					}
 
 					/*
-					 * int n = bonusCalcRepo.updateExgratia(formTot, grossExgratiaAmt, exgratiaAmt,
-					 * dedExgratiaAmt);
+					 * int n = bonusCalcRepo.updateExgratiaAmts(formTot, grossExgratiaAmt,
+					 * exgratiaAmt, dedExgratiaAmt, payableDays,dateTime,userId);
 					 */
+					/*if(n >0) {
+*/						BonusCalc bonusCalc1 = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
+					
+						ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+						String json = ow.writeValueAsString(bonusCalc1);
+
+						int p = bonusCalcRepo.updateExgratiaDetails(json,bonusCalc1.getBonusCalcId());
+					/*
+					 * }
+					 */
+
 				}
 
 			}
