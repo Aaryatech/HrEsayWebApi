@@ -42,10 +42,10 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	private double grossSalaryDytemp;
 	private double epsWages;
 	private double esicWagesDec;
-	private float employeePf;
+	private double employeePf;
 	private double employerEps;
 	private double employerPf;
-	private float esic;
+	private double esic;
 	private double employerEsic;
 	private int esicStatus;
 	private int pfStatus;
@@ -318,10 +318,10 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	public void setEsicWagesDec(double esicWagesDec) {
 		this.esicWagesDec = esicWagesDec;
 	}
-	public float getEmployeePf() {
+	public double getEmployeePf() {
 		return employeePf;
 	}
-	public void setEmployeePf(float employeePf) {
+	public void setEmployeePf(double employeePf) {
 		this.employeePf = employeePf;
 	}
 	public double getEmployerEps() {
@@ -336,10 +336,10 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	public void setEmployerPf(double employerPf) {
 		this.employerPf = employerPf;
 	}
-	public float getEsic() {
+	public double getEsic() {
 		return esic;
 	}
-	public void setEsic(float esic) {
+	public void setEsic(double esic) {
 		this.esic = esic;
 	}
 	public double getEmployerEsic() {
