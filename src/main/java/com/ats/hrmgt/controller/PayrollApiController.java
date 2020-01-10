@@ -656,7 +656,7 @@ public class PayrollApiController {
 						epf_wages_employee = (float) getSalaryTempList.get(i).getEpfWages();
 					}
 				} catch (Exception e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
 
 				try {
@@ -668,7 +668,7 @@ public class PayrollApiController {
 						epf_wages_employeR = (float) getSalaryTempList.get(i).getEpfWages();
 					}
 				} catch (Exception e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
 				getSalaryTempList.get(i).setEpfWagesEmployer(epf_wages_employeR);
 
@@ -680,11 +680,11 @@ public class PayrollApiController {
 						eps_Cal = (float) getSalaryTempList.get(i).getEpsWages();
 					}
 				} catch (Exception e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
 
 				try {
-					//System.out.println("age " +  getSalaryTempList.get(i).getPfApplicable());
+					// System.out.println("age " + getSalaryTempList.get(i).getPfApplicable());
 					if (getSalaryTempList.get(i).getPfApplicable().equalsIgnoreCase("yes")) {
 
 						getSalaryTempList.get(i).setPfStatus(1);
@@ -704,16 +704,18 @@ public class PayrollApiController {
 								// $age = $this->mpayroll->calculateAge($value->dob);
 
 						} catch (Exception e) {
-							//e.printStackTrace();
+							// e.printStackTrace();
 						}
 
 						String[] dob = getSalaryTempList.get(i).getDob().split("-");
-						//System.out.println("dob[2]" + dob[2] +"dob[1]" + dob[1]+"dob[0]" + dob[0] );
-						LocalDate birthDate = LocalDate.of(Integer.parseInt(dob[0]), Integer.parseInt(dob[1]), Integer.parseInt(dob[2]));
-						int age = calculateAge(birthDate, LocalDate.of(Integer.parseInt(dates[0]), Integer.parseInt(dates[1]), Integer.parseInt(dates[2])));
+						// System.out.println("dob[2]" + dob[2] +"dob[1]" + dob[1]+"dob[0]" + dob[0] );
+						LocalDate birthDate = LocalDate.of(Integer.parseInt(dob[0]), Integer.parseInt(dob[1]),
+								Integer.parseInt(dob[2]));
+						int age = calculateAge(birthDate, LocalDate.of(Integer.parseInt(dates[0]),
+								Integer.parseInt(dates[1]), Integer.parseInt(dates[2])));
 
-						System.out.println("age " +  age);
-						//int age = 60;
+						System.out.println("age " + age);
+						// int age = 60;
 						if (age <= eps_age_limit) {
 							// employer_eps
 							float EPS = eps_Cal;
@@ -746,7 +748,7 @@ public class PayrollApiController {
 						getSalaryTempList.get(i).setEpsWages(0);
 					}
 				} catch (Exception e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
 				try {
 					// esic cal start
@@ -782,7 +784,7 @@ public class PayrollApiController {
 						// $records['esic_wages_dec'] = 0;
 					}
 				} catch (Exception e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
 				getSalaryTempList.get(i)
 						.setTotPfAdminCh(getSalaryTempList.get(i).getEpsWages() * tot_pf_admin_ch_percentage);
@@ -820,7 +822,7 @@ public class PayrollApiController {
 
 		if (percentage == 1) {
 			float totalPayableDaysTemp = Math.min(payableDays, totalDaysInMonth);
-
+			// System.out.println(ammt);
 			if (salBasis.equalsIgnoreCase("monthly")) {
 				val = (float) ((ammt / totalDaysInMonth) * totalPayableDaysTemp);
 			} // $sal_basis == "monthly"
@@ -910,11 +912,17 @@ public class PayrollApiController {
 		float value = 0;
 
 		if (plus.length > 1) {
-
+			// System.out.println("add" + formula);
 			for (int i = 0; i < plus.length; i++) {
 				for (int j = 0; j < salaryTermList.size(); j++) {
-					if (Integer.parseInt(plus[i]) == salaryTermList.get(j).getSalTermId()) {
+					if (Integer.parseInt(plus[i]) == salaryTermList.get(j).getSalTermId()
+							&& salaryTermList.get(j).getSalTypeId() == salaryTerm.getSalTypeId()) {
 						value = (float) (value + salaryTermList.get(j).getValue());
+						/*
+						 * System.out .println(salaryTermList.get(j).getSalTermId() + " " +
+						 * salaryTermList.get(j).getValue() + " " +
+						 * empSalInfoDaiyInfoTempInfo.getEmpId());
+						 */ 
 						break;
 					}
 				}
@@ -923,11 +931,14 @@ public class PayrollApiController {
 		} else if (minus.length > 1) {
 			for (int i = 0; i < minus.length; i++) {
 				for (int j = 0; j < salaryTermList.size(); j++) {
-					if (Integer.parseInt(minus[i]) == salaryTermList.get(j).getSalTermId() && i == 0) {
-						value = (float) (salaryTermList.get(j).getValue());
+					if (Integer.parseInt(minus[i]) == salaryTermList.get(j).getSalTermId()
+							&& salaryTermList.get(j).getSalTypeId() == salaryTerm.getSalTypeId()) {
+						if (i == 0) {
+							value = (float) (salaryTermList.get(j).getValue());
+						} else {
+							value = (float) (value - salaryTermList.get(j).getValue());
+						}
 						break;
-					} else {
-						value = (float) (value - salaryTermList.get(j).getValue());
 					}
 				}
 
