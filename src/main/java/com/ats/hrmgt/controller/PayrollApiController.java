@@ -1,5 +1,6 @@
 package com.ats.hrmgt.controller;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -435,6 +436,51 @@ public class PayrollApiController {
 				getSalaryTempList.get(i).setGetAllowanceTempList(list);
 			}
 
+			float epf_wages_employee = 0;
+			float epf_wages_employeR = 0;
+			float eps_Cal = 0;
+			float epf_percentage = 0;
+			float cealing_limit_eps_wages = 0;
+			float eps_percentage = 0;
+			float ceiling_limit = 0;
+			float eps_age_limit = 0;
+			float esic_limit = 0;
+			float tot_pf_admin_ch_percentage = 0;
+			float tot_edli_ch_percentage = 0;
+			float tot_edli_admin_ch_percentage = 0;
+
+			int febmonthptamount_condtioncheck = 0;
+			float febmonthptamount = 0;
+			int amount_round = 0;
+
+			for (int k = 0; k < settingList.size(); k++) {
+				if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit_eps_wages")) {
+					cealing_limit_eps_wages = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("eps_percentage")) {
+					eps_percentage = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("epf_percentage")) {
+					epf_percentage = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit")) {
+					ceiling_limit = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("eps_age_limit")) {
+					eps_age_limit = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("esic_limit")) {
+					esic_limit = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_pf_admin_ch")) {
+					tot_pf_admin_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_edli_ch")) {
+					tot_edli_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_edli_admin_ch")) {
+					tot_edli_admin_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("febmonthptamount_condtioncheck")) {
+					febmonthptamount_condtioncheck = Integer.parseInt(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("febmonthptamount")) {
+					febmonthptamount = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("amount_round")) {
+					amount_round = Integer.parseInt(settingList.get(k).getValue());
+				}
+			}
+
 			MstEmpType mstEmpType = new MstEmpType();
 			SalaryTypesMaster salaryType = new SalaryTypesMaster();
 
@@ -489,29 +535,30 @@ public class PayrollApiController {
 						}
 						switch (salaryTermList.get(j).getFormulaType()) {
 						case "F":
-							float calculatedValue = calculateFdata(salaryTermList.get(j).getPercentage(),
+							double calculatedValue = calculateFdata(salaryTermList.get(j).getPercentage(),
 									getSalaryTempList.get(i).getSalBasis(),
 									getSalaryTempList.get(i).getTotalDaysInmonth(),
 									getSalaryTempList.get(i).getPayableDays(),
 									getSalaryTempList.get(i).getWorkingDays(), ammt,
-									getSalaryTempList.get(i).getPresentDays());
+									getSalaryTempList.get(i).getPresentDays(), amount_round);
 							getSalaryTempList.get(i).setBasicCal(calculatedValue);
 							salaryTermList.get(j).setValue(calculatedValue);
 
 							break;
 						case "A":
-							float tempVal = calculateAllowancedata(salaryTermList.get(j).getPercentage(),
+							double tempVal = calculateAllowancedata(salaryTermList.get(j).getPercentage(),
 									getSalaryTempList.get(i).getSalBasis(),
 									getSalaryTempList.get(i).getTotalDaysInmonth(),
 									getSalaryTempList.get(i).getPayableDays(),
 									getSalaryTempList.get(i).getWorkingDays(), ammt,
-									getSalaryTempList.get(i).getPresentDays());
+									getSalaryTempList.get(i).getPresentDays(), amount_round);
 							getSalaryTempList.get(i).getGetAllowanceTempList().get(index).setAllowanceValueCal(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
 							break;
 						case "S":
 							float tempValNew = 0;
-							tempVal = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i));
+							tempVal = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
+									amount_round);
 
 							if (getSalaryTempList.get(i).getPtApplicable().equalsIgnoreCase("yes")) {
 
@@ -522,9 +569,9 @@ public class PayrollApiController {
 										if (tempVal >= slabMasterList.get(k).getMinVal()
 												&& tempVal <= slabMasterList.get(k).getMaxVal()) {
 
-											if (getSalaryTempList.get(i).getMonth() == 2
-													&& slabMasterList.get(k).getAmount() == 200) {
-												tempValNew = 300;
+											if (getSalaryTempList.get(i).getMonth() == 2 && slabMasterList.get(k)
+													.getAmount() == febmonthptamount_condtioncheck) {
+												tempValNew = febmonthptamount;
 											} // $calc_month == "2" && $amt == "200"
 											else {
 												tempValNew = slabMasterList.get(k).getAmount();
@@ -545,13 +592,13 @@ public class PayrollApiController {
 									getSalaryTempList.get(i).getTotalDaysInmonth(),
 									getSalaryTempList.get(i).getPayableDays(),
 									getSalaryTempList.get(i).getWorkingDays(), ammt,
-									getSalaryTempList.get(i).getPresentDays());
+									getSalaryTempList.get(i).getPresentDays(), amount_round);
 							getSalaryTempList.get(i).setBasicDefault(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
 							break;
 						case "P":
-							float temp = calculatePdata(salaryTermList.get(j), salaryTermList,
-									getSalaryTempList.get(i));
+							double temp = calculatePdata(salaryTermList.get(j), salaryTermList,
+									getSalaryTempList.get(i), amount_round);
 							if (salaryTermList.get(j).getFieldName().equals("gross_salary")) {
 								getSalaryTempList.get(i).setGrossSalaryDytemp(temp);
 							} else if (salaryTermList.get(j).getFieldName().equals("epf_wages")) {
@@ -587,7 +634,7 @@ public class PayrollApiController {
 									getSalaryTempList.get(i).getPayableDays(),
 									getSalaryTempList.get(i).getWorkingDays(),
 									getSalaryTempList.get(i).getTotworkingHrs(), getSalaryTempList.get(i).getTotOthr(),
-									ammt);
+									ammt, amount_round);
 							getSalaryTempList.get(i).setOtWages(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
 							break;
@@ -596,7 +643,7 @@ public class PayrollApiController {
 							break;
 						case "FD":
 							tempVal = fundwages(salaryTermList.get(j).getPercentage(),
-									getSalaryTempList.get(i).getSalBasis(), ammt);
+									getSalaryTempList.get(i).getSalBasis(), ammt, amount_round);
 							salaryTermList.get(j).setValue(tempVal);
 							break;
 						default:
@@ -611,41 +658,6 @@ public class PayrollApiController {
 
 				if (!getSalaryTempList.get(i).getMlwfApplicable().equalsIgnoreCase("yes")) {
 					getSalaryTempList.get(i).setMlwf(0);
-				}
-
-				float epf_wages_employee = 0;
-				float epf_wages_employeR = 0;
-				float eps_Cal = 0;
-				float epf_percentage = 0;
-				float cealing_limit_eps_wages = 0;
-				float eps_percentage = 0;
-				float ceiling_limit = 0;
-				float eps_age_limit = 0;
-				float esic_limit = 0;
-				float tot_pf_admin_ch_percentage = 0;
-				float tot_edli_ch_percentage = 0;
-				float tot_edli_admin_ch_percentage = 0;
-
-				for (int k = 0; k < settingList.size(); k++) {
-					if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit_eps_wages")) {
-						cealing_limit_eps_wages = Float.parseFloat(settingList.get(k).getValue());
-					} else if (settingList.get(k).getKey().equalsIgnoreCase("eps_percentage")) {
-						eps_percentage = Float.parseFloat(settingList.get(k).getValue());
-					} else if (settingList.get(k).getKey().equalsIgnoreCase("epf_percentage")) {
-						epf_percentage = Float.parseFloat(settingList.get(k).getValue());
-					} else if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit")) {
-						ceiling_limit = Float.parseFloat(settingList.get(k).getValue());
-					} else if (settingList.get(k).getKey().equalsIgnoreCase("eps_age_limit")) {
-						eps_age_limit = Float.parseFloat(settingList.get(k).getValue());
-					} else if (settingList.get(k).getKey().equalsIgnoreCase("esic_limit")) {
-						esic_limit = Float.parseFloat(settingList.get(k).getValue());
-					} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_pf_admin_ch")) {
-						tot_pf_admin_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
-					} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_edli_ch")) {
-						tot_edli_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
-					} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_edli_admin_ch")) {
-						tot_edli_admin_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
-					}
 				}
 
 				try {
@@ -793,12 +805,11 @@ public class PayrollApiController {
 						.setTotEdliAdminCh(getSalaryTempList.get(i).getEpsWages() * tot_edli_admin_ch_percentage);
 				getSalaryTempList.get(i).setStatusDytemp(1);
 				getSalaryTempList.get(i).setNetSalary((getSalaryTempList.get(i).getGrossSalaryDytemp()
-						+ getSalaryTempList.get(i).getPerformanceBonus())
+						+ getSalaryTempList.get(i).getPerformanceBonus() + getSalaryTempList.get(i).getMiscExpAdd())
 						- (getSalaryTempList.get(i).getEsic() + getSalaryTempList.get(i).getTds()
 								+ getSalaryTempList.get(i).getItded() + getSalaryTempList.get(i).getPtDed()
 								+ getSalaryTempList.get(i).getAdvanceDed() + getSalaryTempList.get(i).getLoanDed()
-								+ getSalaryTempList.get(i).getMiscExpAdd() + getSalaryTempList.get(i).getEmployeePf()
-								+ getSalaryTempList.get(i).getPayDed()
+								+ getSalaryTempList.get(i).getEmployeePf() + getSalaryTempList.get(i).getPayDed()
 								+ getSalaryTempList.get(i).getSocietyContributionDytemp()));
 			}
 
@@ -815,10 +826,10 @@ public class PayrollApiController {
 		return getSalaryTempList;
 	}
 
-	public float calculateFdata(float percentage, String salBasis, int totalDaysInMonth, float payableDays,
-			float workingDays, double ammt, float presentDays) {
+	public double calculateFdata(float percentage, String salBasis, int totalDaysInMonth, float payableDays,
+			float workingDays, double ammt, float presentDays, int amount_round) {
 
-		float val = 0;
+		double val = 0;
 
 		if (percentage == 1) {
 			float totalPayableDaysTemp = Math.min(payableDays, totalDaysInMonth);
@@ -841,14 +852,14 @@ public class PayrollApiController {
 				val = (float) ((ammt / workingDays) * totalPayableDaysTemp);
 			}
 		} // $percentage == 2
-			// val = castNumber(val);
+		val = castNumber(val, amount_round);
 		return val;
 	}
 
-	public float calculateAllowancedata(float percentage, String salBasis, int totalDays, float totalPayableDays,
-			float workingDays, double amount, float presentDays) {
-		float val = 0;
+	public double calculateAllowancedata(float percentage, String salBasis, int totalDays, float totalPayableDays,
+			float workingDays, double amount, float presentDays, int amount_round) {
 
+		double val = 0;
 		if (percentage == 0) {
 			// val = castNumber(amount);
 		} // $percentage == "0"
@@ -883,14 +894,14 @@ public class PayrollApiController {
 			}
 			// val = castNumber(val);
 		} // $percentage == 3
-
+		val = castNumber(amount, amount_round);
 		return val;
 	}
 
-	public float calculateXdata(float percentage, String salBasis, int totalDays, float totalPayableDays,
-			float workingDays, double amount, float presentDays) {
+	public double calculateXdata(float percentage, String salBasis, int totalDays, float totalPayableDays,
+			float workingDays, double amount, float presentDays, int amount_round) {
 
-		float val = 0;
+		double val = 0;
 		if (salBasis.equalsIgnoreCase("monthly")) {
 			val = (float) amount;
 		} // $sal_basis == "monthly"
@@ -898,18 +909,19 @@ public class PayrollApiController {
 			// $val = ($amount / $working_days ) * $total_payable_days;
 			val = (float) (amount / totalDays);
 		}
+		val = castNumber(val, amount_round);
 		return val;
 
 	}
 
-	public float calculatePdata(SalaryTerm salaryTerm, List<SalaryTerm> salaryTermList,
-			EmpSalInfoDaiyInfoTempInfo empSalInfoDaiyInfoTempInfo) {
+	public double calculatePdata(SalaryTerm salaryTerm, List<SalaryTerm> salaryTermList,
+			EmpSalInfoDaiyInfoTempInfo empSalInfoDaiyInfoTempInfo, int amount_round) {
 
 		String formula = salaryTerm.getFormula();
 		String[] plus = formula.split("\\+");
 		String[] minus = formula.split("\\-");
 
-		float value = 0;
+		double value = 0;
 
 		if (plus.length > 1) {
 			// System.out.println("add" + formula);
@@ -922,7 +934,7 @@ public class PayrollApiController {
 						 * System.out .println(salaryTermList.get(j).getSalTermId() + " " +
 						 * salaryTermList.get(j).getValue() + " " +
 						 * empSalInfoDaiyInfoTempInfo.getEmpId());
-						 */ 
+						 */
 						break;
 					}
 				}
@@ -951,18 +963,18 @@ public class PayrollApiController {
 				}
 			}
 		}
-
+		value = castNumber(value, amount_round);
 		return value;
 	}
 
-	public float otwages(float percentage, String salBasis, int totalDays, float totalPayableDays, float workingDays,
-			float workingHour, float otHr, double ammt) {
+	public double otwages(float percentage, String salBasis, int totalDays, float totalPayableDays, float workingDays,
+			float workingHour, float otHr, double ammt, int amount_round) {
 
 		workingHour = workingHour / 60;
 		otHr = otHr / 60;
 		// basic+DAy
 		// metaf: amount / month_day
-		float val = 0;
+		double val = 0;
 
 		if (salBasis.equalsIgnoreCase("monthly")) {
 			val = (float) ((ammt / workingDays) / (workingHour * (otHr * percentage)));
@@ -970,15 +982,15 @@ public class PayrollApiController {
 		else {
 			val = (float) ((ammt / workingHour) * (otHr * percentage));
 		}
-		// val = castNumber(val);
+		val = castNumber(val, amount_round);
 		return val;
 	}
 
-	public float fundwages(float percentage, String salBasis, double ammt) {
-		float val = 0;
+	public double fundwages(float percentage, String salBasis, double ammt, int amount_round) {
+		double val = 0;
 		float per = percentage / 100;
-		val = (float) (ammt * per);
-		// val = castNumber(val);
+		val = ammt * per;
+		val = castNumber(val, amount_round);
 		return val;
 	}
 
@@ -989,11 +1001,24 @@ public class PayrollApiController {
 			return 0;
 		}
 	}
-	/*
-	 * public float castNumber(float val) { switch
-	 * ($this->sallary_term_cal_amount_setting) { case 1: $number = round($number);
-	 * break; case 2: $number = number_format($number, 2, '.', ''); break; case 3:
-	 * $number = ceil($number); break; case 4: $number = floor($number); break; }
-	 * //$this->sallary_term_cal_amount_setting return $number; }
-	 */
+
+	public double castNumber(double val, int amount_round) {
+		switch (amount_round) {
+		case 1:
+			val = Math.round(val);
+			break;
+		case 2:
+			DecimalFormat df = new DecimalFormat("#.00");
+			val = Double.parseDouble(df.format(val));
+			break;
+		case 3:
+			val = Math.ceil(val);
+			break;
+		case 4:
+			val = Math.floor(val);
+			break;
+		}
+		return val;
+	}
+
 }
