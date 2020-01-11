@@ -635,10 +635,12 @@ public class PayrollApiController {
 									getSalaryTempList.get(i).getPresentDays(), amount_round);
 							// getSalaryTempList.get(i).setBasicDefault(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
-							/*
-							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
-							 * " termid " + salaryTermList.get(j));
-							 */
+
+							/*System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt + " termid "
+									+ salaryTermList.get(j).getSalTermId() + " value "
+									+ salaryTermList.get(j).getValue() + " basic"
+									+ getSalaryTempList.get(i).getBasic());*/
+							/*System.out.println(salaryTermList);*/
 							break;
 						case "P":
 							double temp = calculatePdata(salaryTermList.get(j), salaryTermList,
@@ -667,10 +669,12 @@ public class PayrollApiController {
 								getSalaryTempList.get(i).setSocietyContributionDytemp(ammt);
 							}
 							salaryTermList.get(j).setValue(ammt);
-							/*
-							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
-							 * " termid " + salaryTermList.get(j));
-							 */
+
+							/*System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt + " termid "
+									+ salaryTermList.get(j).getSalTermId() + " value "
+									+ salaryTermList.get(j).getValue() + " basic"
+									+ getSalaryTempList.get(i).getBasic());*/
+							/*System.out.println(salaryTermList);*/
 							break;
 						case "C1":
 
@@ -688,10 +692,12 @@ public class PayrollApiController {
 									getSalaryTempList.get(i).getTotOthr(), ammt, mstEmpType, amount_round);
 							getSalaryTempList.get(i).setOtWages(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
-							/*
-							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
-							 * " termid " + salaryTermList.get(j));
-							 */
+
+							/*System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt + " termid "
+									+ salaryTermList.get(j).getSalTermId() + " value "
+									+ salaryTermList.get(j).getValue() + " basic"
+									+ getSalaryTempList.get(i).getBasic());*/
+
 							break;
 						case "OTFD":
 
