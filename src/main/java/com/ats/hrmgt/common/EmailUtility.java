@@ -39,8 +39,11 @@ public class EmailUtility {
 		/*final String username = "infrabeat.hrms@gmail.com";
 		final String password ="*DNGrm?dt!6W^zJmaK5znVJJ9C";*/
 		
-		final String username = "akshaykasar72@gmail.com";
-		final String password ="Mh151772";
+		/*final String username = "akshaykasar72@gmail.com";
+		final String password ="Mh151772";*/
+		
+		final String username =senderEmail;
+		final String password =senderPassword;
 
 		System.out.println("username" + username);
 		System.out.println("password" + password);

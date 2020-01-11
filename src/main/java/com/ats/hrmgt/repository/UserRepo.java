@@ -19,4 +19,6 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 
 	@Query(value = " SELECT * FROM m_user WHERE BINARY m_user.user_pwd=:password AND  m_user.emp_id=:empId and m_user.del_status=1", nativeQuery = true)
 	User getSpecificUserRecord(@Param("empId") int empId, @Param("password") String password);
+
+	User findByEmpId(int empId);
 }

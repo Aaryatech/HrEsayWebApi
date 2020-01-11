@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.common.EmailUtility;
 import com.ats.hrmgt.model.Allowances;
 import com.ats.hrmgt.model.EmpAllowanceList;
 import com.ats.hrmgt.model.EmpSalAllowance;
@@ -1160,6 +1161,26 @@ public class PayrollApiController {
 			int deleteFromTemp = salaryCalcTempRepo.deleteFromTemp();
 			int deleteFromTempAll = salAllownceTempRepo.deleteFromTempAll();
 
+			info.setError(false);
+			info.setMsg("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("failed");
+			e.printStackTrace();
+		}
+
+		return info;
+	}
+	
+	@RequestMapping(value = { "/sendMailTest" }, method = RequestMethod.GET)
+	@ResponseBody
+	public Info sendMailTest() {
+
+		Info info = new Info();
+
+		try {
+			EmailUtility.sendEmail("task.management@kppmca.com", "De@8380077223", "akshaykasar72@gmail.com", "Test Mail", "", "Mail Testing");
 			info.setError(false);
 			info.setMsg("success");
 

@@ -116,5 +116,31 @@ public class SettingApiController {
 
 	}
 	
+	@RequestMapping(value = { "/findUserInfoByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody User findUserInfoByEmpId(@RequestParam("EmpId") int EmpId) {
+
+		User save = new User();
+		try {
+
+			save = userRepo.findByEmpId(EmpId);
+
+			if (save == null) {
+
+				save = new User();
+				save.setError(true);
+
+			} else {
+				save.setError(false);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+	
 
 }
