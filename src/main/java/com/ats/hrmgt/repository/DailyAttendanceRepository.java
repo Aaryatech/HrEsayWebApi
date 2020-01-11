@@ -30,5 +30,10 @@ public interface DailyAttendanceRepository extends JpaRepository<DailyAttendance
 	@Modifying
 	@Query("update DailyAttendance set rec_status='F',is_fixed=1 WHERE emp_id in (:empIds) and att_date=:date")
 	int fixDailyDailyRecord(@Param("date") String date, @Param("empIds") List<Integer> empIds);
+	
+	@Transactional
+	@Modifying
+	@Query("update DailyAttendance set rec_status='F',is_fixed=1 WHERE att_date between :fromDate and :toDate and emp_id in (:empIds) ")
+	int fixDailyDailyRecordBetweenDate(@Param("fromDate") String fromDate,@Param("toDate") String toDate, @Param("empIds") List<Integer> empIds);
 
 }

@@ -175,7 +175,7 @@ public class PayrollApiController {
 
 	@RequestMapping(value = { "/insertPayrollIntempTable" }, method = RequestMethod.POST)
 	public Info insertPayrollIntempTable(@RequestParam("month") int month, @RequestParam("year") int year,
-			@RequestParam("empIds") List<Integer> empIds) {
+			@RequestParam("empIds") List<Integer> empIds, @RequestParam("userId") int userId) {
 
 		Info info = new Info();
 
@@ -184,7 +184,8 @@ public class PayrollApiController {
 					.getEmployeeListWithEmpSalEnfoForPayRollForTempInsert(month, year, empIds);
 			List<Allowances> allowancelist = allowanceRepo.findBydelStatusAndIsActive(0, 1);
 			List<EmpSalAllowance> empAllowanceList = empSalAllowanceRepo.findByDelStatusAndEmpId(1, empIds);
-
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			// insert code if record not inserted in temp table
 			for (int i = 0; i < list.size(); i++) {
 
@@ -200,6 +201,8 @@ public class PayrollApiController {
 				salaryCalcTempsave.setDepartId(list.get(i).getDepartId());
 				salaryCalcTempsave.setAttSumId(list.get(i).getSumId());
 				salaryCalcTempsave.setSalTypeId(list.get(i).getSalaryTypeId());
+				salaryCalcTempsave.setLoginName(String.valueOf(userId));
+				salaryCalcTempsave.setLoginTime(sf.format(date));
 				SalaryCalcTemp saveres = salaryCalcTempRepo.save(salaryCalcTempsave);
 
 				List<SalAllownceTemp> allowlist = new ArrayList<>();
@@ -416,7 +419,8 @@ public class PayrollApiController {
 
 	@RequestMapping(value = { "/calculateSalary" }, method = RequestMethod.POST)
 	public List<EmpSalInfoDaiyInfoTempInfo> calculateSalary(@RequestParam("month") int month,
-			@RequestParam("year") int year, @RequestParam("empIds") List<Integer> empIds) {
+			@RequestParam("year") int year, @RequestParam("empIds") List<Integer> empIds,
+			@RequestParam("userId") int userId) {
 
 		Info info = new Info();
 		List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList = new ArrayList<>();
@@ -497,6 +501,10 @@ public class PayrollApiController {
 			SalaryTypesMaster salaryType = new SalaryTypesMaster();
 
 			for (int i = 0; i < getSalaryTempList.size(); i++) {
+
+				for (int j = 0; j < salaryTermList.size(); j++) {
+					salaryTermList.get(j).setValue(0);
+				}
 
 				for (int j = 0; j < mstEmpTypeList.size(); j++) {
 
@@ -844,6 +852,7 @@ public class PayrollApiController {
 								+ getSalaryTempList.get(i).getEmployeePf() + getSalaryTempList.get(i).getPayDed()
 								+ getSalaryTempList.get(i).getSocietyContributionDytemp()),
 						amount_round));
+				getSalaryTempList.get(i).setLoginName(String.valueOf(userId));
 			}
 
 			// System.out.println(getSalaryTempList);
@@ -1065,7 +1074,8 @@ public class PayrollApiController {
 		try {
 
 			// System.out.println(salList);
-
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			for (int i = 0; i < salList.size(); i++) {
 
 				SalaryCalc SalaryCalc = new SalaryCalc();
@@ -1118,7 +1128,7 @@ public class PayrollApiController {
 				SalaryCalc.setNetSalary(salList.get(i).getNetSalary());
 				SalaryCalc.setIsLocked(salList.get(i).getIsLocked());
 				SalaryCalc.setLoginName(salList.get(i).getLoginName());
-				SalaryCalc.setLoginTime(salList.get(i).getLoginTime());
+				SalaryCalc.setLoginTime(sf.format(date));
 				SalaryCalc.setMlwfApplicable(salList.get(i).getMlwfApplicable());
 				SalaryCalc.setPtApplicable(salList.get(i).getPtApplicable());
 				SalaryCalc.setPayDed(salList.get(i).getPayDed());
