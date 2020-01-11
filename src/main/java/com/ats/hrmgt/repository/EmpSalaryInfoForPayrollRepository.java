@@ -76,7 +76,7 @@ public interface EmpSalaryInfoForPayrollRepository extends JpaRepository<EmpSala
 			"        ' ',\n" + 
 			"        e.surname) as emp_name,\n" + 
 			"        si.*,\n" + 
-			"        sd.id as sum_id\n" + 
+			"        sd.id as sum_id     \n" + 
 			"    from\n" + 
 			"        tbl_emp_salary_info si,\n" + 
 			"        m_employees e,\n" + 
@@ -85,29 +85,40 @@ public interface EmpSalaryInfoForPayrollRepository extends JpaRepository<EmpSala
 			"        mst_salary_types st,\n" + 
 			"        m_designation de,\n" + 
 			"        m_department dp,\n" + 
-			"        tbl_attt_summary_daily sd\n" + 
+			"        tbl_attt_summary_daily sd     \n" + 
 			"    where\n" + 
-			"        e.emp_id=si.emp_id \n" + 
-			"        and e.del_status=1 \n" + 
-			"        and et.emp_type_id=e.emp_type \n" + 
-			"        and l.loc_id = e.location_id \n" + 
-			"        and st.sal_type_id=si.salary_type_id \n" + 
-			"        and de.desig_id=e.designation_id \n" + 
-			"        and dp.depart_id=e.depart_id \n" + 
-			"        and sd.emp_id=e.emp_id\n" + 
-			"        and sd.month=:month and sd.year=:year\n" + 
+			"        e.emp_id=si.emp_id          \n" + 
+			"        and e.del_status=1          \n" + 
+			"        and et.emp_type_id=e.emp_type          \n" + 
+			"        and l.loc_id = e.location_id          \n" + 
+			"        and st.sal_type_id=si.salary_type_id          \n" + 
+			"        and de.desig_id=e.designation_id          \n" + 
+			"        and dp.depart_id=e.depart_id          \n" + 
+			"        and sd.emp_id=e.emp_id         \n" + 
+			"        and sd.month=:month \n" + 
+			"        and sd.year=:year       \n" + 
 			"        and e.emp_id not in (\n" + 
 			"            select\n" + 
-			"                emp_id \n" + 
+			"                emp_id              \n" + 
 			"            from\n" + 
-			"                tbl_salary_dynamic_temp \n" + 
+			"                tbl_salary_dynamic_temp              \n" + 
 			"            where\n" + 
-			"                calc_month=:month \n" + 
-			"                and calc_year=:year\n" + 
-			"        ) and e.emp_id in (:empIds) \n" + 
+			"                calc_month=sd.month                  \n" + 
+			"                and calc_year=sd.year         \n" + 
+			"        ) \n" + 
+			"        and e.emp_id in (:empIds)\n" + 
+			"        and e.emp_id not in (\n" + 
+			"            select\n" + 
+			"                emp_id              \n" + 
+			"            from\n" + 
+			"                tbl_salary_calc              \n" + 
+			"            where\n" + 
+			"                calc_month=sd.month                 \n" + 
+			"                and calc_year=sd.year         \n" + 
+			"        ) \n" + 
 			"    order by\n" + 
 			"        e.emp_id", nativeQuery = true)
 	List<EmpSalaryInfoForPayroll> getEmployeeListWithEmpSalEnfoForPayRollForTempInsert(@Param("month") int month,
-			@Param("year") int year, List<Integer> empIds);
+			@Param("year") int year,@Param("empIds") List<Integer> empIds);
 
 }
