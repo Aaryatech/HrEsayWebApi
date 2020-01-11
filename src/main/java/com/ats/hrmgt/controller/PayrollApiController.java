@@ -624,14 +624,21 @@ public class PayrollApiController {
 
 							break;
 						case "X":
+							ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
+									amount_round);
+
 							tempVal = calculateXdata(salaryTermList.get(j).getPercentage(),
 									getSalaryTempList.get(i).getSalBasis(),
 									getSalaryTempList.get(i).getTotalDaysInmonth(),
 									getSalaryTempList.get(i).getPayableDays(),
 									getSalaryTempList.get(i).getWorkingDays(), ammt,
 									getSalaryTempList.get(i).getPresentDays(), amount_round);
-							getSalaryTempList.get(i).setBasicDefault(tempVal);
+							// getSalaryTempList.get(i).setBasicDefault(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
+							/*
+							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
+							 * " termid " + salaryTermList.get(j));
+							 */
 							break;
 						case "P":
 							double temp = calculatePdata(salaryTermList.get(j), salaryTermList,
@@ -660,20 +667,31 @@ public class PayrollApiController {
 								getSalaryTempList.get(i).setSocietyContributionDytemp(ammt);
 							}
 							salaryTermList.get(j).setValue(ammt);
+							/*
+							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
+							 * " termid " + salaryTermList.get(j));
+							 */
 							break;
 						case "C1":
 
 							break;
 						case "OT":
+
+							ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
+									amount_round);
+
 							tempVal = otwages(salaryTermList.get(j).getPercentage(),
 									getSalaryTempList.get(i).getSalBasis(),
 									getSalaryTempList.get(i).getTotalDaysInmonth(),
 									getSalaryTempList.get(i).getPayableDays(),
-									getSalaryTempList.get(i).getWorkingDays(),
-									getSalaryTempList.get(i).getTotworkingHrs(), getSalaryTempList.get(i).getTotOthr(),
-									ammt, amount_round);
+									getSalaryTempList.get(i).getWorkingDays(), salaryType.getWorkinghr(),
+									getSalaryTempList.get(i).getTotOthr(), ammt, mstEmpType, amount_round);
 							getSalaryTempList.get(i).setOtWages(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
+							/*
+							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
+							 * " termid " + salaryTermList.get(j));
+							 */
 							break;
 						case "OTFD":
 
@@ -1000,7 +1018,7 @@ public class PayrollApiController {
 				}
 
 			}
-		} else {
+		} else if (minus.length == 1 || plus.length == 1) {
 			for (int j = 0; j < salaryTermList.size(); j++) {
 				if (Integer.parseInt(minus[0]) == salaryTermList.get(j).getSalTermId()) {
 					value = salaryTermList.get(j).getValue();
@@ -1013,7 +1031,7 @@ public class PayrollApiController {
 	}
 
 	public double otwages(float percentage, String salBasis, int totalDays, float totalPayableDays, float workingDays,
-			float workingHour, float otHr, double ammt, int amount_round) {
+			double workingHour, float otHr, double ammt, MstEmpType mstEmpType, int amount_round) {
 
 		workingHour = workingHour / 60;
 		otHr = otHr / 60;
@@ -1021,13 +1039,20 @@ public class PayrollApiController {
 		// metaf: amount / month_day
 		double val = 0;
 
-		if (salBasis.equalsIgnoreCase("monthly")) {
-			val = (ammt / workingDays) / (workingHour * (otHr * percentage));
-		} // $sal_basis == "monthly"
-		else {
-			val = (ammt / workingHour) * (otHr * percentage);
+		double otMultiplication = 0;
+
+		if (mstEmpType.getOtApplicable().equalsIgnoreCase("yes")) {
+			otMultiplication = Integer.parseInt(mstEmpType.getOtType());
+
+			if (salBasis.equalsIgnoreCase("monthly")) {
+				val = (((ammt / totalDays) / workingHour) * otHr) * otMultiplication;
+			} // $sal_basis == "monthly"
+			else {
+				val = ((ammt / workingHour) * otHr) * otMultiplication;
+			}
+			val = castNumber(val, amount_round);
 		}
-		val = castNumber(val, amount_round);
+
 		return val;
 	}
 
@@ -1172,7 +1197,7 @@ public class PayrollApiController {
 
 		return info;
 	}
-	
+
 	@RequestMapping(value = { "/sendMailTest" }, method = RequestMethod.GET)
 	@ResponseBody
 	public Info sendMailTest() {
@@ -1180,7 +1205,8 @@ public class PayrollApiController {
 		Info info = new Info();
 
 		try {
-			EmailUtility.sendEmail("task.management@kppmca.com", "De@8380077223", "akshaykasar72@gmail.com", "Test Mail", "", "Mail Testing");
+			EmailUtility.sendEmail("task.management@kppmca.com", "De@8380077223", "akshaykasar72@gmail.com",
+					"Test Mail", "", "Mail Testing");
 			info.setError(false);
 			info.setMsg("success");
 
