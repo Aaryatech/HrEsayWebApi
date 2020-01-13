@@ -63,6 +63,10 @@ public interface BonusCalcRepo extends JpaRepository<BonusCalc, Integer> {
 
 
 
-	BonusCalc findByDelStatusAndBonusCalcId(int bonusCalcId, int i);
+ 
+
+
+
+	BonusCalc findByBonusCalcIdAndDelStatus(int bonusCalcId, int i);
 
 }
