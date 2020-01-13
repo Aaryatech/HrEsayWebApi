@@ -894,7 +894,8 @@ public class PayrollApiController {
 						(getSalaryTempList.get(i).getEpsWages() * tot_edli_admin_ch_percentage), amount_round));
 				getSalaryTempList.get(i).setStatusDytemp(1);
 				getSalaryTempList.get(i).setNetSalary(castNumber((getSalaryTempList.get(i).getGrossSalaryDytemp()
-						+ getSalaryTempList.get(i).getPerformanceBonus() + getSalaryTempList.get(i).getMiscExpAdd())
+						+ getSalaryTempList.get(i).getPerformanceBonus() + getSalaryTempList.get(i).getMiscExpAdd()
+						+ getSalaryTempList.get(i).getOtWages())
 						- (getSalaryTempList.get(i).getEsic() + getSalaryTempList.get(i).getTds()
 								+ getSalaryTempList.get(i).getItded() + getSalaryTempList.get(i).getPtDed()
 								+ getSalaryTempList.get(i).getAdvanceDed() + getSalaryTempList.get(i).getLoanDed()
@@ -1160,10 +1161,10 @@ public class PayrollApiController {
 				SalaryCalc.setGrossSalary(salList.get(i).getGrossSalaryDytemp());
 				SalaryCalc.setEpsWages(salList.get(i).getEpsWages());
 				SalaryCalc.setEsicWagesDec(salList.get(i).getEsicWagesDec());
-				SalaryCalc.setEmployeePf( salList.get(i).getEmployeePf());
+				SalaryCalc.setEmployeePf(salList.get(i).getEmployeePf());
 				SalaryCalc.setEmployerPf(salList.get(i).getEmployerPf());
 				SalaryCalc.setEmployerEps(salList.get(i).getEmployerEps());
-				SalaryCalc.setEsic( salList.get(i).getEsic());
+				SalaryCalc.setEsic(salList.get(i).getEsic());
 				SalaryCalc.setEmployerEsic(salList.get(i).getEmployerEsic());
 				SalaryCalc.setEsicStatus(salList.get(i).getEsicStatus());
 				SalaryCalc.setPfStatus(salList.get(i).getPfStatus());
