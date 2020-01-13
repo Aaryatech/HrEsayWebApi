@@ -357,13 +357,13 @@ public class LoanApiController {
 	@RequestMapping(value = { "/updateSkipLoan" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateSkipLoan(@RequestParam("dateTimeUpdate") String dateTimeUpdate,
 			@RequestParam("userId") int userId, @RequestParam("skipStr") String skipStr,
-			@RequestParam("count") int count, @RequestParam("advId") int advId) {
+			@RequestParam("count") int count, @RequestParam("advId") int advId,@RequestParam("repayEnd") String repayEnd) {
 
 		Info info = new Info();
 
 		try {
 
-			int delete = loanMainRepo.skipLoan(advId, userId, count, skipStr, dateTimeUpdate);
+			int delete = loanMainRepo.skipLoan(advId, userId, count, skipStr, dateTimeUpdate,repayEnd);
 
 			if (delete > 0) {
 				info.setError(false);

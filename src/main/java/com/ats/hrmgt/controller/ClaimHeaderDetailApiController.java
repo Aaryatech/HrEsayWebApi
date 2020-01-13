@@ -2,7 +2,6 @@ package com.ats.hrmgt.controller;
 
 import java.util.ArrayList;
 
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -29,6 +28,7 @@ import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.model.claim.ClaimApply;
 import com.ats.hrmgt.model.claim.ClaimApplyHeader;
+import com.ats.hrmgt.model.claim.ClaimProof;
 import com.ats.hrmgt.repository.EmployeeInfoRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetAuthorityIdsRepo;
@@ -39,22 +39,18 @@ public class ClaimHeaderDetailApiController {
 	@Autowired
 	EmployeeMasterRepository employeeInfoRepository;
 
-	
 	@Autowired
 	GetAuthorityIdsRepo getAuthorityIdsRepo;
-	
+
 	@Autowired
 	ClaimHeaderRepo claimHeaderRepo;
-	
+
 	@Autowired
 	ClaimApplyRepo claimApplyRepo;
-	
+
 	@Autowired
 	SettingRepo settingRepo;
-	
-	
- 
-	
+
 	@RequestMapping(value = { "/saveClaimHeaderAndDetail" }, method = RequestMethod.POST)
 	public @ResponseBody ClaimApplyHeader saveClaimHeaderAndDetail(@RequestBody ClaimApplyHeader claimHead) {
 
@@ -73,7 +69,6 @@ public class ClaimHeaderDetailApiController {
 			List<ClaimApply> claimDetailsList = claimApplyRepo.saveAll(claimHead.getDetailList());
 			claimHeader.setDetailList(claimDetailsList);
 
-			
 			if (claimDetailsList == null) {
 
 				claimHeader = new ClaimApplyHeader();
@@ -99,7 +94,8 @@ public class ClaimHeaderDetailApiController {
 				Set<String> set = new HashSet<>(al);
 				al.clear();
 				al.addAll(set);
-			//	System.err.println("emp ids for notification are:--------------:" + al.toString());
+				// System.err.println("emp ids for notification are:--------------:" +
+				// al.toString());
 
 				for (int i = 0; i < al.size(); i++) {
 
@@ -118,14 +114,14 @@ public class ClaimHeaderDetailApiController {
 						Date d1 = sdf1.parse(claimHeader.getCafromDt());
 
 						claimDateFrom = sdf2.format(d1.getTime());
-						
+
 						Date d2 = sdf1.parse(claimHeader.getCaToDt());
 
- 						claimDateTo = sdf2.format(d1.getTime());
+						claimDateTo = sdf2.format(d1.getTime());
 
 					} catch (Exception e) {
 						claimDateFrom = claimHeader.getCafromDt();
-						claimDateTo=claimHeader.getCaToDt();
+						claimDateTo = claimHeader.getCaToDt();
 						e.printStackTrace();
 					}
 
@@ -146,20 +142,17 @@ public class ClaimHeaderDetailApiController {
 				}
 
 			}
-			
-		  
- 
+
 		} catch (Exception e) {
 
 			e.printStackTrace();
 			errorMessage.setError(true);
-		 
 
 		}
 		return claimHeader;
 
-}
-	 
+	}
+
 	@RequestMapping(value = { "/updateClaimTrailId" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateTrailId(@RequestParam("claimId") int claimId,
 			@RequestParam("trailId") int trailId) {
@@ -169,6 +162,53 @@ public class ClaimHeaderDetailApiController {
 		try {
 
 			int delete = claimHeaderRepo.updateTrailApply(claimId, trailId);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("updated status");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
+		}
+
+		return info;
+
+	}
+
+	@RequestMapping(value = { "/getClaimHeaderToChangeDate" }, method = RequestMethod.GET)
+	public @ResponseBody List<ClaimApplyHeader> getClaimHeaderToChangeDate() {
+
+		List<ClaimApplyHeader> list = new ArrayList<ClaimApplyHeader>();
+		try {
+
+			list = claimHeaderRepo.getClaimHeaderListByCompanyId();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
+	@RequestMapping(value = { "/updateClmPaidDate" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateClmPaidDate(@RequestParam("dateTimeUpdate") String dateTimeUpdate,
+			@RequestParam("userId") int userId, @RequestParam("clmHeadId") int clmHeadId,
+			@RequestParam("month") int month, @RequestParam("year") int year) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = claimHeaderRepo.updatePaid(dateTimeUpdate,userId,clmHeadId,month,year);
 
 			if (delete > 0) {
 				info.setError(false);
