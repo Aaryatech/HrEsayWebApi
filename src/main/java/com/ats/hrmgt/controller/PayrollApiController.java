@@ -26,6 +26,7 @@ import com.ats.hrmgt.model.EmpSalaryInfoForPayroll;
 import com.ats.hrmgt.model.GetAdvanceList;
 import com.ats.hrmgt.model.GetClaimList;
 import com.ats.hrmgt.model.GetPayDedList;
+import com.ats.hrmgt.model.GetPayrollGeneratedList;
 import com.ats.hrmgt.model.GetSalDynamicTempRecord;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.MstEmpType;
@@ -47,6 +48,7 @@ import com.ats.hrmgt.repository.EmpSalaryInfoRepo;
 import com.ats.hrmgt.repository.GetAdvanceListRepo;
 import com.ats.hrmgt.repository.GetClaimListRepo;
 import com.ats.hrmgt.repository.GetPayDedListRepo;
+import com.ats.hrmgt.repository.GetPayrollGeneratedListRepo;
 import com.ats.hrmgt.repository.GetSalDynamicTempRecordRepository;
 import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.SalAllownceCalRepo;
@@ -116,6 +118,9 @@ public class PayrollApiController {
 
 	@Autowired
 	SalAllownceCalRepo salAllownceCalRepo;
+
+	@Autowired
+	GetPayrollGeneratedListRepo getPayrollGeneratedListRepo;
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -1155,10 +1160,10 @@ public class PayrollApiController {
 				SalaryCalc.setGrossSalary(salList.get(i).getGrossSalaryDytemp());
 				SalaryCalc.setEpsWages(salList.get(i).getEpsWages());
 				SalaryCalc.setEsicWagesDec(salList.get(i).getEsicWagesDec());
-				SalaryCalc.setEmployeePf((float) salList.get(i).getEmployeePf());
+				SalaryCalc.setEmployeePf( salList.get(i).getEmployeePf());
 				SalaryCalc.setEmployerPf(salList.get(i).getEmployerPf());
 				SalaryCalc.setEmployerEps(salList.get(i).getEmployerEps());
-				SalaryCalc.setEsic((float) salList.get(i).getEsic());
+				SalaryCalc.setEsic( salList.get(i).getEsic());
 				SalaryCalc.setEmployerEsic(salList.get(i).getEmployerEsic());
 				SalaryCalc.setEsicStatus(salList.get(i).getEsicStatus());
 				SalaryCalc.setPfStatus(salList.get(i).getPfStatus());
@@ -1185,7 +1190,7 @@ public class PayrollApiController {
 				SalaryCalc.setPayDed(salList.get(i).getPayDed());
 				SalaryCalc.setCommentsForItBonus(salList.get(i).getCommentsForItBonus());
 				SalaryCalc.setSocietyContribution(salList.get(i).getSocietyContributionDytemp());
-				SalaryCalc.setEmpCategory(salList.get(i).getEmpCategory());
+				SalaryCalc.setEmpCategory(salList.get(i).getSalBasis());
 				SalaryCalc.setBasicDefault(salList.get(i).getBasicDefault());
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 
@@ -1205,8 +1210,8 @@ public class PayrollApiController {
 					allowlist.add(empAllowance);
 
 				}
-				
-				if(SalaryCalc.getEmpId()==1) {
+
+				if (SalaryCalc.getEmpId() == 1) {
 					System.out.println(allowlist);
 				}
 				List<SalAllownceCal> saveAllores = salAllownceCalRepo.saveAll(allowlist);
@@ -1246,6 +1251,45 @@ public class PayrollApiController {
 		}
 
 		return info;
+	}
+
+	@RequestMapping(value = { "/getPayrollGenratedList" }, method = RequestMethod.POST)
+	@ResponseBody
+	public PayRollDataForProcessing getPayrollGenratedList(@RequestParam("month") int month,
+			@RequestParam("year") int year) {
+
+		PayRollDataForProcessing payRollDataForProcessing = new PayRollDataForProcessing();
+
+		try {
+
+			List<GetPayrollGeneratedList> list = getPayrollGeneratedListRepo.getPayrollGenratedList(month, year);
+			List<Allowances> allowancelist = allowanceRepo.findBydelStatusAndIsActive(0, 1);
+			List<SalAllownceCal> getPayrollAllownceList = salAllownceCalRepo.getPayrollAllownceList(month, year);
+
+			for (int i = 0; i < list.size(); i++) {
+
+				List<SalAllownceCal> assignAllownceList = new ArrayList<>();
+
+				for (int k = 0; k < getPayrollAllownceList.size(); k++) {
+
+					if (list.get(i).getId() == getPayrollAllownceList.get(k).getSalaryCalcId()) {
+						assignAllownceList.add(getPayrollAllownceList.get(k));
+						break;
+
+					}
+				}
+
+				list.get(i).setPayrollAllownceList(assignAllownceList);
+			}
+
+			payRollDataForProcessing.setPayrollGeneratedList(list);
+			payRollDataForProcessing.setAllowancelist(allowancelist);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return payRollDataForProcessing;
 	}
 
 }
