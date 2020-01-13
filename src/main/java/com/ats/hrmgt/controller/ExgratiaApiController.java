@@ -1,6 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.common.DateConvertor;
+import com.ats.hrmgt.model.EmpJsonData;
 import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
@@ -26,8 +28,8 @@ import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
 import com.ats.hrmgt.repository.SettingRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-
-@RestController
+import com.google.gson.Gson;
+ @RestController
 public class ExgratiaApiController {
 
 	@Autowired
@@ -148,9 +150,21 @@ public class ExgratiaApiController {
 
 					if (n > 0) {
 						BonusCalc bonusCalc1 = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
-
+						ObjectMapper mapper = new ObjectMapper();
+						BonusCalc organisation = mapper.readValue(bonusCalc1.getBonusDetails(), BonusCalc.class);
+						
+						organisation.setExgratiaPrcnt(exgretia_percentage);
+						organisation.setExgretiaApplicable("Yes");
+						organisation.setTotalExgretiaDays((int)(payableDays));
+						organisation.setTotalExgretiaWages(String.valueOf(formTot));
+						organisation.setIsExgretiaFinalized(String.valueOf("0"));
+						organisation.setLoginIdExgretia(userId);
+						organisation.setLoginTimeExgretia( yyDtTm.format(date));
+						organisation.setPaidExgretiaAmt(0);
+					 
+ 						
 						ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-						String json = ow.writeValueAsString(bonusCalc1);
+						String json = ow.writeValueAsString(organisation);
 
 						int p = bonusCalcRepo.updateExgratiaDetails(json, bonusCalc1.getBonusCalcId());
 
@@ -220,7 +234,8 @@ public class ExgratiaApiController {
 			int n = bonusApplicableRepo.updateBonusExgratia(bonusAppId, bonus_formula, exgretia_percentage,
 					ded_exgretia_amt_percentage, userId, dateTime, remark);
 			int n1 = bonusCalcRepo.updateCalcFinalizeExgratia(bonusId, paidDate);
-
+		 
+ 
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -270,8 +285,8 @@ public class ExgratiaApiController {
 	@RequestMapping(value = { "/empBonusCalcUpdateForExgratia" }, method = RequestMethod.POST)
 	public @ResponseBody Info empBonusCalcUpdateForExgratia(@RequestParam("bonusId") int bonusId,
 			@RequestParam("bonusCalcId") int bonusCalcId, @RequestParam("exPrcnt") double exPrcnt,
-			@RequestParam("exgratiaAmt1") double exgratiaAmt1, @RequestParam("companyId") int companyId,
-			@RequestParam("dateTime") String dateTime, @RequestParam("userId") int userId) {
+			@RequestParam("companyId") int companyId, @RequestParam("dateTime") String dateTime,
+			@RequestParam("userId") int userId) {
 
 		Info info = new Info();
 		int flag = 0;
@@ -286,7 +301,7 @@ public class ExgratiaApiController {
 
 			// temp.setLoginTimeExgretia("0000-00-00 00:00:00");
 			double ded_exgretia_amt_percentage = 0.0;
-			 
+
 			Setting setting = new Setting();
 
 			try {
@@ -302,13 +317,13 @@ public class ExgratiaApiController {
 			double dedExgratiaAmt = 0;
 			double payableDays = 0;
 			String isApp = null;
- 			BonusCalc bonusCalc = bonusCalcRepo.findByBonusCalcIdAndDelStatus(bonusCalcId, 1);
-
+			BonusCalc bonusCalc = bonusCalcRepo.findByBonusCalcIdAndDelStatus(bonusCalcId, 1);
+			double exgratiaAmt1 = 0;
 			if (bonusCalc != null) {
 				isApp = bonusCalc.getBonusApplicable();
 				if (isApp.equals("Yes")) {
 					payableDays = bonusCalc.getTotalBonusDays();
-					 
+					exgratiaAmt1 = Double.parseDouble(bonusCalc.getTotalExgretiaWages());
 					exgratiaAmt = (exgratiaAmt1 * exPrcnt) / 100;
 					grossExgratiaAmt = exgratiaAmt1 + exgratiaAmt;
 					dedExgratiaAmt = (grossExgratiaAmt * ded_exgretia_amt_percentage) / 100;
@@ -323,14 +338,27 @@ public class ExgratiaApiController {
 				}
 
 				int n = bonusCalcRepo.updateExgratiaAmts(exgratiaAmt1, grossExgratiaAmt, exgratiaAmt, dedExgratiaAmt,
-						payableDays, yyDtTm.format(date), userId, isApp, bonusCalc.getBonusCalcId(),
-						exPrcnt);
+						payableDays, yyDtTm.format(date), userId, isApp, bonusCalc.getBonusCalcId(), exPrcnt);
 
 				if (n > 0) {
-					BonusCalc bonusCalc1 =bonusCalcRepo.findByBonusCalcIdAndDelStatus(bonusCalcId, 1);
-
+					BonusCalc bonusCalc1 = bonusCalcRepo.findByBonusCalcIdAndDelStatus(bonusCalcId, 1);
+					 
+					ObjectMapper mapper = new ObjectMapper();
+					BonusCalc organisation = mapper.readValue(bonusCalc1.getBonusDetails(), BonusCalc.class);
+					
+					organisation.setExgratiaPrcnt(exPrcnt);
+					organisation.setExgretiaApplicable("Yes");
+					organisation.setTotalExgretiaDays((int)(payableDays));
+					organisation.setTotalExgretiaWages(String.valueOf(exgratiaAmt1));
+					organisation.setIsExgretiaFinalized(String.valueOf("0"));
+					organisation.setLoginIdExgretia(userId);
+					organisation.setLoginTimeExgretia( yyDtTm.format(date));
+					organisation.setPaidExgretiaAmt(0);
+				  
 					ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-					String json = ow.writeValueAsString(bonusCalc1);
+					String json = ow.writeValueAsString(organisation);
+
+				 
 
 					int p = bonusCalcRepo.updateExgratiaDetails(json, bonusCalc1.getBonusCalcId());
 
