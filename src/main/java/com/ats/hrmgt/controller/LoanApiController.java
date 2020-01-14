@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.common.NumberFormatting;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.model.advance.GetAdvance;
@@ -199,15 +200,28 @@ public class LoanApiController {
 			//System.out.println("aft" + oneMonthLater);
 
 			list.setCalDate(String.valueOf(oneMonthLater));
+			int insertVal = 0;
+			try {
 
+				  setting = settingRepo.findByKey("ammount_format_Insert");
+				insertVal = Integer.parseInt(setting.getValue());
+			} catch (Exception e) {
+
+				insertVal = 0;
+
+			}
 			if (type == 1) {
 				si = (principle * (period / 12) * rate) / 100;
-				si = si + principle;
+ 				si = si + principle;
+ 				si=(float) NumberFormatting.castNumber(si, 1);
+ 				
 				// System.err.println("rounded "+emi);
 				emi = Math.round(si / period);
+				emi=(float) NumberFormatting.castNumber(emi, 1);
 				// System.err.println("rounded off "+emi);
 				si = emi * period;
 
+				si=(float) NumberFormatting.castNumber(si, 1);
 			} else {
 				si = 0;
 				emi = 0;
@@ -420,9 +434,7 @@ public class LoanApiController {
 			}else {
 				calDate=sf.format(date1);
 			}
-			
-			
-
+			 
 			//System.err.println("cal" + calDate);
 			int currentOutstanding1 = Integer.parseInt(currentOutstanding);
 			int loanEmi1 = Integer.parseInt(loanEmi);
@@ -436,8 +448,7 @@ public class LoanApiController {
 			//System.out.println("y" + y);
 			LocalDate oneMonthLater = localDate.plusMonths(y);
 			//System.out.println("aft" + oneMonthLater);
-
-			info.setError(false);
+ 			info.setError(false);
 			info.setMsg(String.valueOf(oneMonthLater));
 
 		} catch (Exception e) {

@@ -24,4 +24,6 @@ public interface ShiftMasterRepository extends JpaRepository<ShiftMaster, Intege
 	@Query(value = "select * from tbl_shift_timming where location_id =:locationId and status=1 and self_group_id=:groupId", nativeQuery = true)
 	List<ShiftMaster> getShiftListByGroupIdandlocId(@Param("locationId") int locationId, @Param("groupId") int groupId);
 
+	ShiftMaster findByIdAndStatus(int currShiftId, int i);
+
 }

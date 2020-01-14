@@ -1,7 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.text.SimpleDateFormat;
-
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -85,6 +85,8 @@ public class BonusApiController {
 		try {
 
 			list = bonusMasterRepo.findByDelStatus();
+
+		 
 
 		} catch (Exception e) {
 
@@ -522,10 +524,10 @@ public class BonusApiController {
 
 		}
 		bonusPrcnt=NumberFormatting.castNumber(bonusPrcnt, insertVal);
-		 System.err.println("bonusFormula  **" + bonusFormula);
+		// System.err.println("bonusFormula  **" + bonusFormula);
 		String[] forList = bonusFormula.split("\\+");
 		List<String> formulaList = new ArrayList<String>(Arrays.asList(forList));
-	 System.err.println("formulaList before**" + formulaList.toString());
+	 //System.err.println("formulaList before**" + formulaList.toString());
 		for (int j = 0; j < formulaList.size(); j++) {
 
 			if ((formulaList.get(j).trim()).equals("basic_cal")) {
@@ -534,8 +536,8 @@ public class BonusApiController {
 			}
 
 		}
-		System.err.println("formulaList after**" + formulaList.toString());
-	 System.err.println("empIdList **" + empIdList.toString());
+		//System.err.println("formulaList after**" + formulaList.toString());
+	// System.err.println("empIdList **" + empIdList.toString());
 		try {
 			for (int i = 0; i < empIdList.size(); i++) {
 
@@ -555,7 +557,7 @@ public class BonusApiController {
 
 				}
 
-				 System.err.println("is Add" + isAdd);
+				// System.err.println("is Add" + isAdd);
 				double payableDay = 0.0;
 				try {
 					BonusParam salDays = bonusParamRepo.getDays(empId, datesDet.getMonthFrom(), datesDet.getMonthTo(),
@@ -577,12 +579,12 @@ public class BonusApiController {
 				double formTot = 0.0;
 
 				if (isAdd == 1) {
-					System.err.println("isert process");
+					//System.err.println("isert process");
 
 					if (payableDay <= bonus.getMinDays()) {
 						isApplicable = "Yes";
 
-						System.err.println("Applicable");
+						//System.err.println("Applicable");
 						double basic_calc = 0;
 
 						// to get total from formula
@@ -590,7 +592,7 @@ public class BonusApiController {
 						List<Integer> allIdList = new ArrayList<Integer>();
 						for (int j = 0; j < formulaList.size(); j++) {
 
-							System.err.println("formulaList for **" + formulaList.get(j));
+							//System.err.println("formulaList for **" + formulaList.get(j));
 							Allowances ac = new Allowances();
 							try {
 								ac = AalowancesRepo.findByShortNameAndDelStatus(formulaList.get(j).trim(), 1);
@@ -603,7 +605,7 @@ public class BonusApiController {
 						try {
 							BonusParam salCal = bonusParamRepo.getBonusParameters(empId, datesDet.getMonthFrom(),
 									datesDet.getMonthTo(), datesDet.getYearFrom(), datesDet.getYearTo(), allIdList);
-							 System.err.println("BonusParam**" + salCal.toString());
+							// System.err.println("BonusParam**" + salCal.toString());
 							if (salCal.getTotalAllowance() == null) {
 								formTot = Double.parseDouble(salCal.getTotalBasicCal());
 
@@ -631,8 +633,8 @@ public class BonusApiController {
 							grossBonus = formTot;
 							bonusAmt = (0 * bonusPrcnt) / 100;
 						}
-						System.err.println("grossBonus"+grossBonus);
-						System.err.println("formTot"+formTot);
+					//	System.err.println("grossBonus"+grossBonus);
+					//	System.err.println("formTot"+formTot);
 						advPrcntAmt = (grossBonus * advPrcnt) / 100;
 						advPrcntAmt = advPrcntAmt + grossBonus;
 						advPrcntAmt = NumberFormatting.castNumber(advPrcntAmt, insertVal);
@@ -644,12 +646,12 @@ public class BonusApiController {
 						lossPrcntAmt = lossPrcntAmt + grossBonus;
 						lossPrcntAmt = NumberFormatting.castNumber(lossPrcntAmt, insertVal);
 
-					 System.err.println("advPrcntAmt"+advPrcntAmt);
-					 System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
+					// System.err.println("advPrcntAmt"+advPrcntAmt);
+					// System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
 						System.err.println("lossPrcntAmt"+lossPrcntAmt);
 					} else {
 						isApplicable = "No";
-						System.err.println("not Applicable");
+						//System.err.println("not Applicable");
 					}
 
 				//	System.err.println("param **" + salCal.toString());

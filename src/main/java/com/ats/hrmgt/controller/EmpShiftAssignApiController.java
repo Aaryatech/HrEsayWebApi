@@ -1,5 +1,6 @@
 package com.ats.hrmgt.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -43,7 +44,6 @@ public class EmpShiftAssignApiController {
 
 		return list;
 	}
- 
 
 	@RequestMapping(value = { "/getEmpDetailListByLocId" }, method = RequestMethod.POST)
 	public List<GetEmployeeDetails> getEmpDetailListByLocId(@RequestParam("locationIds") List<Integer> locationIds) {
