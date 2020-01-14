@@ -2,7 +2,6 @@ package com.ats.hrmgt.controller;
 
 import java.text.SimpleDateFormat;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.common.DateConvertor;
+import com.ats.hrmgt.common.NumberFormatting;
 import com.ats.hrmgt.model.EmpJsonData;
 import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
@@ -29,7 +29,8 @@ import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
 import com.ats.hrmgt.repository.SettingRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-  @RestController
+
+@RestController
 public class ExgratiaApiController {
 
 	@Autowired
@@ -82,25 +83,23 @@ public class ExgratiaApiController {
 			double ded_exgretia_amt_percentage = 0.0;
 			double exgretia_percentage = 0.0;
 			String bonus_formula = null;
-
-			Setting setting = new Setting();
-
-			try {
-				setting = settingRepo.findByKey("ded_exgretia_amt_percentage");
-				ded_exgretia_amt_percentage = Double.parseDouble(setting.getValue());
-			} catch (Exception e) {
-
-				ded_exgretia_amt_percentage = 0;
-
+			List<Setting> settingList = new ArrayList<Setting>();
+			settingList = settingRepo.findByGroup("BONUS"); 
+			for (int k = 0; k < settingList.size(); k++) {
+				if (settingList.get(k).getKey().equalsIgnoreCase("bonus_formula")) {
+					bonus_formula = settingList.get(k).getValue();
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("ded_exgretia_amt_percentage")) {
+					ded_exgretia_amt_percentage = Float.parseFloat(settingList.get(k).getValue());
+				}
 			}
-
+			int insertVal = 0;
 			try {
 
-				setting = settingRepo.findByKey("bonus_formula");
-				bonus_formula = setting.getValue();
+				Setting setting = settingRepo.findByKey("ammount_format_Insert");
+				insertVal = Integer.parseInt(setting.getValue());
 			} catch (Exception e) {
 
-				bonus_formula = "";
+				insertVal = 0;
 
 			}
 
@@ -130,11 +129,17 @@ public class ExgratiaApiController {
 					isApp = bonusCalc.getBonusApplicable();
 					if (isApp.equals("Yes")) {
 						payableDays = bonusCalc.getTotalBonusDays();
+						payableDays = NumberFormatting.castNumber(payableDays, insertVal);
 						formTot = bonusCalc.getTotalBonusWages();
+						formTot = NumberFormatting.castNumber(formTot, insertVal);
 						exgratiaAmt = (formTot * exgretia_percentage) / 100;
+						exgratiaAmt = NumberFormatting.castNumber(exgratiaAmt, insertVal);
 						grossExgratiaAmt = exgratiaAmt + formTot;
+						grossExgratiaAmt = NumberFormatting.castNumber(grossExgratiaAmt, insertVal);
 						dedExgratiaAmt = (grossExgratiaAmt * ded_exgretia_amt_percentage) / 100;
+						dedExgratiaAmt = NumberFormatting.castNumber(dedExgratiaAmt, insertVal);
 						dedExgratiaAmt = dedExgratiaAmt + grossExgratiaAmt;
+						dedExgratiaAmt = NumberFormatting.castNumber(dedExgratiaAmt, insertVal);
 					} else {
 						formTot = 0;
 						exgratiaAmt = 0;
@@ -152,17 +157,18 @@ public class ExgratiaApiController {
 						BonusCalc bonusCalc1 = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
 						ObjectMapper mapper = new ObjectMapper();
 						BonusCalc organisation = mapper.readValue(bonusCalc1.getBonusDetails(), BonusCalc.class);
-						
+
 						organisation.setExgratiaPrcnt(exgretia_percentage);
 						organisation.setExgretiaApplicable("Yes");
-						organisation.setTotalExgretiaDays((int)(payableDays));
+						organisation.setTotalExgretiaDays((int) (payableDays));
 						organisation.setTotalExgretiaWages(String.valueOf(formTot));
 						organisation.setIsExgretiaFinalized(String.valueOf("0"));
 						organisation.setLoginIdExgretia(userId);
-						organisation.setLoginTimeExgretia( yyDtTm.format(date));
+						organisation.setLoginTimeExgretia(yyDtTm.format(date));
 						organisation.setPaidExgretiaAmt(0);
-					 
- 						
+						organisation.setGrossExgretiaAmt(grossExgratiaAmt);
+						organisation.setNetExgretiaAmt(exgratiaAmt); 
+						organisation.setDedExgretiaAmt(dedExgratiaAmt);
 						ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 						String json = ow.writeValueAsString(organisation);
 
@@ -229,13 +235,23 @@ public class ExgratiaApiController {
 			bonus_formula = "";
 
 		}
+		int insertVal = 0;
 		try {
 
-			int n = bonusApplicableRepo.updateBonusExgratia(bonusAppId, bonus_formula, exgretia_percentage,
-					ded_exgretia_amt_percentage, userId, dateTime, remark);
+			setting = settingRepo.findByKey("ammount_format_Insert");
+			insertVal = Integer.parseInt(setting.getValue());
+		} catch (Exception e) {
+
+			insertVal = 0;
+
+		}
+		try {
+
+			int n = bonusApplicableRepo.updateBonusExgratia(bonusAppId, bonus_formula,
+					NumberFormatting.castNumber(exgretia_percentage, insertVal),
+					NumberFormatting.castNumber(ded_exgretia_amt_percentage, insertVal), userId, dateTime, remark);
 			int n1 = bonusCalcRepo.updateCalcFinalizeExgratia(bonusId, paidDate);
-		 
- 
+
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -312,6 +328,16 @@ public class ExgratiaApiController {
 				ded_exgretia_amt_percentage = 0;
 
 			}
+			int insertVal = 0;
+			try {
+
+				setting = settingRepo.findByKey("ammount_format_Insert");
+				insertVal = Integer.parseInt(setting.getValue());
+			} catch (Exception e) {
+
+				insertVal = 0;
+
+			}
 			double exgratiaAmt = 0;
 			double grossExgratiaAmt = 0;
 			double dedExgratiaAmt = 0;
@@ -323,11 +349,19 @@ public class ExgratiaApiController {
 				isApp = bonusCalc.getBonusApplicable();
 				if (isApp.equals("Yes")) {
 					payableDays = bonusCalc.getTotalBonusDays();
+					payableDays = NumberFormatting.castNumber(payableDays, insertVal);
 					exgratiaAmt1 = Double.parseDouble(bonusCalc.getTotalExgretiaWages());
+					exgratiaAmt1 = NumberFormatting.castNumber(exgratiaAmt1, insertVal);
+
 					exgratiaAmt = (exgratiaAmt1 * exPrcnt) / 100;
+					exgratiaAmt = NumberFormatting.castNumber(exgratiaAmt, insertVal);
 					grossExgratiaAmt = exgratiaAmt1 + exgratiaAmt;
-					dedExgratiaAmt = (grossExgratiaAmt * ded_exgretia_amt_percentage) / 100;
+					grossExgratiaAmt = NumberFormatting.castNumber(grossExgratiaAmt, insertVal);
+ 					dedExgratiaAmt = (grossExgratiaAmt * ded_exgretia_amt_percentage) / 100;
+					dedExgratiaAmt = NumberFormatting.castNumber(dedExgratiaAmt, insertVal);
 					dedExgratiaAmt = dedExgratiaAmt + grossExgratiaAmt;
+					dedExgratiaAmt = NumberFormatting.castNumber(dedExgratiaAmt, insertVal);
+
 				} else {
 					exgratiaAmt1 = 0;
 					exgratiaAmt = 0;
@@ -342,23 +376,21 @@ public class ExgratiaApiController {
 
 				if (n > 0) {
 					BonusCalc bonusCalc1 = bonusCalcRepo.findByBonusCalcIdAndDelStatus(bonusCalcId, 1);
-					 
+
 					ObjectMapper mapper = new ObjectMapper();
 					BonusCalc organisation = mapper.readValue(bonusCalc1.getBonusDetails(), BonusCalc.class);
-					
+
 					organisation.setExgratiaPrcnt(exPrcnt);
 					organisation.setExgretiaApplicable("Yes");
-					organisation.setTotalExgretiaDays((int)(payableDays));
+					organisation.setTotalExgretiaDays((int) (payableDays));
 					organisation.setTotalExgretiaWages(String.valueOf(exgratiaAmt1));
 					organisation.setIsExgretiaFinalized(String.valueOf("0"));
 					organisation.setLoginIdExgretia(userId);
-					organisation.setLoginTimeExgretia( yyDtTm.format(date));
+					organisation.setLoginTimeExgretia(yyDtTm.format(date));
 					organisation.setPaidExgretiaAmt(0);
-				  
+
 					ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 					String json = ow.writeValueAsString(organisation);
-
-				 
 
 					int p = bonusCalcRepo.updateExgratiaDetails(json, bonusCalc1.getBonusCalcId());
 

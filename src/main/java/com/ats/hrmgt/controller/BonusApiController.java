@@ -140,7 +140,6 @@ public class BonusApiController {
 
 	}
 
-	
 	@RequestMapping(value = { "/checkBonusTitle" }, method = RequestMethod.POST)
 	public @ResponseBody Info checkBonusTitle(@RequestParam String bonusTitle) {
 
@@ -186,18 +185,17 @@ public class BonusApiController {
 	}
 
 	@RequestMapping(value = { "/getBonusCalcList" }, method = RequestMethod.POST)
-	public List<BonusCalc> getAllEmployeeDetailForBonus(@RequestParam("bonusId") int bonusId,@RequestParam("flag") int flag) {
+	public List<BonusCalc> getAllEmployeeDetailForBonus(@RequestParam("bonusId") int bonusId,
+			@RequestParam("flag") int flag) {
 		List<BonusCalc> list = new ArrayList<BonusCalc>();
 		try {
-			 
-			if(flag==0) {
+
+			if (flag == 0) {
 				list = bonusCalcRepo.getEmpDetailListForBonus(bonusId);
-			}else {
+			} else {
 				list = bonusCalcRepo.getEmpDetailListForBonusEx(bonusId);
 			}
-				
 
-			 
 		} catch (Exception e) {
 			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
 			e.printStackTrace();
@@ -205,8 +203,7 @@ public class BonusApiController {
 
 		return list;
 	}
-	 
-	
+
 	@RequestMapping(value = { "/deleteBonusCalc" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteBonusCalc(@RequestParam("bonusCalcId") int bonusCalcId) {
 
@@ -252,8 +249,6 @@ public class BonusApiController {
 		return temp;
 
 	}
-	
-	 
 
 	@RequestMapping(value = { "/empBonusAppSaveOrUpdate" }, method = RequestMethod.POST)
 	public @ResponseBody Info empBonusAppSaveOrUpdate(@RequestParam("bonusAppId") int bonusAppId,
@@ -264,8 +259,8 @@ public class BonusApiController {
 
 		Info info = new Info();
 		int flag = 0;
-		String paidDate=DateConvertor.convertToYMD(startDate);
-		String[] a=paidDate.split("-");
+		String paidDate = DateConvertor.convertToYMD(startDate);
+		String[] a = paidDate.split("-");
 		try {
 
 			if (isFinal == 3) {
@@ -280,76 +275,99 @@ public class BonusApiController {
 				double bonus_sealing_limit_amount = 0;
 				double bonus_percentage = 0;
 
-				Setting setting = new Setting();
+				/*
+				 * Setting setting = new Setting();
+				 * 
+				 * try { setting = settingRepo.findByKey("bonus_app_below_amount");
+				 * bonus_app_below_amount = Double.parseDouble(setting.getValue()); } catch
+				 * (Exception e) {
+				 * 
+				 * bonus_app_below_amount = 0.0;
+				 * 
+				 * }
+				 * 
+				 * try { setting = settingRepo.findByKey("bonus_sealing_limit_amount");
+				 * bonus_sealing_limit_amount = Double.parseDouble(setting.getValue()); } catch
+				 * (Exception e) {
+				 * 
+				 * bonus_sealing_limit_amount = 0.0;
+				 * 
+				 * }
+				 * 
+				 * try { setting = settingRepo.findByKey("bonus_app_below_applicable");
+				 * bonus_app_below_applicable = setting.getValue(); } catch (Exception e) {
+				 * 
+				 * bonus_app_below_applicable = "";
+				 * 
+				 * }
+				 * 
+				 * try { setting = settingRepo.findByKey("bonus_sealing_limit_applicable");
+				 * bonus_sealing_limit_applicable = setting.getValue(); } catch (Exception e) {
+				 * 
+				 * bonus_sealing_limit_applicable = "";
+				 * 
+				 * }
+				 * 
+				 * try { setting = settingRepo.findByKey("ded_bonus_adv_amt_percentage");
+				 * advPrcnt = Double.parseDouble(setting.getValue()); } catch (Exception e) {
+				 * 
+				 * advPrcnt = 0;
+				 * 
+				 * } try {
+				 * 
+				 * setting = settingRepo.findByKey("ded_bonus_puja_amt_percentage"); pujaPrcnt =
+				 * Double.parseDouble(setting.getValue()); } catch (Exception e) {
+				 * 
+				 * pujaPrcnt = 0;
+				 * 
+				 * } try { setting = settingRepo.findByKey("ded_bonus_loss_amt_percentage");
+				 * lossPrcnt = Double.parseDouble(setting.getValue()); } catch (Exception e) {
+				 * 
+				 * lossPrcnt = 0;
+				 * 
+				 * } try {
+				 * 
+				 * setting = settingRepo.findByKey("bonus_formula"); bonus_formula =
+				 * setting.getValue(); } catch (Exception e) {
+				 * 
+				 * bonus_formula = "";
+				 * 
+				 * }
+				 */
 
-				try {
-					setting = settingRepo.findByKey("bonus_app_below_amount");
-					bonus_app_below_amount = Double.parseDouble(setting.getValue());
-				} catch (Exception e) {
+				List<Setting> settingList = new ArrayList<Setting>();
+				settingList = settingRepo.findByGroup("BONUS"); 
+				String bonusFormula = new String();
+				
+			
 
-					bonus_app_below_amount = 0.0;
-
+				for (int k = 0; k < settingList.size(); k++) {
+					if (settingList.get(k).getKey().equalsIgnoreCase("bonus_app_below_amount")) {
+						bonus_app_below_amount = Double.parseDouble(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("bonus_sealing_limit_amount")) {
+						bonus_sealing_limit_amount = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("bonus_app_below_applicable")) {
+						bonus_app_below_applicable = settingList.get(k).getValue();
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("bonus_sealing_limit_applicable")) {
+						bonus_sealing_limit_applicable = settingList.get(k).getValue();
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("ded_bonus_adv_amt_percentage")) {
+						advPrcnt = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("ded_bonus_puja_amt_percentage")) {
+						pujaPrcnt = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("ded_bonus_loss_amt_percentage")) {
+						lossPrcnt = Float.parseFloat(settingList.get(k).getValue());
+					} else if (settingList.get(k).getKey().equalsIgnoreCase("bonus_formula")) {
+						bonus_formula = settingList.get(k).getValue();
+					}
 				}
-
-				try {
-					setting = settingRepo.findByKey("bonus_sealing_limit_amount");
-					bonus_sealing_limit_amount = Double.parseDouble(setting.getValue());
-				} catch (Exception e) {
-
-					bonus_sealing_limit_amount = 0.0;
-
-				}
-
-				try {
-					setting = settingRepo.findByKey("bonus_app_below_applicable");
-					bonus_app_below_applicable = setting.getValue();
-				} catch (Exception e) {
-
-					bonus_app_below_applicable = "";
-
-				}
-
-				try {
-					setting = settingRepo.findByKey("bonus_sealing_limit_applicable");
-					bonus_sealing_limit_applicable = setting.getValue();
-				} catch (Exception e) {
-
-					bonus_sealing_limit_applicable = "";
-
-				}
-
-				try {
-					setting = settingRepo.findByKey("ded_bonus_adv_amt_percentage");
-					advPrcnt = Double.parseDouble(setting.getValue());
-				} catch (Exception e) {
-
-					advPrcnt = 0;
-
-				}
+				int insertVal = 0;
 				try {
 
-					setting = settingRepo.findByKey("ded_bonus_puja_amt_percentage");
-					pujaPrcnt = Double.parseDouble(setting.getValue());
+					Setting setting = settingRepo.findByKey("ammount_format_Insert");
+					insertVal = Integer.parseInt(setting.getValue());
 				} catch (Exception e) {
 
-					pujaPrcnt = 0;
-
-				}
-				try {
-					setting = settingRepo.findByKey("ded_bonus_loss_amt_percentage");
-					lossPrcnt = Double.parseDouble(setting.getValue());
-				} catch (Exception e) {
-
-					lossPrcnt = 0;
-
-				}
-				try {
-
-					setting = settingRepo.findByKey("bonus_formula");
-					bonus_formula = setting.getValue();
-				} catch (Exception e) {
-
-					bonus_formula = "";
+					insertVal = 0;
 
 				}
 
@@ -364,13 +382,13 @@ public class BonusApiController {
 				}
 
 				BonusApplicable temp = new BonusApplicable();
-				temp.setBonusAppBelowAmount(bonus_app_below_amount);
+				temp.setBonusAppBelowAmount(NumberFormatting.castNumber(bonus_app_below_amount, insertVal));
 				temp.setBonusFormula(bonus_formula);
 				temp.setBonusId(bonusId);
 				temp.setBonusItSub(0);
-				temp.setBonusPercentage(bonus_percentage);
+				temp.setBonusPercentage(NumberFormatting.castNumber(bonus_percentage, insertVal));
 				temp.setBonusRemark(remark);
-				temp.setBonusSealingLimitAmount(bonus_sealing_limit_amount);
+				temp.setBonusSealingLimitAmount(NumberFormatting.castNumber(bonus_sealing_limit_amount, insertVal));
 				temp.setBonusSealingLimitApplicable(bonus_sealing_limit_applicable);
 				temp.setCompanyId(companyId);
 				temp.setExgretiaFormula("");
@@ -393,14 +411,14 @@ public class BonusApiController {
 					flag = 0;
 				}
 			} else {
-				int n = bonusApplicableRepo.updateBonus(bonusAppId,a[0],a[1]);
+				int n = bonusApplicableRepo.updateBonus(bonusAppId, a[0], a[1]);
 				// update
 				flag = 1;
 
 			}
 
 			if (flag == 1) {
-				int n = bonusCalcRepo.updateCalcFinalize(bonusId,paidDate);
+				int n = bonusCalcRepo.updateCalcFinalize(bonusId, paidDate);
 
 			}
 
@@ -413,8 +431,6 @@ public class BonusApiController {
 		return info;
 
 	}
-
-	 
 
 	// Bonus Main WS
 
@@ -453,6 +469,8 @@ public class BonusApiController {
 		BonusMaster bonus = new BonusMaster();
 		bonus = bonusMasterRepo.findByBonusIdAndDelStatus(bonusId, 1);
 		double bonusPrcnt = bonus.getBonusPercentage();
+	
+		
 
 		BonusDates datesDet = bonusDatesRepo.getDates(bonusId);
 
@@ -462,7 +480,8 @@ public class BonusApiController {
 		double advPrcnt = 0.0;
 		double pujaPrcnt = 0.0;
 		double lossPrcnt = 0.0;
-
+		settingList = settingRepo.findByGroup("BONUS"); 
+		
 		/*
 		 * try { settingList = settingRepo.findByGroup("BONUS"); if (settingList !=
 		 * null) { for (int i = 0; i < settingList.size(); i++) {
@@ -479,7 +498,8 @@ public class BonusApiController {
 		 * 
 		 * }
 		 */
- 
+		 
+
 		for (int k = 0; k < settingList.size(); k++) {
 			if (settingList.get(k).getKey().equalsIgnoreCase("bonus_formula")) {
 				bonusFormula = settingList.get(k).getValue();
@@ -489,24 +509,23 @@ public class BonusApiController {
 				pujaPrcnt = Float.parseFloat(settingList.get(k).getValue());
 			} else if (settingList.get(k).getKey().equalsIgnoreCase("ded_bonus_loss_amt_percentage")) {
 				lossPrcnt = Float.parseFloat(settingList.get(k).getValue());
-			}  
+			}
 		}
-		int insertVal=0;
+		int insertVal = 0;
 		try {
 
 			Setting setting = settingRepo.findByKey("ammount_format_Insert");
-			  insertVal = Integer.parseInt(setting.getValue());
+			insertVal = Integer.parseInt(setting.getValue());
 		} catch (Exception e) {
 
 			insertVal = 0;
 
 		}
-		
-		
-		
+		bonusPrcnt=NumberFormatting.castNumber(bonusPrcnt, insertVal);
+		 System.err.println("bonusFormula  **" + bonusFormula);
 		String[] forList = bonusFormula.split("\\+");
 		List<String> formulaList = new ArrayList<String>(Arrays.asList(forList));
-		// System.err.println("formulaList before**" + formulaList.toString());
+	 System.err.println("formulaList before**" + formulaList.toString());
 		for (int j = 0; j < formulaList.size(); j++) {
 
 			if ((formulaList.get(j).trim()).equals("basic_cal")) {
@@ -515,8 +534,8 @@ public class BonusApiController {
 			}
 
 		}
-		// System.err.println("formulaList after**" + formulaList.toString());
-		// System.err.println("empIdList **" + empIdList.toString());
+		System.err.println("formulaList after**" + formulaList.toString());
+	 System.err.println("empIdList **" + empIdList.toString());
 		try {
 			for (int i = 0; i < empIdList.size(); i++) {
 
@@ -524,12 +543,9 @@ public class BonusApiController {
 				int isAdd = 0;
 				try {
 
-					
-					  BonusCalc ispresen = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId,
-					  bonusId, 1);
-					 				
-					
- 					if (ispresen == null) {
+					BonusCalc ispresen = bonusCalcRepo.findByEmpIdAndBonusIdAndDelStatus(empId, bonusId, 1);
+
+					if (ispresen == null) {
 						isAdd = 1;
 					} else {
 						isAdd = 2;
@@ -539,13 +555,13 @@ public class BonusApiController {
 
 				}
 
-				// System.err.println("is Add" + isAdd);
+				 System.err.println("is Add" + isAdd);
 				double payableDay = 0.0;
 				try {
 					BonusParam salDays = bonusParamRepo.getDays(empId, datesDet.getMonthFrom(), datesDet.getMonthTo(),
 							datesDet.getYearFrom(), datesDet.getYearTo());
 					payableDay = Double.parseDouble(salDays.getTotalBasicCal());
-
+					payableDay=NumberFormatting.castNumber(payableDay, insertVal);
 				} catch (Exception e) {
 
 					payableDay = 0;
@@ -561,7 +577,7 @@ public class BonusApiController {
 				double formTot = 0.0;
 
 				if (isAdd == 1) {
-					// System.err.println("isert process");
+					System.err.println("isert process");
 
 					if (payableDay <= bonus.getMinDays()) {
 						isApplicable = "Yes";
@@ -574,7 +590,7 @@ public class BonusApiController {
 						List<Integer> allIdList = new ArrayList<Integer>();
 						for (int j = 0; j < formulaList.size(); j++) {
 
-							// System.err.println("formulaList for **" + formulaList.get(j));
+							System.err.println("formulaList for **" + formulaList.get(j));
 							Allowances ac = new Allowances();
 							try {
 								ac = AalowancesRepo.findByShortNameAndDelStatus(formulaList.get(j).trim(), 1);
@@ -587,7 +603,7 @@ public class BonusApiController {
 						try {
 							BonusParam salCal = bonusParamRepo.getBonusParameters(empId, datesDet.getMonthFrom(),
 									datesDet.getMonthTo(), datesDet.getYearFrom(), datesDet.getYearTo(), allIdList);
-							// System.err.println("BonusParam**" + salCal.toString());
+							 System.err.println("BonusParam**" + salCal.toString());
 							if (salCal.getTotalAllowance() == null) {
 								formTot = Double.parseDouble(salCal.getTotalBasicCal());
 
@@ -597,6 +613,8 @@ public class BonusApiController {
 								formTot = Double.parseDouble(salCal.getTotalBasicCal())
 										+ Double.parseDouble(salCal.getTotalAllowance());
 							}
+
+							formTot = NumberFormatting.castNumber(formTot, insertVal);
 						} catch (Exception e) {
 							formTot = 0;
 						}
@@ -604,30 +622,37 @@ public class BonusApiController {
 						try {
 
 							bonusAmt = (formTot * bonusPrcnt) / 100;
+							bonusAmt = NumberFormatting.castNumber(bonusAmt, insertVal);
 							grossBonus = formTot + bonusAmt;
+
+							grossBonus = NumberFormatting.castNumber(grossBonus, insertVal);
 
 						} catch (Exception e) {
 							grossBonus = formTot;
 							bonusAmt = (0 * bonusPrcnt) / 100;
 						}
-						// System.err.println("grossBonus"+grossBonus);
-						// System.err.println("formTot"+formTot);
-						advPrcntAmt = (grossBonus * advPrcnt) * 100;
+						System.err.println("grossBonus"+grossBonus);
+						System.err.println("formTot"+formTot);
+						advPrcntAmt = (grossBonus * advPrcnt) / 100;
 						advPrcntAmt = advPrcntAmt + grossBonus;
+						advPrcntAmt = NumberFormatting.castNumber(advPrcntAmt, insertVal);
 						pujaPrcntAmt = (grossBonus * pujaPrcnt) * 100;
 						pujaPrcntAmt = pujaPrcntAmt + grossBonus;
-						lossPrcntAmt = (grossBonus * lossPrcnt) * 100;
-						lossPrcntAmt = lossPrcntAmt + grossBonus;
+						pujaPrcntAmt = NumberFormatting.castNumber(pujaPrcntAmt, insertVal);
 
-						// System.err.println("advPrcntAmt"+advPrcntAmt);
-						// System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
-						// System.err.println("lossPrcntAmt"+lossPrcntAmt);
+						lossPrcntAmt = (grossBonus * lossPrcnt) /100;
+						lossPrcntAmt = lossPrcntAmt + grossBonus;
+						lossPrcntAmt = NumberFormatting.castNumber(lossPrcntAmt, insertVal);
+
+					 System.err.println("advPrcntAmt"+advPrcntAmt);
+					 System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
+						System.err.println("lossPrcntAmt"+lossPrcntAmt);
 					} else {
 						isApplicable = "No";
 						System.err.println("not Applicable");
 					}
 
-					// System.err.println("param **" + salCal.toString());
+				//	System.err.println("param **" + salCal.toString());
 
 					GetEmployeeDetails list = getEmployeeDetailsRepo.getEmpDetailList(empId);
 
@@ -643,7 +668,7 @@ public class BonusApiController {
 					calcSave.setEmpId(empId);
 					calcSave.setEmpName(list.getFirstName().concat(" ")
 							.concat(list.getMiddleName().concat(" ").concat(list.getSurname())));
-					calcSave.setNetBonusAmt(NumberFormatting.castNumber(bonusAmt,insertVal));
+					calcSave.setNetBonusAmt(bonusAmt);
 					calcSave.setDelStatus(1);
 					calcSave.setExVar2("NA");
 					calcSave.setExInt1(0);
@@ -652,12 +677,12 @@ public class BonusApiController {
 					calcSave.setLoginIdBonus(userId);
 					calcSave.setLoginTimeBonus(sf.format(date));
 					calcSave.setBonusApplicable(isApplicable);
-					calcSave.setGrossBonusAmt(NumberFormatting.castNumber(grossBonus,insertVal));
+					calcSave.setGrossBonusAmt(grossBonus);
 					calcSave.setExgratiaPrcnt(0);
 
-					calcSave.setDedBonusAdvAmt(NumberFormatting.castNumber(advPrcntAmt,insertVal));
-					calcSave.setDedBonusLossAmt(NumberFormatting.castNumber(lossPrcntAmt,insertVal));
-					calcSave.setDedBonusPujaAmt(NumberFormatting.castNumber(pujaPrcntAmt,insertVal));
+					calcSave.setDedBonusAdvAmt(advPrcntAmt);
+					calcSave.setDedBonusLossAmt(lossPrcntAmt);
+					calcSave.setDedBonusPujaAmt(pujaPrcntAmt);
 					calcSave.setDedExgretiaAmt(0);
 					calcSave.setDedReason("");
 					calcSave.setExgretiaApplicable("No");
@@ -673,7 +698,7 @@ public class BonusApiController {
 					calcSave.setPaidExgretiaAmt(0);
 					// calcSave.setPaidExgretiaDate(paidExgretiaDate);
 					calcSave.setRecStatus(0);// ***
-					calcSave.setTotalBonusWages((int)NumberFormatting.castNumber(formTot,insertVal));// ******
+					calcSave.setTotalBonusWages((int)formTot);// ******
 					calcSave.setTotalExgretiaDays(0);
 					calcSave.setTotalExgretiaWages("0");
 					calcSave.setTotalBonusDays((int) payableDay);// ***
