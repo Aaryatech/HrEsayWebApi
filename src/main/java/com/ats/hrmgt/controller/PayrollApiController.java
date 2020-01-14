@@ -1275,11 +1275,65 @@ public class PayrollApiController {
 
 					if (list.get(i).getId() == getPayrollAllownceList.get(k).getSalaryCalcId()) {
 						assignAllownceList.add(getPayrollAllownceList.get(k));
-						break;
 
 					}
 				}
 
+				list.get(i).setPayrollAllownceList(assignAllownceList);
+			}
+
+			payRollDataForProcessing.setPayrollGeneratedList(list);
+			payRollDataForProcessing.setAllowancelist(allowancelist);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return payRollDataForProcessing;
+	}
+
+	@RequestMapping(value = { "/getPayrollGenratedListByEmpIds" }, method = RequestMethod.POST)
+	@ResponseBody
+	public PayRollDataForProcessing getPayrollGenratedListByEmpIds(@RequestParam("month") int month,
+			@RequestParam("year") int year, @RequestParam("empIds") List<Integer> empIds) {
+
+		PayRollDataForProcessing payRollDataForProcessing = new PayRollDataForProcessing();
+
+		try {
+
+			List<GetPayrollGeneratedList> list = getPayrollGeneratedListRepo.getPayrollGenratedList(month, year,
+					empIds);
+			List<Allowances> allowancelist = allowanceRepo.findBydelStatusAndIsActive(0, 1);
+			List<SalAllownceCal> getPayrollAllownceList = salAllownceCalRepo.getPayrollAllownceList(month, year,
+					empIds);
+			Setting setting = settingRepo.findByKey("ammount_format_show");
+			int amount_round = Integer.parseInt(setting.getValue());
+			for (int i = 0; i < list.size(); i++) {
+
+				List<SalAllownceCal> assignAllownceList = new ArrayList<>();
+
+				for (int k = 0; k < getPayrollAllownceList.size(); k++) {
+
+					if (list.get(i).getId() == getPayrollAllownceList.get(k).getSalaryCalcId()) {
+
+						getPayrollAllownceList.get(k).setAllowanceValueCal(
+								castNumber(getPayrollAllownceList.get(k).getAllowanceValueCal(), amount_round));
+						assignAllownceList.add(getPayrollAllownceList.get(k));
+
+					}
+				}
+				list.get(i).setBasicCal(list.get(i).getBasicCal());
+				list.get(i).setOtWages(castNumber(list.get(i).getOtWages(), amount_round));
+				list.get(i).setPerformanceBonus(castNumber(list.get(i).getPerformanceBonus(), amount_round));
+				list.get(i).setMiscExpAdd(castNumber(list.get(i).getMiscExpAdd(), amount_round));
+				list.get(i).setPtDed(castNumber(list.get(i).getPtDed(), amount_round));
+				list.get(i).setEmployeePf((float) castNumber(list.get(i).getEmployeePf(), amount_round));
+				list.get(i).setEsic((float) castNumber(list.get(i).getEsic(), amount_round));
+				list.get(i).setAdvanceDed(castNumber(list.get(i).getAdvanceDed(), amount_round));
+				list.get(i).setTds(castNumber(list.get(i).getTds(), amount_round));
+				list.get(i).setSocietyContribution(castNumber(list.get(i).getSocietyContribution(), amount_round));
+				list.get(i).setLoanDed(castNumber(list.get(i).getLoanDed(), amount_round));
+				list.get(i).setNetSalary(castNumber(list.get(i).getNetSalary(), amount_round));
 				list.get(i).setPayrollAllownceList(assignAllownceList);
 			}
 
