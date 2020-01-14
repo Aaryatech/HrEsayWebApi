@@ -2,6 +2,7 @@ package com.ats.hrmgt.controller;
 
 import java.text.SimpleDateFormat;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +29,7 @@ import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
 import com.ats.hrmgt.repository.SettingRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.google.gson.Gson;
- @RestController
+  @RestController
 public class ExgratiaApiController {
 
 	@Autowired

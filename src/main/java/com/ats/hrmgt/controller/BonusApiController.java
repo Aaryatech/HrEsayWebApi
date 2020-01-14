@@ -1,6 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.common.DateConvertor;
+import com.ats.hrmgt.common.NumberFormatting;
 import com.ats.hrmgt.model.Allowances;
 import com.ats.hrmgt.model.EmpSalAllowance;
 import com.ats.hrmgt.model.GetEmployeeDetails;
@@ -457,60 +459,51 @@ public class BonusApiController {
 		// To get bonus formula
 		List<Setting> settingList = new ArrayList<Setting>();
 		String bonusFormula = new String();
-		try {
-			settingList = settingRepo.findByGroup("BONUS");
-			if (settingList != null) {
-				for (int i = 0; i < settingList.size(); i++) {
-
-					if (settingList.get(i).getKey().equals("bonus_formula")) {
-						bonusFormula = settingList.get(i).getValue();
-						// System.err.println("bonus formula**" + bonusFormula);
-						break;
-					} else {
-						bonusFormula = "";
-					}
-
-				}
-			}
-
-		} catch (Exception e) {
-
-			info.setError(true);
-			info.setMsg("failed");
-
-		}
-
 		double advPrcnt = 0.0;
 		double pujaPrcnt = 0.0;
 		double lossPrcnt = 0.0;
 
-		Setting setting = new Setting();
-
+		/*
+		 * try { settingList = settingRepo.findByGroup("BONUS"); if (settingList !=
+		 * null) { for (int i = 0; i < settingList.size(); i++) {
+		 * 
+		 * if (settingList.get(i).getKey().equals("bonus_formula")) { bonusFormula =
+		 * settingList.get(i).getValue(); // System.err.println("bonus formula**" +
+		 * bonusFormula); break; } else { bonusFormula = ""; }
+		 * 
+		 * } }
+		 * 
+		 * } catch (Exception e) {
+		 * 
+		 * info.setError(true); info.setMsg("failed");
+		 * 
+		 * }
+		 */
+ 
+		for (int k = 0; k < settingList.size(); k++) {
+			if (settingList.get(k).getKey().equalsIgnoreCase("bonus_formula")) {
+				bonusFormula = settingList.get(k).getValue();
+			} else if (settingList.get(k).getKey().equalsIgnoreCase("ded_bonus_adv_amt_percentage")) {
+				advPrcnt = Float.parseFloat(settingList.get(k).getValue());
+			} else if (settingList.get(k).getKey().equalsIgnoreCase("ded_bonus_puja_amt_percentage")) {
+				pujaPrcnt = Float.parseFloat(settingList.get(k).getValue());
+			} else if (settingList.get(k).getKey().equalsIgnoreCase("ded_bonus_loss_amt_percentage")) {
+				lossPrcnt = Float.parseFloat(settingList.get(k).getValue());
+			}  
+		}
+		int insertVal=0;
 		try {
-			setting = settingRepo.findByKey("ded_bonus_adv_amt_percentage");
-			advPrcnt = Double.parseDouble(setting.getValue());
+
+			Setting setting = settingRepo.findByKey("ammount_format_Insert");
+			  insertVal = Integer.parseInt(setting.getValue());
 		} catch (Exception e) {
 
-			advPrcnt = 0;
+			insertVal = 0;
 
 		}
-		try {
-
-			setting = settingRepo.findByKey("ded_bonus_puja_amt_percentage");
-			pujaPrcnt = Double.parseDouble(setting.getValue());
-		} catch (Exception e) {
-
-			pujaPrcnt = 0;
-
-		}
-		try {
-			setting = settingRepo.findByKey("ded_bonus_loss_amt_percentage");
-			lossPrcnt = Double.parseDouble(setting.getValue());
-		} catch (Exception e) {
-
-			lossPrcnt = 0;
-
-		}
+		
+		
+		
 		String[] forList = bonusFormula.split("\\+");
 		List<String> formulaList = new ArrayList<String>(Arrays.asList(forList));
 		// System.err.println("formulaList before**" + formulaList.toString());
@@ -650,7 +643,7 @@ public class BonusApiController {
 					calcSave.setEmpId(empId);
 					calcSave.setEmpName(list.getFirstName().concat(" ")
 							.concat(list.getMiddleName().concat(" ").concat(list.getSurname())));
-					calcSave.setNetBonusAmt(bonusAmt);
+					calcSave.setNetBonusAmt(NumberFormatting.castNumber(bonusAmt,insertVal));
 					calcSave.setDelStatus(1);
 					calcSave.setExVar2("NA");
 					calcSave.setExInt1(0);
@@ -659,12 +652,12 @@ public class BonusApiController {
 					calcSave.setLoginIdBonus(userId);
 					calcSave.setLoginTimeBonus(sf.format(date));
 					calcSave.setBonusApplicable(isApplicable);
-					calcSave.setGrossBonusAmt(grossBonus);
+					calcSave.setGrossBonusAmt(NumberFormatting.castNumber(grossBonus,insertVal));
 					calcSave.setExgratiaPrcnt(0);
 
-					calcSave.setDedBonusAdvAmt(advPrcntAmt);
-					calcSave.setDedBonusLossAmt(lossPrcntAmt);
-					calcSave.setDedBonusPujaAmt(pujaPrcntAmt);
+					calcSave.setDedBonusAdvAmt(NumberFormatting.castNumber(advPrcntAmt,insertVal));
+					calcSave.setDedBonusLossAmt(NumberFormatting.castNumber(lossPrcntAmt,insertVal));
+					calcSave.setDedBonusPujaAmt(NumberFormatting.castNumber(pujaPrcntAmt,insertVal));
 					calcSave.setDedExgretiaAmt(0);
 					calcSave.setDedReason("");
 					calcSave.setExgretiaApplicable("No");
@@ -680,7 +673,7 @@ public class BonusApiController {
 					calcSave.setPaidExgretiaAmt(0);
 					// calcSave.setPaidExgretiaDate(paidExgretiaDate);
 					calcSave.setRecStatus(0);// ***
-					calcSave.setTotalBonusWages((int) (formTot));// ******
+					calcSave.setTotalBonusWages((int)NumberFormatting.castNumber(formTot,insertVal));// ******
 					calcSave.setTotalExgretiaDays(0);
 					calcSave.setTotalExgretiaWages("0");
 					calcSave.setTotalBonusDays((int) payableDay);// ***
