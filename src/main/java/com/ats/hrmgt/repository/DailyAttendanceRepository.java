@@ -36,4 +36,32 @@ public interface DailyAttendanceRepository extends JpaRepository<DailyAttendance
 	@Query("update DailyAttendance set rec_status='F',is_fixed=1 WHERE att_date between :fromDate and :toDate and emp_id in (:empIds) ")
 	int fixDailyDailyRecordBetweenDate(@Param("fromDate") String fromDate,@Param("toDate") String toDate, @Param("empIds") List<Integer> empIds);
 
+	
+	
+	@Query(value = "SELECT\n" + 
+			"    tbl_attt_daily_daily.*\n" + 
+			"FROM\n" + 
+			"    tbl_attt_daily_daily\n" + 
+			"WHERE\n" + 
+			"    tbl_attt_daily_daily.emp_id =:empId AND YEAR(tbl_attt_daily_daily.att_date) =:year  AND MONTH(tbl_attt_daily_daily.att_date) =:monthValue \n" + 
+			"ORDER BY\n" + 
+			"    tbl_attt_daily_daily.id\n" + 
+			"DESC\n" + 
+			"LIMIT 1", nativeQuery = true)
+ 	DailyAttendance findLastMonthRecordOfEmp(int empId, int monthValue, int year);
+	
+	
+	@Query(value = "SELECT\n" + 
+			"    tbl_attt_daily_daily.*\n" + 
+			"FROM\n" + 
+			"    tbl_attt_daily_daily\n" + 
+			"WHERE\n" + 
+			"    tbl_attt_daily_daily.emp_id =:empId  \n" + 
+			"ORDER BY\n" + 
+			"    tbl_attt_daily_daily.id\n" + 
+			"DESC\n" + 
+			"LIMIT 1", nativeQuery = true)
+ 	DailyAttendance findLastMonthRecordOfEmp(int empId);
+	
+ 
 }
