@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.common.EmailUtility;
+import com.ats.hrmgt.common.EnglishNumberToWords;
 import com.ats.hrmgt.model.Allowances;
 import com.ats.hrmgt.model.EmpAllowanceList;
 import com.ats.hrmgt.model.EmpSalAllowance;
@@ -1334,6 +1335,8 @@ public class PayrollApiController {
 				list.get(i).setSocietyContribution(castNumber(list.get(i).getSocietyContribution(), amount_round));
 				list.get(i).setLoanDed(castNumber(list.get(i).getLoanDed(), amount_round));
 				list.get(i).setNetSalary(castNumber(list.get(i).getNetSalary(), amount_round));
+				long sal = (long) list.get(i).getNetSalary();
+				list.get(i).setMoneyInword(EnglishNumberToWords.convert(sal)); 
 				list.get(i).setPayrollAllownceList(assignAllownceList);
 			}
 

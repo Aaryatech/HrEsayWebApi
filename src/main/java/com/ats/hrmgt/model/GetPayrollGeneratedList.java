@@ -87,6 +87,9 @@ public class GetPayrollGeneratedList {
 	@Transient
 	List<SalAllownceCal> payrollAllownceList;
 
+	@Transient
+	private String moneyInword;
+	
 	public int getId() {
 		return id;
 	}
@@ -647,6 +650,14 @@ public class GetPayrollGeneratedList {
 		this.unpaidLeave = unpaidLeave;
 	}
 
+	public String getMoneyInword() {
+		return moneyInword;
+	}
+
+	public void setMoneyInword(String moneyInword) {
+		this.moneyInword = moneyInword;
+	}
+
 	@Override
 	public String toString() {
 		return "GetPayrollGeneratedList [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode
@@ -671,7 +682,7 @@ public class GetPayrollGeneratedList {
 				+ ", empTypeName=" + empTypeName + ", departName=" + departName + ", designName=" + designName
 				+ ", payableDays=" + payableDays + ", presentDays=" + presentDays + ", weeklyOff=" + weeklyOff
 				+ ", paidHoliday=" + paidHoliday + ", paidLeave=" + paidLeave + ", unpaidLeave=" + unpaidLeave
-				+ ", payrollAllownceList=" + payrollAllownceList + "]";
+				+ ", payrollAllownceList=" + payrollAllownceList + ", moneyInword=" + moneyInword + "]";
 	}
 
 }
