@@ -5,10 +5,7 @@ import java.util.List;
 public class EmpShiftDetails {
 
 	private int empId;
-
- 
-
-	private int shiftId;
+ 	private int shiftId;
 
 	private int day;
 
@@ -17,8 +14,31 @@ public class EmpShiftDetails {
 	private String shiftName;
 
 	private String dateOfMonth;
+	
+	private String fromDate;
+	
+	private String toDate;
+ 
+	private int month;
+	 
+	private int year;
 
-	private int monthType;
+
+	public int getMonth() {
+		return month;
+	}
+
+	public void setMonth(int month) {
+		this.month = month;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
 
 	public int getLocationId() {
 		return locationId;
@@ -67,21 +87,33 @@ public class EmpShiftDetails {
 	public void setDay(int day) {
 		this.day = day;
 	}
+	
+	
 
-	public int getMonthType() {
-		return monthType;
+	public String getFromDate() {
+		return fromDate;
 	}
 
-	public void setMonthType(int monthType) {
-		this.monthType = monthType;
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
 	}
 
 	@Override
 	public String toString() {
 		return "EmpShiftDetails [empId=" + empId + ", shiftId=" + shiftId + ", day=" + day + ", locationId="
-				+ locationId + ", shiftName=" + shiftName + ", dateOfMonth=" + dateOfMonth + ", monthType=" + monthType
-				+ "]";
+				+ locationId + ", shiftName=" + shiftName + ", dateOfMonth=" + dateOfMonth + ", fromDate=" + fromDate
+				+ ", toDate=" + toDate + ", month=" + month + ", year=" + year + "]";
 	}
 
+	 
+	 
 	 
 }
