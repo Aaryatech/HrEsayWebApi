@@ -15,8 +15,8 @@ public interface GetPayDedListRepo extends JpaRepository<GetPayDedList, Integer>
 	List<GetPayDedList> getPayDedList(@Param("month") int month, @Param("year") int year,
 			@Param("empIds") List<Integer> empIds);
 
-	@Query(value = "select uuid() as id,emp_id,sum(loan_emi_intrest) as amt from tbl_loan_main where :date between loan_repay_start and "
-			+ "loan_repay_end and del_status=1 and emp_id in (:empIds) group by emp_id", nativeQuery = true)
+	@Query(value = "select uuid() as id, emp_id, sum(CASE WHEN current_outstanding<loan_emi_intrest THEN current_outstanding ELSE loan_emi_intrest end ) as amt from tbl_loan_main "
+			+ "where :date between loan_repay_start and loan_repay_end and del_status=1 and skip_id=0 and current_outstanding>0 and emp_id in (:empIds) group by emp_id", nativeQuery = true)
 	List<GetPayDedList> getLoanList(@Param("date") String date ,
 			@Param("empIds") List<Integer> empIds);
 

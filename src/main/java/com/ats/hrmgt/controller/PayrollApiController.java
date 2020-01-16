@@ -43,7 +43,9 @@ import com.ats.hrmgt.model.SalaryTypesMaster;
 import com.ats.hrmgt.model.SampleClass;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.model.SlabMaster;
+import com.ats.hrmgt.model.loan.LoanDetails;
 import com.ats.hrmgt.model.loan.LoanMain;
+import com.ats.hrmgt.repo.loan.LoanDetailsRepo;
 import com.ats.hrmgt.repo.loan.LoanMainRepo;
 import com.ats.hrmgt.repository.AllowancesRepo;
 import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
@@ -139,6 +141,9 @@ public class PayrollApiController {
 
 	@Autowired
 	LoanMainRepo loanMainRepo;
+
+	@Autowired
+	LoanDetailsRepo loanDetailsRepo;
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -1158,7 +1163,7 @@ public class PayrollApiController {
 			for (int i = 0; i < salList.size(); i++) {
 
 				empIds.add(salList.get(i).getEmpId());
-				
+
 				SalaryCalc SalaryCalc = new SalaryCalc();
 				SalaryCalc.setEmpId(salList.get(i).getEmpId());
 				SalaryCalc.setEmpCode(salList.get(i).getEmpCode());
@@ -1236,11 +1241,11 @@ public class PayrollApiController {
 					allowlist.add(empAllowance);
 
 				}
- 
+
 				List<SalAllownceCal> saveAllores = salAllownceCalRepo.saveAll(allowlist);
 			}
 
-			int deleteFromTemp = salaryCalcTempRepo.deleteFromTemp(month,year,empIds);
+			int deleteFromTemp = salaryCalcTempRepo.deleteFromTemp(month, year, empIds);
 			int deleteFromTempAll = salAllownceTempRepo.deleteFromTempAll(detailIds);
 
 			info.setError(false);
@@ -1269,8 +1274,50 @@ public class PayrollApiController {
 			int updatePayde = payDeductionDetailsRepo.updatePayde(month, year, empIds);
 			// List<GetPayDedList> getLoanList = getPayDedListRepo.getLoanList(year + "-" +
 			// month + "-01", empIds);
-			// List<LoanMain> getLoanList = loanMainRepo.getLoanList(year + "-" + month +
-			// "-01", empIds);
+			List<LoanMain> getLoanList = loanMainRepo.getLoanList(year + "-" + month + "-01", empIds);
+			Date date = new Date();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+			List<LoanDetails> loandetaillist = new ArrayList<>();
+			for (int i = 0; i < getLoanList.size(); i++) {
+				LoanDetails loanDetails = new LoanDetails();
+				loanDetails.setLoanMainId(getLoanList.get(i).getId());
+				loanDetails.setMonths(month);
+				loanDetails.setYears(year);
+				loanDetails.setPayType("SP");
+				loanDetails.setLoginName(String.valueOf(userId));
+				loanDetails.setLoginTime(sf.format(date));
+
+				int amt = 0;
+
+				if (getLoanList.get(i).getCurrentOutstanding() < getLoanList.get(i).getLoanEmiIntrest()) {
+					amt = getLoanList.get(i).getCurrentOutstanding();
+				} else {
+					amt = getLoanList.get(i).getLoanEmiIntrest();
+				}
+
+				if (getLoanList.get(i).getSkipId() == 0) {
+					loanDetails.setAmountEmi(amt);
+					loanDetails.setRemarks("Auto Deducted :Salary Deduction");
+					getLoanList.get(i).setCurrentOutstanding(getLoanList.get(i).getCurrentOutstanding() - amt);
+					getLoanList.get(i).setCurrentTotpaid(getLoanList.get(i).getCurrentTotpaid() + amt);
+				} else {
+					getLoanList.get(i).setSkipId(0);
+					loanDetails.setAmountEmi(0);
+					loanDetails.setSkippAmoount(amt);
+					loanDetails.setSkippMonthYear(month + "-" + year);
+				}
+
+				if (getLoanList.get(i).getCurrentOutstanding() == 0) {
+					getLoanList.get(i).setLoanStatus("Paid");
+				}
+				loandetaillist.add(loanDetails);
+			}
+
+			if (loandetaillist.size() > 0) {
+				List<LoanDetails> res = loanDetailsRepo.saveAll(loandetaillist);
+				List<LoanMain> updateRes = loanMainRepo.saveAll(getLoanList);
+			}
 
 			info.setError(false);
 			info.setMsg("success");
