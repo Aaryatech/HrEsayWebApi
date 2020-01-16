@@ -17,10 +17,10 @@ public interface SalAllownceTempRepo extends JpaRepository<SalAllownceTemp, Inte
 			+ "and st.calc_year=:year and st.emp_id in (:empIds)", nativeQuery = true)
 	List<SalAllownceTemp> getAllowanceTempList(@Param("month") int month, @Param("year") int year,
 			@Param("empIds") List<Integer> empIds);
-	
+
 	@Transactional
 	@Modifying
-	@Query("delete from SalAllownceTemp ")
-	int deleteFromTempAll();
+	@Query("delete from SalAllownceTemp where emp_sal_allowance_id in (:detailIds)")
+	int deleteFromTempAll(@Param("detailIds") List<Integer> detailIds);
 
 }

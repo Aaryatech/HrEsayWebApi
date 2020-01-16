@@ -11,7 +11,7 @@ import com.ats.hrmgt.model.GetClaimList;
 public interface GetClaimListRepo extends JpaRepository<GetClaimList, Integer>{
 
 	@Query(value = "select ca_head_id,emp_id, sum(claim_amount) as claim_amount from claim_apply_header where month=:month and year=:year "
-			+ "and claim_status=3 and emp_id in (:empIds) group by emp_id", nativeQuery = true)
+			+ "and claim_status=3 and is_paid=0 and emp_id in (:empIds) group by emp_id", nativeQuery = true)
 	List<GetClaimList> getClaimList(@Param("month") int month, @Param("year") int year,
 			@Param("empIds") List<Integer> empIds);
 

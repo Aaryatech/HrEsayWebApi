@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.advance.repository.AdvanceRepo;
+import com.ats.hrmgt.claim.repository.ClaimHeaderRepo;
 import com.ats.hrmgt.common.EmailUtility;
 import com.ats.hrmgt.common.EnglishNumberToWords;
 import com.ats.hrmgt.model.Allowances;
@@ -41,6 +43,8 @@ import com.ats.hrmgt.model.SalaryTypesMaster;
 import com.ats.hrmgt.model.SampleClass;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.model.SlabMaster;
+import com.ats.hrmgt.model.loan.LoanMain;
+import com.ats.hrmgt.repo.loan.LoanMainRepo;
 import com.ats.hrmgt.repository.AllowancesRepo;
 import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
 import com.ats.hrmgt.repository.EmpSalInfoDaiyInfoTempInfoRepo;
@@ -52,6 +56,7 @@ import com.ats.hrmgt.repository.GetPayDedListRepo;
 import com.ats.hrmgt.repository.GetPayrollGeneratedListRepo;
 import com.ats.hrmgt.repository.GetSalDynamicTempRecordRepository;
 import com.ats.hrmgt.repository.MstEmpTypeRepository;
+import com.ats.hrmgt.repository.PayDeductionDetailsRepo;
 import com.ats.hrmgt.repository.SalAllownceCalRepo;
 import com.ats.hrmgt.repository.SalAllownceTempRepo;
 import com.ats.hrmgt.repository.SalaryCalcRepo;
@@ -122,6 +127,18 @@ public class PayrollApiController {
 
 	@Autowired
 	GetPayrollGeneratedListRepo getPayrollGeneratedListRepo;
+
+	@Autowired
+	AdvanceRepo advanceRepo;
+
+	@Autowired
+	ClaimHeaderRepo claimHeaderRepo;
+
+	@Autowired
+	PayDeductionDetailsRepo payDeductionDetailsRepo;
+
+	@Autowired
+	LoanMainRepo loanMainRepo;
 
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
@@ -1131,11 +1148,17 @@ public class PayrollApiController {
 
 		try {
 
+			List<Integer> empIds = new ArrayList<>();
+			List<Integer> detailIds = new ArrayList<>();
+			int month = salList.get(0).getMonth();
+			int year = salList.get(0).getYear();
 			// System.out.println(salList);
 			Date date = new Date();
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			for (int i = 0; i < salList.size(); i++) {
 
+				empIds.add(salList.get(i).getEmpId());
+				
 				SalaryCalc SalaryCalc = new SalaryCalc();
 				SalaryCalc.setEmpId(salList.get(i).getEmpId());
 				SalaryCalc.setEmpCode(salList.get(i).getEmpCode());
@@ -1209,18 +1232,45 @@ public class PayrollApiController {
 							salList.get(i).getGetAllowanceTempList().get(j).getAllowanceValueCal());
 					empAllowance.setShortName(salList.get(i).getGetAllowanceTempList().get(j).getShortName());
 					empAllowance.setDelStatus(1);
+					detailIds.add(salList.get(i).getGetAllowanceTempList().get(j).getEmpSalAllowanceId());
 					allowlist.add(empAllowance);
 
 				}
-
-				if (SalaryCalc.getEmpId() == 1) {
-					System.out.println(allowlist);
-				}
+ 
 				List<SalAllownceCal> saveAllores = salAllownceCalRepo.saveAll(allowlist);
 			}
 
-			int deleteFromTemp = salaryCalcTempRepo.deleteFromTemp();
-			int deleteFromTempAll = salAllownceTempRepo.deleteFromTempAll();
+			int deleteFromTemp = salaryCalcTempRepo.deleteFromTemp(month,year,empIds);
+			int deleteFromTempAll = salAllownceTempRepo.deleteFromTempAll(detailIds);
+
+			info.setError(false);
+			info.setMsg("success");
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("failed");
+			e.printStackTrace();
+		}
+
+		return info;
+	}
+
+	@RequestMapping(value = { "/updateIsPaidInPaydeClaimAdvLoan" }, method = RequestMethod.POST)
+	@ResponseBody
+	public Info updateIsPaidInPaydeClaimAdvLoan(@RequestParam("month") int month, @RequestParam("year") int year,
+			@RequestParam("userId") int userId, @RequestParam("empIds") List<Integer> empIds) {
+
+		Info info = new Info();
+
+		try {
+
+			int updateAdv = advanceRepo.updateAdv(month, year, empIds);
+			int updateClaim = claimHeaderRepo.updateClaim(month, year, empIds);
+			int updatePayde = payDeductionDetailsRepo.updatePayde(month, year, empIds);
+			// List<GetPayDedList> getLoanList = getPayDedListRepo.getLoanList(year + "-" +
+			// month + "-01", empIds);
+			// List<LoanMain> getLoanList = loanMainRepo.getLoanList(year + "-" + month +
+			// "-01", empIds);
 
 			info.setError(false);
 			info.setMsg("success");
@@ -1336,7 +1386,7 @@ public class PayrollApiController {
 				list.get(i).setLoanDed(castNumber(list.get(i).getLoanDed(), amount_round));
 				list.get(i).setNetSalary(castNumber(list.get(i).getNetSalary(), amount_round));
 				long sal = (long) list.get(i).getNetSalary();
-				list.get(i).setMoneyInword(EnglishNumberToWords.convert(sal)); 
+				list.get(i).setMoneyInword(EnglishNumberToWords.convert(sal));
 				list.get(i).setPayrollAllownceList(assignAllownceList);
 			}
 

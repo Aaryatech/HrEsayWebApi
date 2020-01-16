@@ -25,7 +25,7 @@ public interface SalaryCalcTempRepo extends JpaRepository<SalaryCalcTemp, Intege
 
 	@Transactional
 	@Modifying
-	@Query("delete from SalaryCalcTemp ")
-	int deleteFromTemp();
+	@Query("delete from SalaryCalcTemp where calc_month=:month and calc_year=:year and emp_id in (:empIds) ")
+	int deleteFromTemp(@Param("month") int month, @Param("year") int year, @Param("empIds") List<Integer> empIds);
 
 }

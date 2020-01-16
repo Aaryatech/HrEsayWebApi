@@ -29,6 +29,11 @@ public interface AdvanceRepo extends JpaRepository<Advance, Integer> {
 	@Modifying
 	@Query("update Advance set  skip_id =:count,skip_login_name =:userId, skip_login_time=:dateTimeUpdate,skip_remarks =:SkipStr ,ded_month=:dedMonth,ded_year=:dedYear WHERE id=:advId")
 	int skipAdvance(@Param("advId") int advId,@Param("userId") int userId,@Param("count") int count,@Param("SkipStr") String SkipStr,@Param("dateTimeUpdate") String dateTimeUpdate,@Param("dedYear") int dedYear,@Param("dedMonth") int dedMonth);
+
+	@Transactional
+	@Modifying
+	@Query("update Advance set is_ded=1 where ded_month=:month and ded_year=:year and del_status=1 and is_ded=0 and emp_id in (:empIds)")
+	int updateAdv(@Param("month")int month, @Param("year") int year, @Param("empIds") List<Integer> empIds);
 	
 	
 

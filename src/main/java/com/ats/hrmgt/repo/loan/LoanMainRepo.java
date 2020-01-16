@@ -73,6 +73,10 @@ public interface LoanMainRepo  extends JpaRepository<LoanMain, Integer>{
 	@Modifying
 	@Query("update LoanMain set  skip_id =:count,skip_login_name =:userId, skip_login_time=:dateTimeUpdate,skip_remarks =:skipStr,loan_repay_end =:repayEnd  WHERE id=:advId")
 	int skipLoan(@Param("advId")  int advId,@Param("userId") int userId,@Param("count") int count,@Param("skipStr") String skipStr,@Param("dateTimeUpdate") String dateTimeUpdate,@Param("repayEnd") String repayEnd);
+
+
+	@Query(value="select * from tbl_loan_main  where :date between loan_repay_start and loan_repay_end and del_status=1 and emp_id in (:empIds)  ",nativeQuery=true)
+	List<LoanMain> getLoanList(@Param("date")String date, @Param("empIds") List<Integer> empIds);
 	
 
 }

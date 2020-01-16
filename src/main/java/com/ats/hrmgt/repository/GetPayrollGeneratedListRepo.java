@@ -38,7 +38,7 @@ public interface GetPayrollGeneratedListRepo extends JpaRepository<GetPayrollGen
 			"        and et.emp_type_id=sc.emp_type \n" + 
 			"        and d.depart_id=sc.depart_id \n" + 
 			"        and dg.desig_id=e.designation_id\n" + 
-			"        and dd.id=sc.att_sum_id", nativeQuery = true)
+			"        and dd.id=sc.att_sum_id order by e.emp_id asc", nativeQuery = true)
 	List<GetPayrollGeneratedList> getPayrollGenratedList(@Param("month") int month, @Param("year") int year);
 	
 	 
@@ -70,7 +70,7 @@ public interface GetPayrollGeneratedListRepo extends JpaRepository<GetPayrollGen
 			"        and et.emp_type_id=sc.emp_type \n" + 
 			"        and d.depart_id=sc.depart_id \n" + 
 			"        and dg.desig_id=e.designation_id\n" + 
-			"        and dd.id=sc.att_sum_id and e.emp_id in(:empIds)", nativeQuery = true)
+			"        and dd.id=sc.att_sum_id and e.emp_id in(:empIds) order by e.emp_id asc", nativeQuery = true)
 	List<GetPayrollGeneratedList> getPayrollGenratedList(@Param("month") int month, @Param("year") int year,@Param("empIds") List<Integer> empIds);
 
 }

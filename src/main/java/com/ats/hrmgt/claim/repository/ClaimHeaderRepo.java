@@ -77,5 +77,10 @@ public interface ClaimHeaderRepo extends JpaRepository<ClaimApplyHeader, Integer
 	@Modifying
 	@Query("update ClaimApplyHeader set year=:year,month=:month,maker_enter_datetime=:dateTimeUpdate,maker_user_id=:userId WHERE ca_head_id=:clmHeadId")
 	int updatePaid(@Param("dateTimeUpdate") String dateTimeUpdate,@Param("userId")  int userId,@Param("clmHeadId")  int clmHeadId,@Param("month")  int month,@Param("year")  int year);
+
+	@Transactional
+	@Modifying
+	@Query("update ClaimApplyHeader set is_paid=1 where month=:month  and year=:year and claim_status=3 and is_paid=0 and emp_id in (:empIds) ")
+	int updateClaim(@Param("month")int month, @Param("year") int year, @Param("empIds") List<Integer> empIds);
 	 
 }
