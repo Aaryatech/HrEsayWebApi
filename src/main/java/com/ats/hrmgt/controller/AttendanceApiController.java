@@ -390,8 +390,10 @@ public class AttendanceApiController {
 							dailyAttendanceList.get(i).setInTime(fileUploadedDataList.get(j).getInTime());
 							dailyAttendanceList.get(i).setOutTime(fileUploadedDataList.get(j).getOutTime());
 							dailyAttendanceList.get(i).setByFileUpdated(1);
-							dailyAttendanceList.get(i).setRowId(j + 1);
 
+							if (dataForUpdateAttendance.getEmpId() == 0) {
+								dailyAttendanceList.get(i).setRowId(j + 1);
+							}
 							break;
 
 						}
@@ -1585,16 +1587,18 @@ public class AttendanceApiController {
 
 		try {
 
-			/*SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			Date fmdt = df.parse(fromDate);
-			Date todt = df.parse(toDate);
-
-			for (Date j = fmdt; j.compareTo(todt) <= 0;) {
-
-				int fixDailyDailyRecord = dailyAttendanceRepository.fixDailyDailyRecord(df.format(j), empIds);
-				j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
-			}*/
-			int fixDailyDailyRecord = dailyAttendanceRepository.fixDailyDailyRecordBetweenDate(fromDate,toDate, empIds); 
+			/*
+			 * SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd"); Date fmdt =
+			 * df.parse(fromDate); Date todt = df.parse(toDate);
+			 * 
+			 * for (Date j = fmdt; j.compareTo(todt) <= 0;) {
+			 * 
+			 * int fixDailyDailyRecord =
+			 * dailyAttendanceRepository.fixDailyDailyRecord(df.format(j), empIds);
+			 * j.setTime(j.getTime() + 1000 * 60 * 60 * 24); }
+			 */
+			int fixDailyDailyRecord = dailyAttendanceRepository.fixDailyDailyRecordBetweenDate(fromDate, toDate,
+					empIds);
 			info.setError(false);
 			info.setMsg("success");
 
