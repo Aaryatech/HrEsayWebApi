@@ -56,7 +56,7 @@ public interface DailyAttendanceRepository extends JpaRepository<DailyAttendance
 			"FROM\n" + 
 			"    tbl_attt_daily_daily\n" + 
 			"WHERE\n" + 
-			"    tbl_attt_daily_daily.emp_id =:empId  \n" + 
+			"    tbl_attt_daily_daily.emp_id =:empId AND tbl_attt_daily_daily.in_time != '00:00:00' \n" + 
 			"ORDER BY\n" + 
 			"    tbl_attt_daily_daily.id\n" + 
 			"DESC\n" + 

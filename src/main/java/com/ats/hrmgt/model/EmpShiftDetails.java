@@ -1,30 +1,24 @@
 package com.ats.hrmgt.model;
- 
+
+import java.util.List;
+
 public class EmpShiftDetails {
-	
+
 	private int empId;
-	
-	private String empName;
-	
-	
-	private String empCode;
-	
-	
+
+ 
+
 	private int shiftId;
-	
+
 	private int day;
-	
+
 	private int locationId;
-	
+
 	private String shiftName;
-	
-	private String  dateOfMonth;
-	
-	
-	private String type;
-	
-	
-	
+
+	private String dateOfMonth;
+
+	private int monthType;
 
 	public int getLocationId() {
 		return locationId;
@@ -49,23 +43,7 @@ public class EmpShiftDetails {
 	public void setEmpId(int empId) {
 		this.empId = empId;
 	}
-
-	public String getEmpName() {
-		return empName;
-	}
-
-	public void setEmpName(String empName) {
-		this.empName = empName;
-	}
-
-	public String getEmpCode() {
-		return empCode;
-	}
-
-	public void setEmpCode(String empCode) {
-		this.empCode = empCode;
-	}
-
+ 
 	public int getShiftId() {
 		return shiftId;
 	}
@@ -82,8 +60,6 @@ public class EmpShiftDetails {
 		this.shiftName = shiftName;
 	}
 
-	
-	
 	public int getDay() {
 		return day;
 	}
@@ -92,22 +68,20 @@ public class EmpShiftDetails {
 		this.day = day;
 	}
 
-	
-	public String getType() {
-		return type;
+	public int getMonthType() {
+		return monthType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setMonthType(int monthType) {
+		this.monthType = monthType;
 	}
 
 	@Override
 	public String toString() {
-		return "EmpShiftDetails [empId=" + empId + ", empName=" + empName + ", empCode=" + empCode + ", shiftId="
-				+ shiftId + ", day=" + day + ", locationId=" + locationId + ", shiftName=" + shiftName
-				+ ", dateOfMonth=" + dateOfMonth + ", type=" + type + "]";
+		return "EmpShiftDetails [empId=" + empId + ", shiftId=" + shiftId + ", day=" + day + ", locationId="
+				+ locationId + ", shiftName=" + shiftName + ", dateOfMonth=" + dateOfMonth + ", monthType=" + monthType
+				+ "]";
 	}
 
-	 
 	 
 }

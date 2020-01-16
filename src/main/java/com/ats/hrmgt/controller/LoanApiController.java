@@ -156,23 +156,7 @@ public class LoanApiController {
 
 	}
 
-	@RequestMapping(value = { "/getLastApplicationNumber" }, method = RequestMethod.GET)
-	public @ResponseBody LoanMain getLastApplicationNumber() {
-
-		 
-		LoanMain list = new LoanMain();
-		try {
-
-			list = loanMainRepo.getLastApplicationNo();
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
-		return list;
-
-	}
+ 
 
 	@Autowired
 	SettingRepo settingRepo;
