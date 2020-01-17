@@ -1,8 +1,18 @@
 package com.ats.hrmgt.model;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Table(name="t_emp_shift_details")
+@Entity
 public class EmpShiftDetails {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+ 	private int empShiftDetId;
 
 	private int empId;
  	private int shiftId;
@@ -23,6 +33,14 @@ public class EmpShiftDetails {
 	 
 	private int year;
 
+
+	public int getEmpShiftDetId() {
+		return empShiftDetId;
+	}
+
+	public void setEmpShiftDetId(int empShiftDetId) {
+		this.empShiftDetId = empShiftDetId;
+	}
 
 	public int getMonth() {
 		return month;
@@ -108,12 +126,11 @@ public class EmpShiftDetails {
 
 	@Override
 	public String toString() {
-		return "EmpShiftDetails [empId=" + empId + ", shiftId=" + shiftId + ", day=" + day + ", locationId="
-				+ locationId + ", shiftName=" + shiftName + ", dateOfMonth=" + dateOfMonth + ", fromDate=" + fromDate
-				+ ", toDate=" + toDate + ", month=" + month + ", year=" + year + "]";
+		return "EmpShiftDetails [empShiftDetId=" + empShiftDetId + ", empId=" + empId + ", shiftId=" + shiftId
+				+ ", day=" + day + ", locationId=" + locationId + ", shiftName=" + shiftName + ", dateOfMonth="
+				+ dateOfMonth + ", fromDate=" + fromDate + ", toDate=" + toDate + ", month=" + month + ", year=" + year
+				+ "]";
 	}
 
-	 
-	 
-	 
+ 
 }
