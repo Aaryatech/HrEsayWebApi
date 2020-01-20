@@ -154,6 +154,12 @@ public class LeaveReportApiController {
 				temp.setOctCount(octVal);
 				temp.setSepCount(sepVal);
 
+				double tot = Double.parseDouble(janVal) + Double.parseDouble(febVal) + Double.parseDouble(marchVal)
+						+ Double.parseDouble(aprVal) + Double.parseDouble(mayVal) + Double.parseDouble(junVal)
+						+ Double.parseDouble(julVal) + Double.parseDouble(augVal) + Double.parseDouble(sepVal)
+						+ Double.parseDouble(octVal) + Double.parseDouble(novVal) + Double.parseDouble(decVal);
+				temp.setTotal(tot);
+
 				newList.add(temp);
 
 			}

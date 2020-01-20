@@ -101,7 +101,18 @@ public interface GetAdvanceRepo  extends JpaRepository<GetAdvance, Integer>{
 			"    m_employees.first_name,\n" + 
 			"    m_employees.middle_name,\n" + 
 			"    m_employees.surname,\n" + 
-			"    m_designation.name as designation\n" + 
+			"     (\n" + 
+			"    SELECT\n" + 
+			"        CONCAT(\n" + 
+			"            m_employees.first_name,\n" + 
+			"            ' ',\n" + 
+			"            m_employees.surname\n" + 
+			"        )\n" + 
+			"    FROM\n" + 
+			"        m_employees\n" + 
+			"    WHERE\n" + 
+			"        m_employees.emp_id = tbl_advance.skip_login_name\n" + 
+			") AS designation \n" + 
 			"FROM\n" + 
 			"    m_employees,\n" + 
 			"    tbl_advance,\n" + 
