@@ -94,6 +94,25 @@ public interface GetAdvanceRepo  extends JpaRepository<GetAdvance, Integer>{
 	List<GetAdvance> getSpecEmpAdv(@Param("companyId") int companyId,@Param("empId") int empId);
 	
 	
+
+	@Query(value=" SELECT\n" + 
+			"    tbl_advance.*,\n" + 
+			"    m_employees.emp_code,\n" + 
+			"    m_employees.first_name,\n" + 
+			"    m_employees.middle_name,\n" + 
+			"    m_employees.surname,\n" + 
+			"    m_designation.name as designation\n" + 
+			"FROM\n" + 
+			"    m_employees,\n" + 
+			"    tbl_advance,\n" + 
+			"    m_designation\n" + 
+			"WHERE\n" + 
+			"    tbl_advance.del_status = 1  AND  tbl_advance.emp_id = m_employees.emp_id AND m_designation.desig_id = m_employees.designation_id AND tbl_advance.cmp_id=:companyId AND MONTH(tbl_advance.adv_date)=:month AND YEAR(tbl_advance.adv_date)=:year ORDER BY tbl_advance.emp_id ASC",nativeQuery=true)
+	List<GetAdvance> getSpecEmpAdvForReport(@Param("companyId") int companyId,@Param("month") int month,@Param("year") int year);
+	
+	
+	 
+	
 	
 
 }
