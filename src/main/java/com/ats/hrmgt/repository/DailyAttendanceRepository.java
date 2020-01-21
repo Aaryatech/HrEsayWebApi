@@ -18,6 +18,9 @@ public interface DailyAttendanceRepository extends JpaRepository<DailyAttendance
 
 	@Query(value = "select * from tbl_attt_daily_daily where att_date between :fromDate and :toDate  ", nativeQuery = true)
 	List<DailyAttendance> dailyAttendanceListAll(String fromDate, String toDate);
+	
+	@Query(value = "select * from tbl_attt_daily_daily where att_date between :fromDate and :toDate  AND  company_id=:companyId ", nativeQuery = true)
+	List<DailyAttendance> dailyAttendanceListAll1(String fromDate, String toDate,int companyId);
 
 	@Query(value = "select * from tbl_attt_daily_daily where id=:dailyId", nativeQuery = true)
 	DailyAttendance getdailyRecordById(@Param("dailyId") int dailyId);

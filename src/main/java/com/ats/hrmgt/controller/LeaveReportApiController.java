@@ -13,13 +13,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.advance.repository.GetAdvanceRepo;
 import com.ats.hrmgt.common.DateConvertor;
+import com.ats.hrmgt.model.DailyAttendance;
 import com.ats.hrmgt.model.EmpShiftDetails;
 import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.GetDailyDailyRecord;
+import com.ats.hrmgt.model.GetDailyDailyRecordRepository;
 import com.ats.hrmgt.model.LeaveApply;
 import com.ats.hrmgt.model.advance.GetAdvance;
+import com.ats.hrmgt.model.report.EmpAttendeanceRep;
 import com.ats.hrmgt.model.report.GetYearlyAdvance;
 import com.ats.hrmgt.model.report.GetYearlyAdvanceNew;
+import com.ats.hrmgt.repo.report.EmpAttendeanceRepRepo;
 import com.ats.hrmgt.repo.report.GetYearlyAdvanceRepo;
+import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
 
@@ -170,6 +176,56 @@ public class LeaveReportApiController {
 		}
 
 		return newList;
+
+	}
+	
+	
+	@Autowired
+	GetDailyDailyRecordRepository getDailyDailyRecordRepository;
+	@RequestMapping(value = { "/getAttendenceRegReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetDailyDailyRecord> getAttendenceRegReport(@RequestParam("companyId") int companyId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<GetDailyDailyRecord> list = new ArrayList<GetDailyDailyRecord>();
+		
+	
+		try {
+
+			list = getDailyDailyRecordRepository.summaryDailyAttendanceListAll1(fromDate, toDate,companyId);
+
+		 
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return  list;
+
+	}
+	@Autowired
+	EmpAttendeanceRepRepo empAttendeanceRepRepo;
+	
+	
+	@RequestMapping(value = { "/getDailyAttendenceReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<EmpAttendeanceRep> getDailyAttendenceReport(@RequestParam("companyId") int companyId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<EmpAttendeanceRep> list = new ArrayList<EmpAttendeanceRep>();
+		
+	
+		try {
+
+			list = empAttendeanceRepRepo.getSpecEmpAdvForReport(companyId,fromDate, toDate);
+
+		 
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return  list;
 
 	}
 
