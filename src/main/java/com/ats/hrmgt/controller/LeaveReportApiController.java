@@ -228,5 +228,30 @@ public class LeaveReportApiController {
 		return  list;
 
 	}
+	
+	@Autowired
+	DailyAttendanceRepository dailyAttendanceRepository;
+	
+	@RequestMapping(value = { "/getEmpLateMarkReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<DailyAttendance> getEmpLateMarkReport(@RequestParam("companyId") int companyId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<DailyAttendance> list = new ArrayList<DailyAttendance>();
+		
+	
+		try {
+
+			list = dailyAttendanceRepository.dailyAttendanceListAll1(companyId,fromDate, toDate);
+
+		 
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return  list;
+
+	}
 
 }
