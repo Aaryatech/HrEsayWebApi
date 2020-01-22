@@ -100,7 +100,7 @@ public class EmployeeApiController {
 			return emp;
 			
 		}
-		
+		  
 		@RequestMapping(value = { "/deleteEmployee" }, method = RequestMethod.POST)
 		public Info deleteEmployee(@RequestParam int empId) {
 

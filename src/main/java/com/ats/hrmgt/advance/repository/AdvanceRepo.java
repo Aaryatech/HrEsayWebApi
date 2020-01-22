@@ -25,6 +25,8 @@ public interface AdvanceRepo extends JpaRepository<Advance, Integer> {
 	List<Advance> findByVoucherNoAndDelStatus(String voucherNo, int i);
 	
 	
+	List<Advance> findByEmpIdAndDelStatus(int empId,int i);
+	
 	@Transactional
 	@Modifying
 	@Query("update Advance set  skip_id =:count,skip_login_name =:userId, skip_login_time=:dateTimeUpdate,skip_remarks =:SkipStr ,ded_month=:dedMonth,ded_year=:dedYear WHERE id=:advId")

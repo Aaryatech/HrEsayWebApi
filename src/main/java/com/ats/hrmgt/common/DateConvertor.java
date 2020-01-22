@@ -1,8 +1,15 @@
 package com.ats.hrmgt.common;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import com.ats.hrmgt.model.EmpSalaryInfo;
 
 public class DateConvertor {
 
@@ -74,6 +81,56 @@ public class DateConvertor {
 			return convertedDate;
 
 		}
+
+	
+	
+	public static List<String> getAllMonth(Date x) {
+		
+ 		List<String> dateList = new ArrayList<String>();
+		try {
+			Date date = new Date();
+			SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+			String currDate = sf1.format(date);
+
+			SimpleDateFormat sf = new SimpleDateFormat("MM-yyyy");
+ 
+			LocalDate localDate = LocalDate.parse((currDate));
+			LocalDate oneMonthLater = localDate.plusMonths(1);
+			String joinnigDate = sf.format(x);
+ 
+			String currDateNew = String.valueOf(oneMonthLater.getMonthValue()).concat("-")
+					.concat(String.valueOf(oneMonthLater.getYear()));
+
+		 
+			DateFormat formater = new SimpleDateFormat("MM-yyyy");
+
+			Calendar beginCalendar = Calendar.getInstance();
+			Calendar finishCalendar = Calendar.getInstance();
+			try {
+				beginCalendar.setTime(formater.parse(joinnigDate));
+				finishCalendar.setTime(formater.parse(currDateNew));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		
+			while (beginCalendar.before(finishCalendar)) {
+				// add one month to date per loop
+				String date1 = formater.format(beginCalendar.getTime()).toUpperCase();
+				System.out.println(date1);
+				dateList.add(date1);
+				beginCalendar.add(Calendar.MONTH, 1);
+			}
+
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return dateList;
+
+	}
 
 		
 		

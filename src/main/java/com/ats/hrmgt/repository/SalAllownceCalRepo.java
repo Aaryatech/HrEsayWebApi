@@ -17,4 +17,7 @@ public interface SalAllownceCalRepo extends JpaRepository<SalAllownceCal, Intege
 			+ "sc.calc_month=:month and calc_year=:year and sc.emp_id in(:empIds)", nativeQuery = true)
 	List<SalAllownceCal> getPayrollAllownceList(@Param("month") int month, @Param("year") int year,@Param("empIds") List<Integer> empIds);
 
+ 
+	List<SalAllownceCal> findByEmpId(int i);
+
 }
