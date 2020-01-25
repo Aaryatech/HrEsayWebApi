@@ -43,7 +43,11 @@ public class LoginResponse {
 	@Column(name="user_pwd")
 	private String userPwd; 
 	
+	@Column(name="design_type")
+	private int designType; 
 	
+	@Column(name="hod_dept_ids")
+	private String hodDeptIds; 
 	
 	
 	
@@ -142,12 +146,28 @@ public class LoginResponse {
 		this.locationIds = locationIds;
 	}
 
+	public int getDesignType() {
+		return designType;
+	}
+
+	public void setDesignType(int designType) {
+		this.designType = designType;
+	}
+
+	public String getHodDeptIds() {
+		return hodDeptIds;
+	}
+
+	public void setHodDeptIds(String hodDeptIds) {
+		this.hodDeptIds = hodDeptIds;
+	}
+
 	@Override
 	public String toString() {
 		return "LoginResponse [empId=" + empId + ", empCode=" + empCode + ", firstName=" + firstName + ", middleName="
 				+ middleName + ", surname=" + surname + ", motherName=" + motherName + ", emailId=" + emailId
-				+ ", userId=" + userId + ", locationIds=" + locationIds + ", userPwd=" + userPwd + ", isError="
-				+ isError + "]";
+				+ ", userId=" + userId + ", locationIds=" + locationIds + ", userPwd=" + userPwd + ", designType="
+				+ designType + ", hodDeptIds=" + hodDeptIds + ", isError=" + isError + "]";
 	}
 
 	 

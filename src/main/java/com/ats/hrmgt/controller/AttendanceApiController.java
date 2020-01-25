@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -1605,6 +1606,78 @@ public class AttendanceApiController {
 		} catch (Exception e) {
 			info.setError(true);
 			info.setMsg("failed");
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+
+	@RequestMapping(value = { "/getEmployyeDailyDailyListByDeptIds" }, method = RequestMethod.POST)
+	public @ResponseBody List<DailyAttendance> getAttendanceSheet(@RequestParam("date") String date,
+			@RequestParam("desgType") int desgType, @RequestParam("departIds") List<Integer> departIds) {
+
+		List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
+		try {
+
+			if (desgType == 1) {
+				dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceByDeptId(date, departIds);
+			} else if (desgType == 2) {
+				dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceListAll(date, date);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return dailyAttendanceList;
+
+	}
+
+	@RequestMapping(value = { "/updateAttendaceRecordSingleByHod" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateAttendaceRecordSingleByHod(@RequestParam("dailyId") int dailyId,
+			@RequestParam("selectStatus") int selectStatus, @RequestParam("lateMark") String lateMark,
+			@RequestParam("selectStatusText") String selectStatusText, @RequestParam("userId") int userId,
+			@RequestParam("flag") int flag,@RequestParam("otHours") String otHours) {
+
+		Info info = new Info();
+		try {
+
+			DailyAttendance dailyRecordById = dailyAttendanceRepository.getdailyRecordById(dailyId);
+			String[] dts = dailyRecordById.getAttDate().split("-");
+
+			Date firstDay = new GregorianCalendar(Integer.parseInt(dts[0]), Integer.parseInt(dts[1]) - 1, 1).getTime();
+			Date lastDay = new GregorianCalendar(Integer.parseInt(dts[0]), Integer.parseInt(dts[1]), 0).getTime();
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+
+			int month = Integer.parseInt(dts[1]);
+			int year = Integer.parseInt(dts[0]);
+
+			if (dailyRecordById.getIsFixed() == 0) {
+
+				if (flag == 0) {
+					if (selectStatus != 0) {
+						dailyRecordById.setLvSumupId(selectStatus);
+						dailyRecordById.setAttStatus(selectStatusText);
+					}
+					dailyRecordById.setLateMark(lateMark);
+					//System.out.println("In if");
+				}else {
+					//System.out.println("In else");
+					String[] othrsarry = otHours.split(":");
+					int othrs = (Integer.parseInt(othrsarry[0]) * 60) + Integer.parseInt(othrsarry[1]);
+					dailyRecordById.setOtHr(String.valueOf(othrs));
+				}
+
+				DailyAttendance updateRes = dailyAttendanceRepository.save(dailyRecordById);
+				info = finalUpdateDailySumaryRecord(sf.format(firstDay), sf.format(lastDay), userId, month, year,
+						dailyRecordById.getEmpId());
+				// System.out.println(othrsarry[0] + " " + othrsarry[1]);
+
+			}
+		} catch (Exception e) {
+
 			e.printStackTrace();
 		}
 

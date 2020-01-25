@@ -65,6 +65,9 @@ public interface DailyAttendanceRepository extends JpaRepository<DailyAttendance
 			"DESC\n" + 
 			"LIMIT 1", nativeQuery = true)
  	DailyAttendance findLastMonthRecordOfEmp(int empId);
+
+	@Query(value = "select d.* from tbl_attt_daily_daily d,m_employees e where d.att_date = :date and d.emp_id=e.emp_id and e.depart_id in (:departIds)", nativeQuery = true)
+	List<DailyAttendance> dailyAttendanceByDeptId(@Param("date") String date,@Param("departIds") List<Integer> departIds);
 	
  
 }
