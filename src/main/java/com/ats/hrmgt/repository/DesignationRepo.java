@@ -20,4 +20,8 @@ public interface DesignationRepo extends JpaRepository<Designation, Integer> {
 	@Modifying
 	@Query(value="UPDATE m_designation SET del_status=0 WHERE desig_id=:desigId",nativeQuery=true)
 	public int deleteDesignation(@Param("desigId") int desigId);
+
+	public List<Designation> findByNameAndCompanyId(String desgn, int compId);
+
+	public List<Designation> findByNameAndCompanyIdAndDesigIdNot(String trim, int compId, int primaryKey);
 }

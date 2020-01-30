@@ -21,4 +21,8 @@ public interface DepartmentRepo extends JpaRepository<Department, Integer> {
 	@Modifying
 	@Query(value="UPDATE m_department SET del_status=0 WHERE depart_id=:deptId",nativeQuery=true)
 	public int deleteDepartment(@Param("deptId") int deptId);
+
+	public List<Department> findByNameAndCompanyId(String dept, int compId);
+
+	public List<Department> findByNameAndCompanyIdAndDepartIdNot(String trim, int compId, int primaryKey);
 }

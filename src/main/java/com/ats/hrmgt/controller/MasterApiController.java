@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.hrmgt.claim.repository.GetEmpInfoRepo;
 import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.model.CalenderYear;
+import com.ats.hrmgt.model.Department;
+import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveSummary;
@@ -25,6 +27,8 @@ import com.ats.hrmgt.model.ShiftMaster;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.model.claim.GetEmployeeInfo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
+import com.ats.hrmgt.repository.DepartmentRepo;
+import com.ats.hrmgt.repository.DesignationRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveSummaryRepository;
 import com.ats.hrmgt.repository.LeaveTypeRepository;
@@ -166,6 +170,122 @@ public class MasterApiController {
 		}
 
 		return leaveType;
+
+	}
+
+	@Autowired
+	DesignationRepo designationRepo;
+
+	/*
+	 * @RequestMapping(value = { "/checkUniqueDesignation" }, method =
+	 * RequestMethod.POST) public @ResponseBody Info
+	 * checkUniqueDesignation(@RequestParam("desgn") String desgn,
+	 * 
+	 * @RequestParam("compId") int compId) {
+	 * 
+	 * Info info = new Info();
+	 * 
+	 * try {
+	 * 
+	 * Designation det = designationRepo.findByNameAndCompanyId(desgn, compId);
+	 * 
+	 * if (det == null) { info.setError(false); info.setMsg("0"); } else {
+	 * info.setError(true); info.setMsg("1");
+	 * 
+	 * }
+	 * 
+	 * } catch (Exception e) {
+	 * 
+	 * e.printStackTrace();
+	 * 
+	 * }
+	 * 
+	 * return info;
+	 * 
+	 * }
+	 */
+	@Autowired
+	DepartmentRepo departmentRepo;
+
+	/*
+	 * @RequestMapping(value = { "/checkUniqueDepartment" }, method =
+	 * RequestMethod.POST) public @ResponseBody Info
+	 * checkUniqueDepartment(@RequestParam("dept") String dept,
+	 * 
+	 * @RequestParam("compId") int compId) {
+	 * 
+	 * Info info = new Info();
+	 * 
+	 * try {
+	 * 
+	 * Department det = departmentRepo.findByNameAndCompanyId(dept, compId);
+	 * 
+	 * if (det == null) { info.setError(false); info.setMsg("0"); } else {
+	 * info.setError(true); info.setMsg("1");
+	 * 
+	 * }
+	 * 
+	 * } catch (Exception e) {
+	 * 
+	 * e.printStackTrace();
+	 * 
+	 * }
+	 * 
+	 * return info;
+	 * 
+	 * }
+	 */
+	@RequestMapping(value = { "/checkUniqueDeptDesgn" }, method = RequestMethod.POST)
+	public @ResponseBody Info checkUniqueField(@RequestParam String inputValue, @RequestParam int valueType,
+		 @RequestParam int isEditCall, @RequestParam int primaryKey,
+			@RequestParam("compId") int compId) {
+
+		Info info = new Info();
+//1- dept,2-desgn
+		List<Department> dept = new ArrayList<Department>();
+		List<Designation> desgn = new ArrayList<Designation>();
+		
+		if (valueType == 1) {
+			//System.err.println("Its Dept check");
+			if (isEditCall == 0) {
+				//System.err.println("Its New Record Insert ");
+				dept = departmentRepo.findByNameAndCompanyId(inputValue, compId);
+			} else {
+				//System.err.println("Its Edit Record ");
+				dept = departmentRepo.findByNameAndCompanyIdAndDepartIdNot(inputValue.trim(), compId, primaryKey);
+			}
+			//System.err.println("****"+dept.toString());
+			if (dept.size() <=0) {
+				info.setError(false);
+				info.setMsg("0");
+			} else {
+				info.setError(true);
+				info.setMsg("1");
+
+			}
+		} else if (valueType == 2) {
+			//System.err.println("Its Desn check");
+			if (isEditCall == 0) {
+				//System.err.println("Its New Record Insert ");
+				desgn = designationRepo.findByNameAndCompanyId(inputValue, compId);
+			} else {
+				//System.err.println("Its Edit Record ");
+				desgn = designationRepo.findByNameAndCompanyIdAndDesigIdNot(inputValue.trim(), compId, primaryKey);
+			}
+
+			if (desgn.size()<=0) {
+				info.setError(false);
+				info.setMsg("0");
+			} else {
+				info.setError(true);
+				info.setMsg("1");
+
+			}
+
+		}
+		 
+
+		return info;
 
 	}
 
@@ -479,8 +599,8 @@ public class MasterApiController {
 		return info;
 
 	}
-	
-	//self grp
+
+	// self grp
 	@RequestMapping(value = { "/saveSelfGrp" }, method = RequestMethod.POST)
 	public @ResponseBody SelfGroup saveSelfGrp(@RequestBody SelfGroup bonusMaster) {
 
@@ -505,7 +625,7 @@ public class MasterApiController {
 		return save;
 
 	}
-	
+
 	@RequestMapping(value = { "/getSelftGroupList" }, method = RequestMethod.GET)
 	public @ResponseBody List<SelfGroup> getSelftGroupList() {
 
@@ -522,7 +642,7 @@ public class MasterApiController {
 		return selfGrouptList;
 
 	}
-	
+
 	@RequestMapping(value = { "/deleteSelfGroup" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteSelfGroup(@RequestParam("bonusId") int bonusId) {
 
@@ -550,7 +670,7 @@ public class MasterApiController {
 		return info;
 
 	}
-	
+
 	@RequestMapping(value = { "/getSelfGroupById" }, method = RequestMethod.POST)
 	public @ResponseBody SelfGroup getSelfGroupById(@RequestParam("bonusId") int selftGroupId) {
 
@@ -567,7 +687,7 @@ public class MasterApiController {
 		return bous;
 
 	}
-	//selfgrp end 
+	// selfgrp end
 
 	@RequestMapping(value = { "/saveShiftMaster" }, method = RequestMethod.POST)
 	public @ResponseBody ShiftMaster getSelftGroupList(@RequestBody ShiftMaster shiftMaster) {
