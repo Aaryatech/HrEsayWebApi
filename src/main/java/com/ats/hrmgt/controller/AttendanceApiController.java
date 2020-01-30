@@ -762,11 +762,23 @@ public class AttendanceApiController {
 
 								} else {
 
-									dailyAttendanceList.get(i).setAttStatus("PL");
-									for (int j = 0; j < lvTypeList.size(); j++) {
-										if (lvTypeList.get(j).getNameSd().equals("PL")) {
-											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
-											break;
+									if (stsInfo.getLeaveTyId() == 2) {
+										dailyAttendanceList.get(i).setAttStatus("LWP");
+										for (int j = 0; j < lvTypeList.size(); j++) {
+											if (lvTypeList.get(j).getNameSd().equals("LWP")) {
+												dailyAttendanceList.get(i)
+														.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+												break;
+											}
+										}
+									} else {
+										dailyAttendanceList.get(i).setAttStatus("PL");
+										for (int j = 0; j < lvTypeList.size(); j++) {
+											if (lvTypeList.get(j).getNameSd().equals("PL")) {
+												dailyAttendanceList.get(i)
+														.setLvSumupId(lvTypeList.get(j).getLvSumupId());
+												break;
+											}
 										}
 									}
 
@@ -776,11 +788,22 @@ public class AttendanceApiController {
 							} // $case == '2457'
 							else if (atteanceCase.equals("2458")) {
 
-								dailyAttendanceList.get(i).setAttStatus("PL");
-								for (int j = 0; j < lvTypeList.size(); j++) {
-									if (lvTypeList.get(j).getNameSd().equals("PL")) {
-										dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
-										break;
+								if (stsInfo.getLeaveTyId() == 2) {
+
+									dailyAttendanceList.get(i).setAttStatus("LWP");
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals("LWP")) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
+									}
+								} else {
+									dailyAttendanceList.get(i).setAttStatus("PL");
+									for (int j = 0; j < lvTypeList.size(); j++) {
+										if (lvTypeList.get(j).getNameSd().equals("PL")) {
+											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
+											break;
+										}
 									}
 								}
 
@@ -865,9 +888,9 @@ public class AttendanceApiController {
 											.parseFloat(shiftMaster.getShiftHalfdayHr())) {
 										dailyAttendanceList.get(i).setEarlyGoingMark(0);
 										dailyAttendanceList.get(i).setLateMark("0");
-										dailyAttendanceList.get(i).setAttStatus("LWP");
+										dailyAttendanceList.get(i).setAttStatus("AB");
 										for (int j = 0; j < lvTypeList.size(); j++) {
-											if (lvTypeList.get(j).getNameSd().equals("LWP")) {
+											if (lvTypeList.get(j).getNameSd().equals("AB")) {
 												dailyAttendanceList.get(i)
 														.setLvSumupId(lvTypeList.get(j).getLvSumupId());
 												break;
@@ -901,9 +924,9 @@ public class AttendanceApiController {
 							else if (atteanceCase.equals("2468")) {
 
 								if (defaultDate.compareTo(sf.parse(employee.getCmpJoiningDate())) >= 0) {
-									dailyAttendanceList.get(i).setAttStatus("LWP");
+									dailyAttendanceList.get(i).setAttStatus("AB");
 									for (int j = 0; j < lvTypeList.size(); j++) {
-										if (lvTypeList.get(j).getNameSd().equals("LWP")) {
+										if (lvTypeList.get(j).getNameSd().equals("AB")) {
 											dailyAttendanceList.get(i).setLvSumupId(lvTypeList.get(j).getLvSumupId());
 											break;
 										}
@@ -989,6 +1012,7 @@ public class AttendanceApiController {
 				float paidHoliday = 0;
 				float layOff = 0;
 				float legalStrike = 0;
+				int absentLeave = 0;
 				int lateMin = 0;
 				int lateMark = 0;
 				int totalWorkingHr = 0;
@@ -1027,6 +1051,12 @@ public class AttendanceApiController {
 									+ (dailyDailyInformationList.get(j).getDaycount() * 0.5));
 							unPaidLeave = (float) (unPaidLeave
 									+ (dailyDailyInformationList.get(j).getDaycount() * 0.5));
+
+						}
+
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 22) { // 21=HD
+
+							absentLeave = (int) (absentLeave + (dailyDailyInformationList.get(j).getDaycount()));
 
 						}
 
@@ -1100,7 +1130,7 @@ public class AttendanceApiController {
 				summaryDailyAttendanceList.get(i).setLayOff(layOff);
 				summaryDailyAttendanceList.get(i).setLegalStrike(legalStrike);
 				summaryDailyAttendanceList.get(i).setNcpDays(layOff + legalStrike);
-
+				summaryDailyAttendanceList.get(i).setAbsentDays(absentLeave);
 				summaryDailyAttendanceList.get(i).setTotalDaysInmonth(totalDaysInmonth);
 				workingDays = totalDaysInmonth - summaryDailyAttendanceList.get(i).getWeeklyOff()
 						- summaryDailyAttendanceList.get(i).getPaidHoliday();
@@ -1251,7 +1281,7 @@ public class AttendanceApiController {
 				ret = "WO";
 			} // $case == '1458' || $case == '1468'
 			else if (atteanceCase.equals("2468")) {
-				ret = "LWP";
+				ret = "AB";
 			} // $case == '2468'
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1639,7 +1669,7 @@ public class AttendanceApiController {
 	public @ResponseBody Info updateAttendaceRecordSingleByHod(@RequestParam("dailyId") int dailyId,
 			@RequestParam("selectStatus") int selectStatus, @RequestParam("lateMark") String lateMark,
 			@RequestParam("selectStatusText") String selectStatusText, @RequestParam("userId") int userId,
-			@RequestParam("flag") int flag,@RequestParam("otHours") String otHours) {
+			@RequestParam("flag") int flag, @RequestParam("otHours") String otHours) {
 
 		Info info = new Info();
 		try {
@@ -1662,9 +1692,9 @@ public class AttendanceApiController {
 						dailyRecordById.setAttStatus(selectStatusText);
 					}
 					dailyRecordById.setLateMark(lateMark);
-					//System.out.println("In if");
-				}else {
-					//System.out.println("In else");
+					// System.out.println("In if");
+				} else {
+					// System.out.println("In else");
 					String[] othrsarry = otHours.split(":");
 					int othrs = (Integer.parseInt(othrsarry[0]) * 60) + Integer.parseInt(othrsarry[1]);
 					dailyRecordById.setOtHr(String.valueOf(othrs));

@@ -28,6 +28,7 @@ import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveApply;
 import com.ats.hrmgt.model.LeaveHistory;
 import com.ats.hrmgt.model.LeaveTrail;
+import com.ats.hrmgt.model.PayableDayAndPresentDays;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.repository.AuthorityInformationRepository;
 import com.ats.hrmgt.repository.CalculateYearRepository;
@@ -38,6 +39,7 @@ import com.ats.hrmgt.repository.GetLeaveApplyAuthwiseRepo;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
 import com.ats.hrmgt.repository.LeaveHistoryRepo;
 import com.ats.hrmgt.repository.LeaveTrailRepository;
+import com.ats.hrmgt.repository.PayableDayAndPresentDaysRepo;
 import com.ats.hrmgt.repository.SettingRepo;
 
 @RestController
@@ -69,6 +71,9 @@ public class LeaveActionApiController {
 
 	@Autowired
 	SettingRepo settingRepo;
+
+	@Autowired
+	PayableDayAndPresentDaysRepo payableDayAndPresentDaysRepo;
 
 	@RequestMapping(value = { "/updateLeaveStatus" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateLeaveStatus(@RequestParam("leaveId") int leaveId,
@@ -169,6 +174,33 @@ public class LeaveActionApiController {
 		}
 
 		return list;
+
+	}
+
+	@RequestMapping(value = { "/getPayableDayandPresentDayByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody PayableDayAndPresentDays getPayableDayandPresentDayByEmpId(@RequestParam("empId") int empId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		PayableDayAndPresentDays payableDayAndPresentDays = new PayableDayAndPresentDays();
+		try {
+
+			payableDayAndPresentDays = payableDayAndPresentDaysRepo.getPayableDayandPresentDayByEmpId(empId,
+					DateConvertor.convertToYMD(fromDate), DateConvertor.convertToYMD(toDate));
+
+			if (payableDayAndPresentDays == null) {
+				payableDayAndPresentDays = new PayableDayAndPresentDays();
+				payableDayAndPresentDays.setError(true);
+			} else {
+				payableDayAndPresentDays.setError(false);
+			}
+
+		} catch (Exception e) {
+			payableDayAndPresentDays = new PayableDayAndPresentDays();
+			payableDayAndPresentDays.setError(true);
+			e.printStackTrace();
+		}
+
+		return payableDayAndPresentDays;
 
 	}
 
