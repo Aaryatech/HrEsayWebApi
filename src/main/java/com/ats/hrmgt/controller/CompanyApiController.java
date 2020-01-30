@@ -19,13 +19,12 @@ import com.ats.hrmgt.repository.MstCompanySubRepo;
 
 @RestController
 public class CompanyApiController {
-	
-	
-	
-	//***********************************************Company****************************************
 
-	@Autowired MstCompanyRepo mstCompRepo;
-	
+	// ***********************************************Company****************************************
+
+	@Autowired
+	MstCompanyRepo mstCompRepo;
+
 	@RequestMapping(value = { "/getAllCompanies" }, method = RequestMethod.GET)
 	public List<MstCompany> getAllCompanies() {
 		List<MstCompany> list = new ArrayList<MstCompany>();
@@ -38,7 +37,7 @@ public class CompanyApiController {
 
 		return list;
 	}
-	
+
 	@RequestMapping(value = { "/getCompanyById" }, method = RequestMethod.POST)
 	public MstCompany getPayDeductionById(@RequestParam int companyId) {
 		MstCompany company = new MstCompany();
@@ -52,8 +51,7 @@ public class CompanyApiController {
 		return company;
 
 	}
-	
-	
+
 	@RequestMapping(value = { "/saveNewCompany" }, method = RequestMethod.POST)
 	public MstCompany saveDeductnPaymentType(@RequestBody MstCompany company) {
 		MstCompany saveCompany = new MstCompany();
@@ -67,111 +65,117 @@ public class CompanyApiController {
 		return saveCompany;
 
 	}
-	
-	
-	//***********************************************Sub Company****************************************
 
-		@Autowired MstCompanySubRepo mstCompanySubRepo;
-		
-		@RequestMapping(value = { "/getAllSubCompanies" }, method = RequestMethod.GET)
-		public List<MstCompanySub> getAllSubCompanies() {
-			List<MstCompanySub> list = new ArrayList<MstCompanySub>();
-			try {
-				list = mstCompanySubRepo.findAll();
-			} catch (Exception e) {
-				System.err.println("Excep in getAllCompanies : " + e.getMessage());
-				e.printStackTrace();
-			}
+	// ***********************************************Sub
+	// Company****************************************
 
-			return list;
+	@Autowired
+	MstCompanySubRepo mstCompanySubRepo;
+
+	@RequestMapping(value = { "/getAllSubCompanies" }, method = RequestMethod.GET)
+	public List<MstCompanySub> getAllSubCompanies() {
+		List<MstCompanySub> list = new ArrayList<MstCompanySub>();
+		try {
+			list = mstCompanySubRepo.findAll();
+		} catch (Exception e) {
+			System.err.println("Excep in getAllCompanies : " + e.getMessage());
+			e.printStackTrace();
 		}
-		
-		@RequestMapping(value = { "/getSubCompanyById" }, method = RequestMethod.POST)
-		public MstCompany getSubCompanyById(@RequestParam int companyId) {
-			MstCompany company = new MstCompany();
-			try {
-				company = mstCompRepo.findByCompanyIdAndDelStatus(companyId, 1);
-			} catch (Exception e) {
-				System.err.println("Excep in getCompanyById : " + e.getMessage());
-				e.printStackTrace();
-			}
 
-			return company;
+		return list;
+	}
 
+	@RequestMapping(value = { "/getSubCompanyById" }, method = RequestMethod.POST)
+	public MstCompanySub getSubCompanyById(@RequestParam int companyId) {
+		MstCompanySub company = new MstCompanySub();
+		try {
+			company = mstCompanySubRepo.findByCompanyId(companyId);
+		} catch (Exception e) {
+			System.err.println("Excep in getCompanyById : " + e.getMessage());
+			e.printStackTrace();
 		}
-		
-		
-		@RequestMapping(value = { "/saveSubNewCompany" }, method = RequestMethod.POST)
-		public MstCompanySub saveSubNewCompany(@RequestBody MstCompanySub company) {
-			MstCompanySub saveCompany = new MstCompanySub();
-			try {
-				saveCompany = mstCompanySubRepo.save(company);
-			} catch (Exception e) {
-				System.err.println("Excep in /saveNewCompany : " + e.getMessage());
-				e.printStackTrace();
-			}
 
-			return saveCompany;
+		return company;
 
+	}
+
+	@RequestMapping(value = { "/saveSubNewCompany" }, method = RequestMethod.POST)
+	public MstCompanySub saveSubNewCompany(@RequestBody MstCompanySub company) {
+		MstCompanySub saveCompany = new MstCompanySub();
+		try {
+			saveCompany = mstCompanySubRepo.save(company);
+		} catch (Exception e) {
+			System.err.println("Excep in /saveNewCompany : " + e.getMessage());
+			e.printStackTrace();
 		}
-		
-		
-		@RequestMapping(value = { "/deleteSubCompany" }, method = RequestMethod.POST)
-		public @ResponseBody Info deleteSubCompany(@RequestParam("compId") int compId) {
 
-			Info info = new Info();
+		return saveCompany;
 
-			try {
+	}
 
-				int delete = mstCompanySubRepo.deleteSubComp(compId);
+	@RequestMapping(value = { "/deleteSubCompany" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteSubCompany(@RequestParam("compId") int compId) {
 
-				if (delete > 0) {
-					info.setError(false);
-					info.setMsg("deleted");
-				} else {
-					info.setError(true);
-					info.setMsg("failed");
-				}
+		Info info = new Info();
 
-			} catch (Exception e) {
+		try {
 
-				e.printStackTrace();
+			int delete = mstCompanySubRepo.deleteSubComp(compId);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
 				info.setError(true);
 				info.setMsg("failed");
 			}
 
-			return info;
+		} catch (Exception e) {
 
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
 		}
-		
-		
-		@RequestMapping(value = { "/changeCompActive" }, method = RequestMethod.POST)
-		public @ResponseBody Info changeCompActive(@RequestParam("compId") int compId,@RequestParam("stat") int stat) {
 
-			Info info = new Info();
+		return info;
 
-			try {
+	}
 
-				int delete = mstCompanySubRepo.activateSubComp(compId,stat);
+	@RequestMapping(value = { "/changeCompActive" }, method = RequestMethod.POST)
+	public @ResponseBody Info changeCompActive(@RequestParam("compId") int compId) {
 
-				if (delete > 0) {
-					info.setError(false);
-					info.setMsg("deleted");
-				} else {
-					info.setError(true);
-					info.setMsg("failed");
+		Info info = new Info();
+
+		int status = 0;
+		 
+		try {
+			MstCompanySub company = new MstCompanySub();
+			 
+			company = mstCompanySubRepo.findByCompanyId(compId);
+				if(company.getIsActive()==1) {
+					status=0;
+				}else {
+					status=1;
 				}
+			int delete = mstCompanySubRepo.activateSubComp(compId, status);
 
-			} catch (Exception e) {
-
-				e.printStackTrace();
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
 				info.setError(true);
 				info.setMsg("failed");
 			}
 
-			return info;
+		} catch (Exception e) {
 
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
 		}
 
-	
+		return info;
+
+	}
+
 }

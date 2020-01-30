@@ -24,6 +24,12 @@ public interface MstCompanySubRepo extends JpaRepository<MstCompanySub, Integer>
 	@Query("update MstCompanySub set is_active=:stat  WHERE company_id=:compId")
 	int activateSubComp(int compId,int stat);
 
+
+	MstCompanySub findByCompanyIdAndDelStatus(int companyId, int i);
+
+
+	MstCompanySub findByCompanyId(int companyId);
+
 	
 
 }
