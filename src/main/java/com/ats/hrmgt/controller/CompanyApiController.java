@@ -90,8 +90,6 @@ public class CompanyApiController {
 		return list;
 	}
 
-	
-	
 	@RequestMapping(value = { "/getAllActiveSubCompanies" }, method = RequestMethod.GET)
 	public List<MstCompanySub> getAllActiveSubCompanies() {
 		List<MstCompanySub> list = new ArrayList<MstCompanySub>();
@@ -133,72 +131,97 @@ public class CompanyApiController {
 
 	}
 
-	/*
-	 * @RequestMapping(value = { "/deleteSubCompany" }, method = RequestMethod.POST)
-	 * public @ResponseBody Info deleteSubCompany(@RequestParam("compId") int
-	 * compId,
-	 * 
-	 * @RequestParam("companyId") int companyId) {
-	 * 
-	 * Info info = new Info();
-	 * 
-	 * try {
-	 * 
-	 * List<EmployeeMaster> emplist = new ArrayList<EmployeeMaster>();
-	 * 
-	 * emplist = empMastRepo.findByDelStatusAndCmpCodeAndSubCmpIdOrderByEmpIdDesc(1,
-	 * companyId,compId);
-	 * 
-	 * if (emplist.size() <= 0) { int delete =
-	 * mstCompanySubRepo.deleteSubComp(compId); System.err.println("delete " +
-	 * delete); if (delete > 0) { info.setError(false);
-	 * info.setMsg("Sub Company Deleted Successfully"); } else {
-	 * info.setError(true); info.setMsg("Failed to Delete"); }
-	 * 
-	 * } else { info.setError(true);
-	 * info.setMsg("Sub Company Can Not Be Deleted as it is Assigned To Employee");
-	 * }
-	 * 
-	 * } catch (Exception e) {
-	 * 
-	 * e.printStackTrace(); info.setError(true); info.setMsg("Failed to Delete"); }
-	 * 
-	 * return info;
-	 * 
-	 * }
-	 */
+	@RequestMapping(value = { "/deleteSubCompany" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteSubCompany(@RequestParam("compId") int compId,
 
-	@RequestMapping(value = { "/changeCompActive" }, method = RequestMethod.POST)
-	public @ResponseBody Info changeCompActive(@RequestParam("compId") int compId) {
+			@RequestParam("companyId") int companyId) {
 
 		Info info = new Info();
 
-		int status = 0;
-
 		try {
-			MstCompanySub company = new MstCompanySub();
 
-			company = mstCompanySubRepo.findByCompanyId(compId);
-			if (company.getIsActive() == 1) {
-				status = 0;
-			} else {
-				status = 1;
-			}
-			int delete = mstCompanySubRepo.activateSubComp(compId, status);
+			List<EmployeeMaster> emplist = new ArrayList<EmployeeMaster>();
 
-			if (delete > 0) {
-				info.setError(false);
-				info.setMsg("deleted");
+			emplist = empMastRepo.findByDelStatusAndCmpCodeAndSubCmpIdOrderByEmpIdDesc(1, companyId, compId);
+
+			if (emplist.size() <= 0) {
+				int delete = mstCompanySubRepo.deleteSubComp(compId);
+				System.err.println("delete " + delete);
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Sub Company Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed to Delete");
+				}
+
 			} else {
 				info.setError(true);
-				info.setMsg("failed");
+				info.setMsg("Sub Company Can Not Be Deleted as it is Assigned To Employee");
 			}
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
 			info.setError(true);
-			info.setMsg("failed");
+			info.setMsg("Failed to Delete");
+		}
+
+		return info;
+
+	}
+
+	@RequestMapping(value = { "/changeCompActive" }, method = RequestMethod.POST)
+	public @ResponseBody Info changeCompActive(@RequestParam("compId") int compId,
+			@RequestParam("companyId") int companyId) {
+
+		Info info = new Info();
+
+		int status = 0;
+
+		try {
+
+			int flag = 0;
+			 
+			MstCompanySub company = new MstCompanySub();
+
+			company = mstCompanySubRepo.findByCompanyId(compId);
+ 			 System.err.println(""+company.toString());
+				if (company.getIsActive() == 1) {
+					status = 0;
+				} else {
+					status = 1;
+				}
+			 
+
+			if (status == 0) {
+				List<EmployeeMaster> emplist = new ArrayList<EmployeeMaster>();
+
+				emplist = empMastRepo.findByDelStatusAndCmpCodeAndSubCmpIdOrderByEmpIdDesc(1, companyId, compId);
+				if (emplist.size() > 0) {
+					flag = 1;
+				}
+			}
+
+			if (flag == 0) {
+				int delete = mstCompanySubRepo.activateSubComp(compId, status);
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Company Updated Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed to Update");
+				}
+			} else {
+				info.setError(true);
+				info.setMsg("Sub Company Can Not Be Deactivated as it is Assigned To Employee");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("Failed to Update");
 		}
 
 		return info;
