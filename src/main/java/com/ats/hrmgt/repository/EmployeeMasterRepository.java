@@ -2,6 +2,7 @@ package com.ats.hrmgt.repository;
 
 import java.util.List;
 
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -78,6 +79,9 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	public List<EmployeeMaster> findByCmpCodeAndDelStatusOrderByEmpIdDesc(int companyId, int del);
 	
 	public List<EmployeeMaster> findByDelStatusAndCmpCodeOrderByEmpIdDesc(int del, int companyId);
+	
+	
+	public List<EmployeeMaster> findByDelStatusAndCmpCodeAndSubCmpIdOrderByEmpIdDesc(int del, int companyId,int subCompId);
 	public List<EmployeeMaster> findByDelStatusAndCmpCodeAndLocationIdOrderByEmpIdDesc(int del, int companyId,int locationId);
 	
 	public List<EmployeeMaster> findByDelStatusAndEmpId(int del, int empId);

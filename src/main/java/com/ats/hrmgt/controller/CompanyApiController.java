@@ -1,6 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.MstCompany;
 import com.ats.hrmgt.model.MstCompanySub;
+import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.MstCompanyRepo;
 import com.ats.hrmgt.repository.MstCompanySubRepo;
 
@@ -24,6 +27,8 @@ public class CompanyApiController {
 
 	@Autowired
 	MstCompanyRepo mstCompRepo;
+	@Autowired
+	EmployeeMasterRepository empMastRepo;
 
 	@RequestMapping(value = { "/getAllCompanies" }, method = RequestMethod.GET)
 	public List<MstCompany> getAllCompanies() {
@@ -85,6 +90,21 @@ public class CompanyApiController {
 		return list;
 	}
 
+	
+	
+	@RequestMapping(value = { "/getAllActiveSubCompanies" }, method = RequestMethod.GET)
+	public List<MstCompanySub> getAllActiveSubCompanies() {
+		List<MstCompanySub> list = new ArrayList<MstCompanySub>();
+		try {
+			list = mstCompanySubRepo.findByIsActive(1);
+		} catch (Exception e) {
+			System.err.println("Excep in getAllCompanies : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
 	@RequestMapping(value = { "/getSubCompanyById" }, method = RequestMethod.POST)
 	public MstCompanySub getSubCompanyById(@RequestParam int companyId) {
 		MstCompanySub company = new MstCompanySub();
@@ -113,33 +133,40 @@ public class CompanyApiController {
 
 	}
 
-	@RequestMapping(value = { "/deleteSubCompany" }, method = RequestMethod.POST)
-	public @ResponseBody Info deleteSubCompany(@RequestParam("compId") int compId) {
-
-		Info info = new Info();
-
-		try {
-
-			int delete = mstCompanySubRepo.deleteSubComp(compId);
-
-			if (delete > 0) {
-				info.setError(false);
-				info.setMsg("deleted");
-			} else {
-				info.setError(true);
-				info.setMsg("failed");
-			}
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			info.setError(true);
-			info.setMsg("failed");
-		}
-
-		return info;
-
-	}
+	/*
+	 * @RequestMapping(value = { "/deleteSubCompany" }, method = RequestMethod.POST)
+	 * public @ResponseBody Info deleteSubCompany(@RequestParam("compId") int
+	 * compId,
+	 * 
+	 * @RequestParam("companyId") int companyId) {
+	 * 
+	 * Info info = new Info();
+	 * 
+	 * try {
+	 * 
+	 * List<EmployeeMaster> emplist = new ArrayList<EmployeeMaster>();
+	 * 
+	 * emplist = empMastRepo.findByDelStatusAndCmpCodeAndSubCmpIdOrderByEmpIdDesc(1,
+	 * companyId,compId);
+	 * 
+	 * if (emplist.size() <= 0) { int delete =
+	 * mstCompanySubRepo.deleteSubComp(compId); System.err.println("delete " +
+	 * delete); if (delete > 0) { info.setError(false);
+	 * info.setMsg("Sub Company Deleted Successfully"); } else {
+	 * info.setError(true); info.setMsg("Failed to Delete"); }
+	 * 
+	 * } else { info.setError(true);
+	 * info.setMsg("Sub Company Can Not Be Deleted as it is Assigned To Employee");
+	 * }
+	 * 
+	 * } catch (Exception e) {
+	 * 
+	 * e.printStackTrace(); info.setError(true); info.setMsg("Failed to Delete"); }
+	 * 
+	 * return info;
+	 * 
+	 * }
+	 */
 
 	@RequestMapping(value = { "/changeCompActive" }, method = RequestMethod.POST)
 	public @ResponseBody Info changeCompActive(@RequestParam("compId") int compId) {
@@ -147,16 +174,16 @@ public class CompanyApiController {
 		Info info = new Info();
 
 		int status = 0;
-		 
+
 		try {
 			MstCompanySub company = new MstCompanySub();
-			 
+
 			company = mstCompanySubRepo.findByCompanyId(compId);
-				if(company.getIsActive()==1) {
-					status=0;
-				}else {
-					status=1;
-				}
+			if (company.getIsActive() == 1) {
+				status = 0;
+			} else {
+				status = 1;
+			}
 			int delete = mstCompanySubRepo.activateSubComp(compId, status);
 
 			if (delete > 0) {
