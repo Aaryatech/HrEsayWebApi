@@ -87,7 +87,7 @@ public class MstCompanySub {
 	private String pfSignatory3;
 	
 	@Column(name="is_esic_applicable")
-	private int isEsicApplicable;
+	private String  isEsicApplicable;
 	
 	@Column(name="esic_no")
 	private String esicNo;
@@ -360,11 +360,13 @@ public class MstCompanySub {
 		this.pfSignatory3 = pfSignatory3;
 	}
 
-	public int getIsEsicApplicable() {
+	 
+
+	public String getIsEsicApplicable() {
 		return isEsicApplicable;
 	}
 
-	public void setIsEsicApplicable(int isEsicApplicable) {
+	public void setIsEsicApplicable(String isEsicApplicable) {
 		this.isEsicApplicable = isEsicApplicable;
 	}
 
