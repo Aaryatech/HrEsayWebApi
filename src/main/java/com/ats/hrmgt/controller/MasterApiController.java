@@ -368,6 +368,9 @@ public class MasterApiController {
 		return list;
 
 	}
+	
+	@Autowired
+	EmployeeMasterRepository empRepo;
 
 	@RequestMapping(value = { "/deleteLocation" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteLocation(@RequestParam("locId") int locId) {
@@ -375,22 +378,32 @@ public class MasterApiController {
 		Info info = new Info();
 
 		try {
+			
+			
+			List<EmployeeMaster> empList = empRepo.findByLocationIdAndDelStatus(locId,1);
+
+			if (empList.size() <= 0) {
 
 			int delete = locationRepository.deleteLocation(locId);
 
 			if (delete > 0) {
 				info.setError(false);
-				info.setMsg("deleted");
+				info.setMsg("Location Deleted Successfully");
 			} else {
 				info.setError(true);
-				info.setMsg("failed");
+				info.setMsg("Failed to Delete Location");
 			}
-
+			}
+			else {
+				info.setError(true);
+				info.setMsg("Loaction Can't Be Deleted as it is Assigned to Employee");
+			}
+		 
 		} catch (Exception e) {
 
 			e.printStackTrace();
 			info.setError(true);
-			info.setMsg("failed");
+			info.setMsg("Failed to Delete Location");
 		}
 
 		return info;

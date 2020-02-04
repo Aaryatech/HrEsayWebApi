@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveType;
@@ -234,28 +235,36 @@ public class EmpShiftAssignApiController {
 
 	}
 
+	@Autowired
+	EmployeeMasterRepository empRepo;
+
 	@RequestMapping(value = { "/deleteLMstEmpType" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteLMstEmpType(@RequestParam("empTypeId") int empTypeId) {
 
 		Info info = new Info();
+ 		try {
 
-		try {
+ 			List<EmployeeMaster> empList = empRepo.findByEmpTypeAndDelStatus(empTypeId,1);
 
-			int delete = mstEmpTypeRepository.deleteMstType(empTypeId);
-
-			if (delete > 0) {
-				info.setError(false);
-				info.setMsg("deleted");
+			if (empList.size() <= 0) {
+				int delete = mstEmpTypeRepository.deleteMstType(empTypeId);
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Employee Type Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed to Delete Employee Type");
+				}
 			} else {
 				info.setError(true);
-				info.setMsg("failed");
+				info.setMsg("Employee Type Can't Be Deleted as it is Assigned to Employee");
 			}
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
 			info.setError(true);
-			info.setMsg("failed");
+			info.setMsg("Failed to Delete Employee Type");
 		}
 
 		return info;

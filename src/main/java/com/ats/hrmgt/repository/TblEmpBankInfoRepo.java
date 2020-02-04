@@ -1,6 +1,8 @@
 package com.ats.hrmgt.repository;
 
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,5 +19,7 @@ public interface TblEmpBankInfoRepo extends JpaRepository<TblEmpBankInfo, Intege
 	@Modifying
 	@Query(value="UPDATE `tbl_emp_bank_info` SET del_status=0 WHERE emp_id=:empId",nativeQuery=true)
 	public int deleteEmpBankInfo(@Param("empId") int empId);
+	
+	List<TblEmpBankInfo> findByBankIdAndDelStatus(int bankId, int i);
 	
 }

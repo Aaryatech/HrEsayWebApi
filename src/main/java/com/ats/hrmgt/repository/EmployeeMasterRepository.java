@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.TblEmpBankInfo;
+
 import java.lang.String;
 
 public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, Integer> {
@@ -103,5 +105,13 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 
 	
 	EmployeeMaster findByEmpCode(String empcode);
+
+	 
+
+	List<EmployeeMaster> findByEmpTypeAndDelStatus(int empTypeId, int i);
+
+	List<EmployeeMaster> findByLocationIdAndDelStatus(int locId, int i);
+
+
 	
 }
