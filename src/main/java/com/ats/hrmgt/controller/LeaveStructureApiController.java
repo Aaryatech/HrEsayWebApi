@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
- 
+
 import com.ats.hrmgt.model.CalenderYear;
 import com.ats.hrmgt.model.EmployeeLeaveDetail;
 import com.ats.hrmgt.model.GetLeaveApplyAuthwise;
@@ -58,19 +58,19 @@ public class LeaveStructureApiController {
 
 	@Autowired
 	LeaveBalanceCalRepo leaveBalanceCalRepo;
-	
+
 	@Autowired
 	LeaveAllotmentRepository leaveAllotmentRepository;
-	
+
 	@Autowired
 	EmployeeLeaveDetailRepo employeeLeaveDetailRepo;
-	
+
 	@Autowired
 	GetLeaveApplyAuthwiseRepo getLeaveApplyAuthwiseRepo;
 
 	@Autowired
 	GetLeaveStatusRepo getLeaveStatusRepo;
-	
+
 	// ----------------------Leave balance Cal---------------------
 
 	@RequestMapping(value = { "/saveLeaveBalanceCal" }, method = RequestMethod.POST)
@@ -197,7 +197,7 @@ public class LeaveStructureApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "getLeaveAllotmentByCurrentCalender" }, method = RequestMethod.GET)
 	public @ResponseBody List<LeavesAllotment> getLeaveAllotmentByCurrentCalender() {
 
@@ -225,9 +225,9 @@ public class LeaveStructureApiController {
 		try {
 
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date now = new Date(); 
+			Date now = new Date();
 			String dateTime = dateFormat.format(now);
-			
+
 			save = leaveAllotmentRepository.saveAndFlush(leavesAllotment);
 			if (save != null) {
 				System.out.println("*************Hii");
@@ -277,7 +277,7 @@ public class LeaveStructureApiController {
 		return save;
 
 	}
-	
+
 	// ----------------------Leave balance Structure--------------------
 
 	@RequestMapping(value = { "/saveLeaveStruture" }, method = RequestMethod.POST)
@@ -403,29 +403,35 @@ public class LeaveStructureApiController {
 		Info info = new Info();
 
 		try {
+			List<LeavesAllotment> lvsList = leavesAllotmentRepo.findByLvsIdAndDelStatus(lvsId, 1);
+			if (lvsList.size() <= 0) {
 
-			int delete = leaveStructureHeaderRepo.deleteLeaveStructure(lvsId);
+				int delete = leaveStructureHeaderRepo.deleteLeaveStructure(lvsId);
 
-			if (delete > 0) {
-				info.setError(false);
-				info.setMsg("deleted");
-			} else {
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Leave Structure Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed To Delete Leave Structure");
+				}
+			}
+
+			else {
 				info.setError(true);
-				info.setMsg("failed");
+				info.setMsg("Leave Structure Can't be Deleted as it is Asigned to Employee");
 			}
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
 			info.setError(true);
-			info.setMsg("failed");
+			info.setMsg("Failed To Delete Leave Structure");
+			System.err.println("Excep in deleteBank : " + e.getMessage());
+			e.printStackTrace();
 		}
-
 		return info;
 
 	}
-	
-	
+
 	@RequestMapping(value = { "getLeaveListByEmpId" }, method = RequestMethod.POST)
 	public @ResponseBody List<EmployeeLeaveDetail> getLeaveListByEmpId(@RequestParam("empId") int empId) {
 
@@ -444,11 +450,11 @@ public class LeaveStructureApiController {
 		return employeeInfo;
 
 	}
-	
+
 	@RequestMapping(value = { "/getLeaveApplyDetailsByLeaveId" }, method = RequestMethod.POST)
 	public @ResponseBody GetLeaveApplyAuthwise getLeaveApplyDetailsByLeaveId(@RequestParam("leaveId") int leaveId) {
 		GetLeaveApplyAuthwise list = new GetLeaveApplyAuthwise();
-		  
+
 		try {
 
 			list = getLeaveApplyAuthwiseRepo.getLeaveApplyDetails(leaveId);
@@ -461,14 +467,14 @@ public class LeaveStructureApiController {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getEmpInfoListByTrailEmpId" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetLeaveStatus> getEmpInfoListByTrailEmpId(@RequestParam("leaveId") int leaveId) {
 
 		List<GetLeaveStatus> leaveStatus = new ArrayList<GetLeaveStatus>();
 		try {
 			leaveStatus = getLeaveStatusRepo.getEmpInfoByLeaveId(leaveId);
-			} catch (Exception e) { 
+		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
@@ -476,7 +482,7 @@ public class LeaveStructureApiController {
 		return leaveStatus;
 
 	}
-	
+
 	@RequestMapping(value = { "/saveNewLeaveAllotment" }, method = RequestMethod.POST)
 	public @ResponseBody LeavesAllotment saveNewLeaveAllotmentWith(@RequestBody LeavesAllotment leavesAllotment) {
 
@@ -484,12 +490,11 @@ public class LeaveStructureApiController {
 
 		try {
 
-			 
 			save = leaveAllotmentRepository.saveAndFlush(leavesAllotment);
 			if (save != null) {
-				 
+
 				save.setError(false);
- 
+
 			} else {
 
 				save = new LeavesAllotment();

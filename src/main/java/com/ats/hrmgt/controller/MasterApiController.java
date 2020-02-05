@@ -19,6 +19,7 @@ import com.ats.hrmgt.model.Department;
 import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.model.LeaveStructureDetails;
 import com.ats.hrmgt.model.LeaveSummary;
 import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
@@ -30,6 +31,7 @@ import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
+import com.ats.hrmgt.repository.LeaveStructureDetailsRepo;
 import com.ats.hrmgt.repository.LeaveSummaryRepository;
 import com.ats.hrmgt.repository.LeaveTypeRepository;
 import com.ats.hrmgt.repository.LocationRepository;
@@ -119,28 +121,40 @@ public class MasterApiController {
 
 	}
 
+	@Autowired
+	LeaveStructureDetailsRepo leaveStructureDetailsRepo;
+
 	@RequestMapping(value = { "/deleteLeaveType" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteLeaveType(@RequestParam("lvTypeId") int lvTypeId) {
 
 		Info info = new Info();
 
 		try {
+			List<LeaveStructureDetails> lvsDet = leaveStructureDetailsRepo.findByLvTypeIdAndDelStatus(lvTypeId);
 
-			int delete = leaveTypeRepository.deleteLeaveType(lvTypeId);
+			if (lvsDet.size() <= 0) {
 
-			if (delete > 0) {
-				info.setError(false);
-				info.setMsg("deleted");
-			} else {
+				int delete = leaveTypeRepository.deleteLeaveType(lvTypeId);
+
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Leave Type Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed To Delete Leave Type");
+				}
+			}
+
+			else {
 				info.setError(true);
-				info.setMsg("failed");
+				info.setMsg("Leave Type Can't be Deleted as it is Part of Leave Structure ");
 			}
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
 			info.setError(true);
-			info.setMsg("failed");
+			info.setMsg("Failed To Delete Leave Type");
+			System.err.println("Excep in deleteBank : " + e.getMessage());
+			e.printStackTrace();
 		}
 
 		return info;
@@ -237,25 +251,24 @@ public class MasterApiController {
 	 */
 	@RequestMapping(value = { "/checkUniqueDeptDesgn" }, method = RequestMethod.POST)
 	public @ResponseBody Info checkUniqueField(@RequestParam String inputValue, @RequestParam int valueType,
-		 @RequestParam int isEditCall, @RequestParam int primaryKey,
-			@RequestParam("compId") int compId) {
+			@RequestParam int isEditCall, @RequestParam int primaryKey, @RequestParam("compId") int compId) {
 
 		Info info = new Info();
 //1- dept,2-desgn
 		List<Department> dept = new ArrayList<Department>();
 		List<Designation> desgn = new ArrayList<Designation>();
-		
+
 		if (valueType == 1) {
-			//System.err.println("Its Dept check");
+			// System.err.println("Its Dept check");
 			if (isEditCall == 0) {
-				//System.err.println("Its New Record Insert ");
+				// System.err.println("Its New Record Insert ");
 				dept = departmentRepo.findByNameAndCompanyId(inputValue, compId);
 			} else {
-				//System.err.println("Its Edit Record ");
+				// System.err.println("Its Edit Record ");
 				dept = departmentRepo.findByNameAndCompanyIdAndDepartIdNot(inputValue.trim(), compId, primaryKey);
 			}
-			//System.err.println("****"+dept.toString());
-			if (dept.size() <=0) {
+			// System.err.println("****"+dept.toString());
+			if (dept.size() <= 0) {
 				info.setError(false);
 				info.setMsg("0");
 			} else {
@@ -264,16 +277,16 @@ public class MasterApiController {
 
 			}
 		} else if (valueType == 2) {
-			//System.err.println("Its Desn check");
+			// System.err.println("Its Desn check");
 			if (isEditCall == 0) {
-				//System.err.println("Its New Record Insert ");
+				// System.err.println("Its New Record Insert ");
 				desgn = designationRepo.findByNameAndCompanyId(inputValue, compId);
 			} else {
-				//System.err.println("Its Edit Record ");
+				// System.err.println("Its Edit Record ");
 				desgn = designationRepo.findByNameAndCompanyIdAndDesigIdNot(inputValue.trim(), compId, primaryKey);
 			}
 
-			if (desgn.size()<=0) {
+			if (desgn.size() <= 0) {
 				info.setError(false);
 				info.setMsg("0");
 			} else {
@@ -283,7 +296,6 @@ public class MasterApiController {
 			}
 
 		}
-		 
 
 		return info;
 
@@ -368,7 +380,7 @@ public class MasterApiController {
 		return list;
 
 	}
-	
+
 	@Autowired
 	EmployeeMasterRepository empRepo;
 
@@ -378,27 +390,25 @@ public class MasterApiController {
 		Info info = new Info();
 
 		try {
-			
-			
-			List<EmployeeMaster> empList = empRepo.findByLocationIdAndDelStatus(locId,1);
+
+			List<EmployeeMaster> empList = empRepo.findByLocationIdAndDelStatus(locId, 1);
 
 			if (empList.size() <= 0) {
 
-			int delete = locationRepository.deleteLocation(locId);
+				int delete = locationRepository.deleteLocation(locId);
 
-			if (delete > 0) {
-				info.setError(false);
-				info.setMsg("Location Deleted Successfully");
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Location Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed to Delete Location");
+				}
 			} else {
-				info.setError(true);
-				info.setMsg("Failed to Delete Location");
-			}
-			}
-			else {
 				info.setError(true);
 				info.setMsg("Loaction Can't Be Deleted as it is Assigned to Employee");
 			}
-		 
+
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -655,29 +665,39 @@ public class MasterApiController {
 		return selfGrouptList;
 
 	}
-
+	@Autowired
+ 	ShiftMasterRepository ShiftMasterRepository;
 	@RequestMapping(value = { "/deleteSelfGroup" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteSelfGroup(@RequestParam("bonusId") int bonusId) {
 
 		Info info = new Info();
 
 		try {
+			
+			List<ShiftMaster> shftList =ShiftMasterRepository.findBySelfGroupIdAndStatus(bonusId,1);
 
+			if (shftList.size() <= 0) {
 			int delete = selfGroupRepository.deleteSelfGroup(bonusId);
 
 			if (delete > 0) {
 				info.setError(false);
-				info.setMsg("deleted");
+				info.setMsg("Self Group Deleted Successfully");
 			} else {
 				info.setError(true);
-				info.setMsg("failed");
+				info.setMsg("Failed To Delete Self Group");
+			}
+			}
+
+			else {
+				info.setError(true);
+				info.setMsg("Self Group Can't be Deleted as it is Asigned");
 			}
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
 			info.setError(true);
-			info.setMsg("failed");
+			info.setMsg("Failed To Delete Self Group");
+			System.err.println("Excep in deleteBank : " + e.getMessage());
+			e.printStackTrace();
 		}
 
 		return info;

@@ -26,4 +26,6 @@ public interface ShiftMasterRepository extends JpaRepository<ShiftMaster, Intege
 
 	List<ShiftMaster> findByStatus( int i);
 
+	List<ShiftMaster> findBySelfGroupIdAndStatus(int bonusId, int i);
+
 }
