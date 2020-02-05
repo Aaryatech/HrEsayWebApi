@@ -77,6 +77,9 @@ public interface LoanMainRepo  extends JpaRepository<LoanMain, Integer>{
 
 	@Query(value="select * from tbl_loan_main  where :date between loan_repay_start and loan_repay_end and del_status=1 and current_outstanding>0 and emp_id in (:empIds)  ",nativeQuery=true)
 	List<LoanMain> getLoanList(@Param("date")String date, @Param("empIds") List<Integer> empIds);
+
+
+	List<LoanMain> findByEmpIdAndDelStatus(int empId, int i);
 	
 
 }

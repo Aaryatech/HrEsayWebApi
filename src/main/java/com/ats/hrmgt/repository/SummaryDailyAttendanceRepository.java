@@ -28,6 +28,6 @@ public interface SummaryDailyAttendanceRepository extends JpaRepository<SummaryD
 	SummaryDailyAttendance findByCompanyIdAndEmpId(int companyId, int empId);
 	
  
-	List<SummaryDailyAttendance> findAllByCompanyIdAndEmpIdAndYear(int companyId, int empId, int year);
+	List<SummaryDailyAttendance> findAllByCompanyIdAndEmpId(int companyId, int empId);
 
 }

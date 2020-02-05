@@ -132,6 +132,63 @@ public class DateConvertor {
 
 	}
 
+	
+	
+public static List<String> getAllMonthBetDates(Date  fromDate,Date toDate) {
+		
+ 		List<String> dateList = new ArrayList<String>();
+		try {
+		 
+			SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+			String currDate = sf1.format(toDate);
+			
+			System.err.println(currDate);
+
+			SimpleDateFormat sf = new SimpleDateFormat("MM-yyyy");
+ 
+			LocalDate localDate = LocalDate.parse((currDate));
+			LocalDate oneMonthLater = localDate.plusMonths(1);
+			String fDate = sf.format(fromDate);
+ 
+			String tDate = String.valueOf(oneMonthLater.getMonthValue()).concat("-")
+					.concat(String.valueOf(oneMonthLater.getYear()));
+
+		 
+			DateFormat formater = new SimpleDateFormat("MM-yyyy");
+			
+			System.err.println("from date "+fDate);
+			System.err.println("to date "+tDate);
+
+			Calendar beginCalendar = Calendar.getInstance();
+			Calendar finishCalendar = Calendar.getInstance();
+			try {
+				beginCalendar.setTime(formater.parse(fDate));
+				finishCalendar.setTime(formater.parse(tDate));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		
+			while (beginCalendar.before(finishCalendar)) {
+				// add one month to date per loop
+				String date1 = formater.format(beginCalendar.getTime()).toUpperCase();
+				System.out.println(date1);
+				dateList.add(date1);
+				beginCalendar.add(Calendar.MONTH, 1);
+			}
+
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return dateList;
+
+	}
+
+
+ 
 		
 		
 
