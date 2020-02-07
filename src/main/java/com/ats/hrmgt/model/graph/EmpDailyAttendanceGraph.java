@@ -9,6 +9,9 @@ public class EmpDailyAttendanceGraph {
 	private double paidLeave;
 	private double unpaidLeave;
 	private double monthDays;
+	
+	
+	private int  lateMarks;
 
 	private int month;
 
@@ -18,6 +21,14 @@ public class EmpDailyAttendanceGraph {
 	
 	
 	
+
+	public int getLateMarks() {
+		return lateMarks;
+	}
+
+	public void setLateMarks(int lateMarks) {
+		this.lateMarks = lateMarks;
+	}
 
 	public String getDate() {
 		return date;
@@ -103,9 +114,11 @@ public class EmpDailyAttendanceGraph {
 	public String toString() {
 		return "EmpDailyAttendanceGraph [workingDays=" + workingDays + ", presentdays=" + presentdays + ", paidHoliday="
 				+ paidHoliday + ", unpaidHoliday=" + unpaidHoliday + ", paidLeave=" + paidLeave + ", unpaidLeave="
-				+ unpaidLeave + ", monthDays=" + monthDays + ", month=" + month + ", year=" + year + ", date=" + date
-				+ "]";
+				+ unpaidLeave + ", monthDays=" + monthDays + ", lateMarks=" + lateMarks + ", month=" + month + ", year="
+				+ year + ", date=" + date + "]";
 	}
+
+ 
  
 
 }

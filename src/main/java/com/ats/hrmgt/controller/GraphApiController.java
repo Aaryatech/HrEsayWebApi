@@ -259,6 +259,9 @@ public class GraphApiController {
 	// *************************************************New WS for from date to to
 	// date **************************
 
+	
+	
+	//String[] monthNames = {"Jan", "Feb", "March", "April", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
 	@RequestMapping(value = { "/getEmpAdvanceGraphNew" }, method = RequestMethod.POST)
 	public List<EmpAdvanceGraph> getEmpAdvanceGraphNew(@RequestParam("empId") int empId,
 			@RequestParam("companyId") int companyId, @RequestParam("fromDate") String fromDate,
@@ -336,6 +339,7 @@ public class GraphApiController {
 				double paidLeave = 0;
 				double unpaidLeave = 0;
 				double monthDays = 0;
+				int lateMarks=0;
 				String a[] = dateList.get(i).split("-");
 				int year = Integer.parseInt(a[1]);
 				int month = Integer.parseInt(a[0]);
@@ -350,6 +354,7 @@ public class GraphApiController {
 						unpaidLeave = attList.get(j).getUnpaidLeave();
 						monthDays = attList.get(j).getTotalDaysInmonth();
 						unpaidHoliday = attList.get(j).getUnpaidHoliday();
+						lateMarks=attList.get(j).getTotLate();
 						dailyrec.setMonthDays(monthDays);
 						dailyrec.setPaidHoliday(paidHoliday);
 						dailyrec.setPaidLeave(paidLeave);
@@ -357,6 +362,7 @@ public class GraphApiController {
 						dailyrec.setUnpaidHoliday(unpaidHoliday);
 						dailyrec.setUnpaidLeave(unpaidLeave);
 						dailyrec.setWorkingDays(workingDays);
+						dailyrec.setLateMarks(lateMarks);
 						break;
 					}
 
