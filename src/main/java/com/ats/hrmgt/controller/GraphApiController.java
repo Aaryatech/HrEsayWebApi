@@ -420,7 +420,7 @@ public class GraphApiController {
 				
 				String c = Month.of(month).name();
 				dailyrec.setDate(c.concat("-").concat(String.valueOf(year)));
-
+				
 				list.add(dailyrec);
 
 			}
