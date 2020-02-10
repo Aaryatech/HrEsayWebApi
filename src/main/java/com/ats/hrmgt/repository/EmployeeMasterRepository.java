@@ -111,6 +111,12 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	List<EmployeeMaster> findByEmpTypeAndDelStatus(int empTypeId, int i);
 
 	List<EmployeeMaster> findByLocationIdAndDelStatus(int locId, int i);
+	
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET  holiday_category   =:holiCatId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int assignHoliCat(@Param("empIdList") List<Integer> empIdList, @Param("holiCatId") String holiCatId);
 
 
 	

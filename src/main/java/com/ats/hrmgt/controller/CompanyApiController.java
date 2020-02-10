@@ -149,22 +149,22 @@ public class CompanyApiController {
 				System.err.println("delete " + delete);
 				if (delete > 0) {
 					info.setError(false);
-					info.setMsg("Sub Company Deleted Successfully");
+					info.setMsg("Company Deleted Successfully");
 				} else {
 					info.setError(true);
-					info.setMsg("Failed to Delete");
+					info.setMsg("Failed to Delete Company");
 				}
 
 			} else {
 				info.setError(true);
-				info.setMsg("Sub Company Can Not Be Deleted as it is Assigned To Employee");
+				info.setMsg("Company Can Not Be Deleted as it is Assigned To Employee");
 			}
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
 			info.setError(true);
-			info.setMsg("Failed to Delete");
+			info.setMsg("Failed to Delete Company");
 		}
 
 		return info;
@@ -214,7 +214,7 @@ public class CompanyApiController {
 				}
 			} else {
 				info.setError(true);
-				info.setMsg("Sub Company Can Not Be Deactivated as it is Assigned To Employee");
+				info.setMsg("Company Can Not Be Deactivated as it is Assigned To Employee");
 			}
 
 		} catch (Exception e) {

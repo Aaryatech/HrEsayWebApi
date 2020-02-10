@@ -188,6 +188,37 @@ public class EmpShiftAssignApiController {
 		return info;
 
 	}
+     
+	@RequestMapping(value = { "/holiCatAssignmentUpdate" }, method = RequestMethod.POST)
+	public @ResponseBody Info holiCatAssignmentUpdate(@RequestParam("empIdList") List<Integer> empIdList,
+			@RequestParam("holiCatId") String holiCatId) {
+
+		Info info = new Info();
+		try {
+
+			int res = 0;
+			res = employeeMasterRepository.assignHoliCat(empIdList, holiCatId);
+
+			if (res > 0) {
+				info.setError(false);
+				info.setMsg("success");
+
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+
+			}
+		} catch (Exception e) {
+
+			System.err.println("Exce in deleteService  " + e.getMessage());
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("excep");
+		}
+
+		return info;
+
+	}
 
 	// **************************MstEmpType*******************************************
 	@Autowired
