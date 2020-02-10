@@ -46,6 +46,19 @@ public class EmpShiftAssignApiController {
 		return list;
 	}
 
+	@RequestMapping(value = { "/getAllEmplistForHolidayCatAssign" }, method = RequestMethod.GET)
+	public List<GetEmployeeDetails> getAllEmplistForHolidayCatAssign() {
+		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
+		try {
+			list = getEmployeeDetailsRepo.getAllEmplistForHolidayCatAssign();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
 	@RequestMapping(value = { "/getEmpDetailListByLocId" }, method = RequestMethod.POST)
 	public List<GetEmployeeDetails> getEmpDetailListByLocId(@RequestParam("locationIds") List<Integer> locationIds) {
 		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
@@ -242,9 +255,9 @@ public class EmpShiftAssignApiController {
 	public @ResponseBody Info deleteLMstEmpType(@RequestParam("empTypeId") int empTypeId) {
 
 		Info info = new Info();
- 		try {
+		try {
 
- 			List<EmployeeMaster> empList = empRepo.findByEmpTypeAndDelStatus(empTypeId,1);
+			List<EmployeeMaster> empList = empRepo.findByEmpTypeAndDelStatus(empTypeId, 1);
 
 			if (empList.size() <= 0) {
 				int delete = mstEmpTypeRepository.deleteMstType(empTypeId);
