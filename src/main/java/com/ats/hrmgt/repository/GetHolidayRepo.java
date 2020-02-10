@@ -11,12 +11,37 @@ import com.ats.hrmgt.model.GetHoliday;
 
 public interface GetHolidayRepo extends JpaRepository<GetHoliday, Integer> {
 
-	@Query(value = "  SELECT h.holiday_id,h.holiday_fromdt,h.holiday_todt,h.holiday_remark,h.ex_var1,h.ex_var2,"
-			+ "h.cal_yr_id,h.company_id,h.loc_id,c.company_name,l.loc_name,cy.cal_yr_from_date,"
-			+ "cy.cal_yr_to_date FROM m_holiday h ,m_company c,m_location l,dm_cal_year cy WHERE"
-			+ " h.company_id=:companyId    AND h.del_status=1 AND h.is_active=1 AND h.company_id=c.company_id AND"
-			+ " l.loc_id=h.loc_id AND cy.cal_yr_id=h.cal_yr_id AND c.del_status=1 AND l.del_status=1 ", nativeQuery = true)
-
+	@Query(value = "SELECT\n" + 
+			"        h.holiday_id,\n" + 
+			"        h.holiday_fromdt,\n" + 
+			"        h.holiday_todt,\n" + 
+			"        h.holiday_remark,\n" + 
+			"        h.ex_var1,\n" + 
+			"        h.ex_var2,\n" + 
+			"        h.cal_yr_id,\n" + 
+			"        h.company_id,\n" + 
+			"        h.loc_id,\n" + 
+			"        c.company_name,\n" + 
+			"        l.loc_name,\n" + 
+			"        cy.cal_yr_from_date,\n" + 
+			"        cy.cal_yr_to_date,\n" + 
+			"        hc.ho_cat_name\n" + 
+			"    FROM\n" + 
+			"        m_holiday h ,\n" + 
+			"        m_company c,\n" + 
+			"        m_location l,\n" + 
+			"        dm_cal_year cy,\n" + 
+			"        holiday_category hc\n" + 
+			"    WHERE\n" + 
+			"        h.company_id=:companyId    \n" + 
+			"        AND h.del_status=1 \n" + 
+			"        AND h.is_active=1 \n" + 
+			"        AND h.company_id=c.company_id \n" + 
+			"        AND l.loc_id=h.loc_id \n" + 
+			"        AND cy.cal_yr_id=h.cal_yr_id \n" + 
+			"        AND c.del_status=1 \n" + 
+			"        AND l.del_status=1 \n" + 
+			"        and hc.ho_cat_id = h.ex_int1 order by hc.ho_cat_id,h.holiday_fromdt ", nativeQuery = true) 
 	List<GetHoliday> getHolidayListByCompany(@Param("companyId") int companyId);
 
 }
