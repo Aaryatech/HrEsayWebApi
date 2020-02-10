@@ -18,6 +18,8 @@ import com.ats.hrmgt.model.CalenderYear;
 import com.ats.hrmgt.model.Department;
 import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.Holiday;
+import com.ats.hrmgt.model.HolidayCategory;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveStructureDetails;
 import com.ats.hrmgt.model.LeaveSummary;
@@ -31,6 +33,8 @@ import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
+import com.ats.hrmgt.repository.HolidayCategoryRepo;
+import com.ats.hrmgt.repository.HolidayRepo;
 import com.ats.hrmgt.repository.LeaveStructureDetailsRepo;
 import com.ats.hrmgt.repository.LeaveSummaryRepository;
 import com.ats.hrmgt.repository.LeaveTypeRepository;
@@ -61,6 +65,9 @@ public class MasterApiController {
 
 	@Autowired
 	SelfGroupRepository selfGroupRepository;
+
+	@Autowired
+	HolidayCategoryRepo holidayCategoryRepo;
 
 	@RequestMapping(value = { "/saveLeaveType" }, method = RequestMethod.POST)
 	public @ResponseBody LeaveType saveLeaveType(@RequestBody LeaveType leaveType) {
@@ -257,6 +264,9 @@ public class MasterApiController {
 //1- dept,2-desgn
 		List<Department> dept = new ArrayList<Department>();
 		List<Designation> desgn = new ArrayList<Designation>();
+		
+		List<HolidayCategory> hoCatList = new ArrayList<HolidayCategory>();
+
 
 		if (valueType == 1) {
 			// System.err.println("Its Dept check");
@@ -287,6 +297,27 @@ public class MasterApiController {
 			}
 
 			if (desgn.size() <= 0) {
+				info.setError(false);
+				info.setMsg("0");
+			} else {
+				info.setError(true);
+				info.setMsg("1");
+
+			}
+
+		}
+		
+		else if (valueType == 3) {
+			System.err.println("Its Holi cat check");
+			if (isEditCall == 0) {
+			 System.err.println("Its New Record Insert ");
+				hoCatList = holidayCategoryRepo.findByHoCatNameAndCompanyId(inputValue, compId);
+			} else {
+				System.err.println("Its Edit Record ");
+				hoCatList = holidayCategoryRepo.findByHoCatNameAndCompanyIdAndHoCatIdNot(inputValue.trim(), compId, primaryKey);
+			}
+
+			if (hoCatList.size() <= 0) {
 				info.setError(false);
 				info.setMsg("0");
 			} else {
@@ -665,27 +696,29 @@ public class MasterApiController {
 		return selfGrouptList;
 
 	}
+
 	@Autowired
- 	ShiftMasterRepository ShiftMasterRepository;
+	ShiftMasterRepository ShiftMasterRepository;
+
 	@RequestMapping(value = { "/deleteSelfGroup" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteSelfGroup(@RequestParam("bonusId") int bonusId) {
 
 		Info info = new Info();
 
 		try {
-			
-			List<ShiftMaster> shftList =ShiftMasterRepository.findBySelfGroupIdAndStatus(bonusId,1);
+
+			List<ShiftMaster> shftList = ShiftMasterRepository.findBySelfGroupIdAndStatus(bonusId, 1);
 
 			if (shftList.size() <= 0) {
-			int delete = selfGroupRepository.deleteSelfGroup(bonusId);
+				int delete = selfGroupRepository.deleteSelfGroup(bonusId);
 
-			if (delete > 0) {
-				info.setError(false);
-				info.setMsg("Self Group Deleted Successfully");
-			} else {
-				info.setError(true);
-				info.setMsg("Failed To Delete Self Group");
-			}
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Self Group Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed To Delete Self Group");
+				}
 			}
 
 			else {
@@ -759,6 +792,108 @@ public class MasterApiController {
 		}
 
 		return shiftList;
+
+	}
+
+	// *************Holiday Category***********************
+
+	@RequestMapping(value = { "/saveHolidayCat" }, method = RequestMethod.POST)
+	public @ResponseBody HolidayCategory saveHolidayCat(@RequestBody HolidayCategory holiCat) {
+
+		HolidayCategory save = new HolidayCategory();
+		try {
+
+			save = holidayCategoryRepo.saveAndFlush(holiCat);
+			if (save == null) {
+
+				save = new HolidayCategory();
+				save.setError(true);
+
+			} else {
+				save.setError(false);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+
+	@RequestMapping(value = { "/getHolidayCategoryList" }, method = RequestMethod.POST)
+	public @ResponseBody List<HolidayCategory> HolidayCategory() {
+
+		List<HolidayCategory> list = new ArrayList<HolidayCategory>();
+		try {
+
+			list = holidayCategoryRepo.findByDelStatus(1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	
+	@RequestMapping(value = { "/getHolidayCategoryHoCatId" }, method = RequestMethod.POST)
+	public @ResponseBody HolidayCategory getHolidayCategoryHoCatId(@RequestParam("hoCatId") int hoCatId) {
+
+		HolidayCategory bous = new HolidayCategory();
+		try {
+
+			bous = holidayCategoryRepo.findByHoCatIdAndDelStatus(hoCatId, 1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return bous;
+
+	}
+
+	@Autowired
+	HolidayRepo holidayRepo;
+
+	@RequestMapping(value = { "/deleteHolidayCategory" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteHolidayCategory(@RequestParam("hoCatId") String hoCatId) {
+
+		Info info = new Info();
+
+		try {
+			List<Holiday> lvsDet = holidayRepo.findByExInt1AndDelStatus(Integer.parseInt(hoCatId),1);
+
+			if (lvsDet.size() <= 0) {
+
+				int delete = holidayCategoryRepo.deleteHoliCat(Integer.parseInt(hoCatId));
+
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Holiday Category Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed To Delete Holiday Category");
+				}
+			}
+
+			else {
+				info.setError(true);
+				info.setMsg("Holiday Category Can't be Deleted as it is Assigned To Holiday ");
+			}
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("Failed To Delete Holiday Category");
+			System.err.println("Excep in deleteBank : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return info;
 
 	}
 }

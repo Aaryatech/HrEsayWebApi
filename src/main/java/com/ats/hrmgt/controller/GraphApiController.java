@@ -1,7 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.text.DateFormat;
-
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Month;
@@ -268,6 +268,7 @@ public class GraphApiController {
 			@RequestParam("toDate") String toDate) {
 		List<EmpAdvanceGraph> list = new ArrayList<EmpAdvanceGraph>();
 		try {
+			String[] shortMonths = new DateFormatSymbols().getShortMonths();
  			Date date1 = new SimpleDateFormat("dd-MM-yyyy").parse(fromDate);
 			Date date2 = new SimpleDateFormat("dd-MM-yyyy").parse(toDate);
 
@@ -297,7 +298,7 @@ public class GraphApiController {
 				}
 
 				String c = Month.of(month).name();
-				dailyrec.setDate(c.concat("-").concat(String.valueOf(year)));
+				dailyrec.setDate(shortMonths[month-1].concat("-").concat(String.valueOf(year)));
 				dailyrec.setMonth(month);
 				dailyrec.setYear(year);
 				dailyrec.setAdvanceAmt(advanceAmt);
@@ -319,16 +320,16 @@ public class GraphApiController {
 			@RequestParam("toDate") String toDate) {
 		List<EmpDailyAttendanceGraph> list = new ArrayList<EmpDailyAttendanceGraph>();
 		try {
-
+			String[] shortMonths = new DateFormatSymbols().getShortMonths();
 			Date date1 = new SimpleDateFormat("dd-MM-yyyy").parse(fromDate);
 			Date date2 = new SimpleDateFormat("dd-MM-yyyy").parse(toDate);
 			List<String> dateList = DateConvertor.getAllMonthBetDates(date1, date2);
-			System.err.println("datelist " + dateList.toString());
+		//	System.err.println("datelist " + dateList.toString());
 
 			List<SummaryDailyAttendance> attList = summaryDailyAttendanceRepository
 					.findAllByCompanyIdAndEmpId(companyId, empId);
 
-			System.err.println("  attList" + attList.toString());
+		//	System.err.println("  attList" + attList.toString());
 			for (int i = 0; i < dateList.size(); i++) {
 				EmpDailyAttendanceGraph dailyrec = new EmpDailyAttendanceGraph();
 
@@ -339,6 +340,7 @@ public class GraphApiController {
 				double paidLeave = 0;
 				double unpaidLeave = 0;
 				double monthDays = 0;
+				double payableDays = 0;
 				int lateMarks=0;
 				String a[] = dateList.get(i).split("-");
 				int year = Integer.parseInt(a[1]);
@@ -355,6 +357,7 @@ public class GraphApiController {
 						monthDays = attList.get(j).getTotalDaysInmonth();
 						unpaidHoliday = attList.get(j).getUnpaidHoliday();
 						lateMarks=attList.get(j).getTotLate();
+						payableDays=attList.get(j).getPayableDays();
 						dailyrec.setMonthDays(monthDays);
 						dailyrec.setPaidHoliday(paidHoliday);
 						dailyrec.setPaidLeave(paidLeave);
@@ -363,12 +366,13 @@ public class GraphApiController {
 						dailyrec.setUnpaidLeave(unpaidLeave);
 						dailyrec.setWorkingDays(workingDays);
 						dailyrec.setLateMarks(lateMarks);
+						dailyrec.setPayableDaysDays(payableDays);
 						break;
 					}
 
 				}
 				String c = Month.of(month).name();
-				dailyrec.setDate(c.concat("-").concat(String.valueOf(year)));
+				dailyrec.setDate(shortMonths[month-1].concat("-").concat(String.valueOf(year)));
 				dailyrec.setMonth(month);
 				dailyrec.setYear(year);
 				list.add(dailyrec);
@@ -391,6 +395,7 @@ public class GraphApiController {
 			@RequestParam("companyId") int companyId, @RequestParam("fromDate") String fromDate,
 			@RequestParam("toDate") String toDate) {
 		List<EmpLoanGraph> list = new ArrayList<EmpLoanGraph>();
+		String[] shortMonths = new DateFormatSymbols().getShortMonths();
 		try {
 			Date date1 = new SimpleDateFormat("dd-MM-yyyy").parse(fromDate);
 			Date date2 = new SimpleDateFormat("dd-MM-yyyy").parse(toDate);
@@ -425,7 +430,7 @@ public class GraphApiController {
 				dailyrec.setLoanAmt(loanAmt);
 				
 				String c = Month.of(month).name();
-				dailyrec.setDate(c.concat("-").concat(String.valueOf(year)));
+				dailyrec.setDate(shortMonths[month-1].concat("-").concat(String.valueOf(year)));
 				
 				list.add(dailyrec);
 

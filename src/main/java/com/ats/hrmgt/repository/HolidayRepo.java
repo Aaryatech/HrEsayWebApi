@@ -30,4 +30,6 @@ public interface HolidayRepo extends JpaRepository<Holiday, Integer> {
 			+ "and del_status=1",nativeQuery=true)
 	List<Holiday> getholidaybetweendate(@Param("fromDate") String fromDate,@Param("toDate") String toDate);
 
+	List<Holiday> findByExInt1AndDelStatus(int hoCatId,int i);
+
 }
