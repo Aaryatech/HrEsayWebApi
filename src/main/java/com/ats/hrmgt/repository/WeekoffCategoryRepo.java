@@ -21,7 +21,7 @@ List<WeekoffCategory> findByDelStatus(int i);
 	
 	@Transactional
 	@Modifying
-	@Query("update WeekoffCategory set del_status=0  WHERE ho_cat_id=:hoCatId")
+	@Query("update WeekoffCategory set del_status=0  WHERE wo_cat_id=:hoCatId")
 	int deleteWoCat(@Param("hoCatId") int hoCatId);
 
 

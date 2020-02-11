@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
- 
+
+import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.WeeklyOff;
 
 public interface WeeklyOffRepo extends JpaRepository<WeeklyOff, Integer> {
@@ -30,5 +31,8 @@ public interface WeeklyOffRepo extends JpaRepository<WeeklyOff, Integer> {
 	
 	@Query(value = " select w.* from weekly_off w  where  w.del_status=1 AND w.company_id=:companyId AND w.loc_id=:locId", nativeQuery = true)
  	WeeklyOff getRecord(@Param("companyId")  int companyId,@Param("locId")  int locId);
+	
+	
+	List<WeeklyOff> findByExInt1AndDelStatus(int hoCatId,int i);
 
 }

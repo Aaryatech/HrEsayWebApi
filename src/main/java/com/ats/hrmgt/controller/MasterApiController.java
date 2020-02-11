@@ -27,6 +27,7 @@ import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
 import com.ats.hrmgt.model.SelfGroup;
 import com.ats.hrmgt.model.ShiftMaster;
+import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeekoffCategory;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.model.claim.GetEmployeeInfo;
@@ -42,6 +43,7 @@ import com.ats.hrmgt.repository.LeaveTypeRepository;
 import com.ats.hrmgt.repository.LocationRepository;
 import com.ats.hrmgt.repository.SelfGroupRepository;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
+import com.ats.hrmgt.repository.WeeklyOffRepo;
 import com.ats.hrmgt.repository.WeekoffCategoryRepo;
 
 @RestController
@@ -258,6 +260,10 @@ public class MasterApiController {
 	 * 
 	 * }
 	 */
+	
+	@Autowired
+	WeekoffCategoryRepo weekoffCategoryRepo;
+	
 	@RequestMapping(value = { "/checkUniqueDeptDesgn" }, method = RequestMethod.POST)
 	public @ResponseBody Info checkUniqueField(@RequestParam String inputValue, @RequestParam int valueType,
 			@RequestParam int isEditCall, @RequestParam int primaryKey, @RequestParam("compId") int compId) {
@@ -268,6 +274,7 @@ public class MasterApiController {
 		List<Designation> desgn = new ArrayList<Designation>();
 		
 		List<HolidayCategory> hoCatList = new ArrayList<HolidayCategory>();
+		List<WeekoffCategory> woCatList = new ArrayList<WeekoffCategory>();
 
 
 		if (valueType == 1) {
@@ -310,12 +317,11 @@ public class MasterApiController {
 		}
 		
 		else if (valueType == 3) {
-			System.err.println("Its Holi cat check");
-			if (isEditCall == 0) {
-			 System.err.println("Its New Record Insert ");
+ 			if (isEditCall == 0) {
+		 
 				hoCatList = holidayCategoryRepo.findByHoCatNameAndCompanyId(inputValue, compId);
 			} else {
-				System.err.println("Its Edit Record ");
+				 
 				hoCatList = holidayCategoryRepo.findByHoCatNameAndCompanyIdAndHoCatIdNot(inputValue.trim(), compId, primaryKey);
 			}
 
@@ -328,7 +334,28 @@ public class MasterApiController {
 
 			}
 
+		} 
+		else if (valueType == 4) {
+			System.err.println("Its Week cat check");
+			if (isEditCall == 0) {
+			 System.err.println("Its New Record Insert ");
+			 woCatList = weekoffCategoryRepo.findByWoCatNameAndCompanyId(inputValue, compId);
+			} else {
+				System.err.println("Its Edit Record ");
+				woCatList = weekoffCategoryRepo.findByWoCatNameAndCompanyIdAndWoCatIdNot(inputValue.trim(), compId, primaryKey);
+			}
+
+			if (woCatList.size() <= 0) {
+				info.setError(false);
+				info.setMsg("0");
+			} else {
+				info.setError(true);
+				info.setMsg("1");
+
+			}
+
 		}
+
 
 		return info;
 
@@ -901,9 +928,7 @@ public class MasterApiController {
 	
 	
 	
-	@Autowired
-	WeekoffCategoryRepo weekoffCategoryRepo;
-	
+
 	
 	@RequestMapping(value = { "/saveWeekoffCat" }, method = RequestMethod.POST)
 	public @ResponseBody WeekoffCategory saveWeekoffCat(@RequestBody WeekoffCategory holiCat) {
@@ -930,7 +955,7 @@ public class MasterApiController {
 
 	}
 
-	@RequestMapping(value = { "/getWeekoffCategoryList" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/getWeekoffCategoryList" }, method = RequestMethod.GET)
 	public @ResponseBody List<WeekoffCategory> getWeekoffCategoryList() {
 
 		List<WeekoffCategory> list = new ArrayList<WeekoffCategory>();
@@ -949,12 +974,12 @@ public class MasterApiController {
 	
 	
 	@RequestMapping(value = { "/getWeekoffCategoryHoCatId" }, method = RequestMethod.POST)
-	public @ResponseBody WeekoffCategory getWeekoffCategoryHoCatId(@RequestParam("hoCatId") int hoCatId) {
+	public @ResponseBody WeekoffCategory getWeekoffCategoryHoCatId(@RequestParam("woCatId") int woCatId) {
 
 		WeekoffCategory bous = new WeekoffCategory();
 		try {
 
-			bous = weekoffCategoryRepo.findByWoCatIdAndDelStatus(hoCatId, 1);
+			bous = weekoffCategoryRepo.findByWoCatIdAndDelStatus(woCatId, 1);
 
 		} catch (Exception e) {
 
@@ -965,19 +990,20 @@ public class MasterApiController {
 
 	}
 
-	 
+	@Autowired
+	WeeklyOffRepo weeklyOffRepo;
 
 	@RequestMapping(value = { "/deleteWeekoffCategory" }, method = RequestMethod.POST)
-	public @ResponseBody Info deleteWeekoffCategory(@RequestParam("hoCatId") String hoCatId) {
+	public @ResponseBody Info deleteWeekoffCategory(@RequestParam("woCatId") String woCatId) {
 
 		Info info = new Info();
 
 		try {
-			List<Holiday> lvsDet = holidayRepo.findByExInt1AndDelStatus(Integer.parseInt(hoCatId),1);
+			List<WeeklyOff> lvsDet = weeklyOffRepo.findByExInt1AndDelStatus(Integer.parseInt(woCatId),1);
 
 			if (lvsDet.size() <= 0) {
 
-				int delete = weekoffCategoryRepo.deleteWoCat(Integer.parseInt(hoCatId));
+				int delete = weekoffCategoryRepo.deleteWoCat(Integer.parseInt(woCatId));
 
 				if (delete > 0) {
 					info.setError(false);
