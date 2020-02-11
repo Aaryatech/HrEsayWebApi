@@ -73,7 +73,7 @@ public class EmpShiftDetailsController {
 	@RequestMapping(value = { "/getEmpShiftDetails" }, method = RequestMethod.POST)
 	public List<EmpShiftDetails> getEmpShiftDetails(@RequestParam String nextMonthDay, @RequestParam String today,
 			@RequestParam int companyId, @RequestParam String empRes, @RequestParam int daysNext,
-			@RequestParam int daysToday,@RequestParam int weekEndCatId,@RequestParam int holidayCatId) {
+			@RequestParam int daysToday) {
 		List<EmpShiftDetails> empShiftList = new ArrayList<EmpShiftDetails>();
 		try {
 
@@ -302,12 +302,27 @@ public class EmpShiftDetailsController {
 			List<Holiday> holidayList = holidayRepo.getholidaybetweendate(fromDate, toDate1);
 			List<WeeklyOffShit> weeklyOffShitList = weeklyOffShitRepository.getWeeklyOffShitList(fromDate, toDate1);
 			for (int m = 0; m < empShiftList.size(); m++) {
+				int holidayCat=0;
+				
+				int WeekoffCat=0;
+				
 
 				int empIdNew = empShiftList.get(m).getEmpId();
 				String calcDate = empShiftList.get(m).getDateOfMonth();
 				int location = empShiftList.get(m).getLocationId();
 				List<LeaveApply> leavetListMain = new ArrayList<LeaveApply>();
-
+				 
+				for (int l = 0; l < emplist.size(); l++) {
+					
+					if(emplist.get(l).getEmpId()==empIdNew) {
+						holidayCat=emplist.get(l).getHolidayCategory();
+						WeekoffCat=emplist.get(l).getWeekendCategory();
+						break;
+						
+					}
+					
+				}
+				 
 				if (leavetList != null) {
 					for (int p = 0; p < leavetList.size(); p++) {
 						if (leavetList.get(p).getEmpId() == empIdNew) {
@@ -318,9 +333,9 @@ public class EmpShiftDetailsController {
 				}
 
 				int weekEndStatus = commonFunctionService.findDateInWeekEnd(calcDate, calcDate, weeklyOfflist,
-						weeklyOffShitList, empShiftList.get(m).getLocationId(),weekEndCatId);
+						weeklyOffShitList, empShiftList.get(m).getLocationId(),WeekoffCat);
 
-				int holidayStatus = commonFunctionService.findDateInHoliday(calcDate, calcDate, holidayList, location,holidayCatId);
+				int holidayStatus = commonFunctionService.findDateInHoliday(calcDate, calcDate, holidayList, location,holidayCat);
 
 				LeaveStsAndLeaveId stsInfo = commonFunctionService.findDateInLeave(calcDate, leavetListMain, empIdNew);
 

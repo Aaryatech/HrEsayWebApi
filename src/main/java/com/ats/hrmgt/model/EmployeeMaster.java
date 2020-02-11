@@ -157,9 +157,32 @@ public class EmployeeMaster {
 	
 	@Column(name="ex_var2")
 	private String exVar2;
+	 
+	@Column(name="holiday_category ")
+	private int holidayCategory ;
+	
+	@Column(name="weekend_category ")
+	private int weekendCategory ;
 	
 	
 	
+	
+	 
+	public int getHolidayCategory() {
+		return holidayCategory;
+	}
+
+	public void setHolidayCategory(int holidayCategory) {
+		this.holidayCategory = holidayCategory;
+	}
+
+	public int getWeekendCategory() {
+		return weekendCategory;
+	}
+
+	public void setWeekendCategory(int weekendCategory) {
+		this.weekendCategory = weekendCategory;
+	}
 
 	public int getSubCmpId() {
 		return subCmpId;
@@ -553,9 +576,10 @@ public class EmployeeMaster {
 				+ loginTime + ", plCalcBase=" + plCalcBase + ", earnLeaveOpeningBalance=" + earnLeaveOpeningBalance
 				+ ", empCategory=" + empCategory + ", exgratiaPerc=" + exgratiaPerc + ", newBasicRate=" + newBasicRate
 				+ ", newHraRate=" + newHraRate + ", newDaRate=" + newDaRate + ", delStatus=" + delStatus + ", exInt1="
-				+ exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
+				+ exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", holidayCategory="
+				+ holidayCategory + ", weekendCategory=" + weekendCategory + "]";
 	}
 
-	 
+ 
 	
 }

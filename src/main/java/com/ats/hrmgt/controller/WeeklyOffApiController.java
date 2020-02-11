@@ -727,7 +727,7 @@ public class WeeklyOffApiController {
 	@RequestMapping(value = { "/getWeeklyOffDatesToChange" }, method = RequestMethod.POST)
 	public @ResponseBody List<String> getWeeklyOffDatesToChange(@RequestParam("companyId") int companyId,
 			@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("locId") int locId,
-			@RequestParam("holidayCatId") int holidayCatId) {
+			@RequestParam("weekoffCatId") int weekoffCatId) {
 		List<WeeklyOffShit> sht = new ArrayList<WeeklyOffShit>();
 
 		List<String> datesList = new ArrayList<>();
@@ -759,7 +759,7 @@ public class WeeklyOffApiController {
 			try {
 				List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 				datesList = commonFunctionService.getDatesOfWeeklyOfForShiftingDate(fromDate, toDate, weeklyOfflist,
-						locId, holidayCatId);
+						locId, weekoffCatId);
 				// System.out.println("datesList: " + datesList.toString());
 
 				if (sht != null) {
