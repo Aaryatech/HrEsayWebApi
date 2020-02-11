@@ -27,6 +27,7 @@ import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
 import com.ats.hrmgt.model.SelfGroup;
 import com.ats.hrmgt.model.ShiftMaster;
+import com.ats.hrmgt.model.WeekoffCategory;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.model.claim.GetEmployeeInfo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
@@ -41,6 +42,7 @@ import com.ats.hrmgt.repository.LeaveTypeRepository;
 import com.ats.hrmgt.repository.LocationRepository;
 import com.ats.hrmgt.repository.SelfGroupRepository;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
+import com.ats.hrmgt.repository.WeekoffCategoryRepo;
 
 @RestController
 public class MasterApiController {
@@ -896,4 +898,111 @@ public class MasterApiController {
 		return info;
 
 	}
+	
+	
+	
+	@Autowired
+	WeekoffCategoryRepo weekoffCategoryRepo;
+	
+	
+	@RequestMapping(value = { "/saveWeekoffCat" }, method = RequestMethod.POST)
+	public @ResponseBody WeekoffCategory saveWeekoffCat(@RequestBody WeekoffCategory holiCat) {
+
+		WeekoffCategory save = new WeekoffCategory();
+		try {
+
+			save = weekoffCategoryRepo.saveAndFlush(holiCat);
+			if (save == null) {
+
+				save = new WeekoffCategory();
+				save.setError(true);
+
+			} else {
+				save.setError(false);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+
+	@RequestMapping(value = { "/getWeekoffCategoryList" }, method = RequestMethod.POST)
+	public @ResponseBody List<WeekoffCategory> getWeekoffCategoryList() {
+
+		List<WeekoffCategory> list = new ArrayList<WeekoffCategory>();
+		try {
+
+			list = weekoffCategoryRepo.findByDelStatus(1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	
+	@RequestMapping(value = { "/getWeekoffCategoryHoCatId" }, method = RequestMethod.POST)
+	public @ResponseBody WeekoffCategory getWeekoffCategoryHoCatId(@RequestParam("hoCatId") int hoCatId) {
+
+		WeekoffCategory bous = new WeekoffCategory();
+		try {
+
+			bous = weekoffCategoryRepo.findByWoCatIdAndDelStatus(hoCatId, 1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return bous;
+
+	}
+
+	 
+
+	@RequestMapping(value = { "/deleteWeekoffCategory" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteWeekoffCategory(@RequestParam("hoCatId") String hoCatId) {
+
+		Info info = new Info();
+
+		try {
+			List<Holiday> lvsDet = holidayRepo.findByExInt1AndDelStatus(Integer.parseInt(hoCatId),1);
+
+			if (lvsDet.size() <= 0) {
+
+				int delete = weekoffCategoryRepo.deleteWoCat(Integer.parseInt(hoCatId));
+
+				if (delete > 0) {
+					info.setError(false);
+					info.setMsg("Weekly Off Category Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed To Delete Weekly Off Category");
+				}
+			}
+
+			else {
+				info.setError(true);
+				info.setMsg("Weekly Off Category Can't be Deleted as it is Assigned To Week Off ");
+			}
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("Failed To Delete Weekly Off Category");
+			System.err.println("Excep in deleteBank : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+	
+	
 }
