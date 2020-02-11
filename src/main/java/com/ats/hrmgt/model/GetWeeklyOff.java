@@ -43,6 +43,21 @@ public class GetWeeklyOff {
 
 	private String locName;
 	private String companyName;
+	
+	
+	private String weekOffCat;
+	
+	
+	
+	
+
+	public String getWeekOffCat() {
+		return weekOffCat;
+	}
+
+	public void setWeekOffCat(String weekOffCat) {
+		this.weekOffCat = weekOffCat;
+	}
 
 	public int getWoId() {
 		return woId;
@@ -211,7 +226,9 @@ public class GetWeeklyOff {
 				+ woIsUsed + ", delStatus=" + delStatus + ", isActive=" + isActive + ", makerUserId=" + makerUserId
 				+ ", makerEnterDatetime=" + makerEnterDatetime + ", exInt1=" + exInt1 + ", exInt2=" + exInt2
 				+ ", exInt3=" + exInt3 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
-				+ ", locName=" + locName + ", companyName=" + companyName + "]";
+				+ ", locName=" + locName + ", companyName=" + companyName + ", weekOffCat=" + weekOffCat + "]";
 	}
+
+	 
 
 }
