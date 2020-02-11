@@ -73,7 +73,7 @@ public class EmpShiftDetailsController {
 	@RequestMapping(value = { "/getEmpShiftDetails" }, method = RequestMethod.POST)
 	public List<EmpShiftDetails> getEmpShiftDetails(@RequestParam String nextMonthDay, @RequestParam String today,
 			@RequestParam int companyId, @RequestParam String empRes, @RequestParam int daysNext,
-			@RequestParam int daysToday) {
+			@RequestParam int daysToday,@RequestParam int weekEndCatId,@RequestParam int holidayCatId) {
 		List<EmpShiftDetails> empShiftList = new ArrayList<EmpShiftDetails>();
 		try {
 
@@ -318,9 +318,9 @@ public class EmpShiftDetailsController {
 				}
 
 				int weekEndStatus = commonFunctionService.findDateInWeekEnd(calcDate, calcDate, weeklyOfflist,
-						weeklyOffShitList, empShiftList.get(m).getLocationId());
+						weeklyOffShitList, empShiftList.get(m).getLocationId(),weekEndCatId);
 
-				int holidayStatus = commonFunctionService.findDateInHoliday(calcDate, calcDate, holidayList, location);
+				int holidayStatus = commonFunctionService.findDateInHoliday(calcDate, calcDate, holidayList, location,holidayCatId);
 
 				LeaveStsAndLeaveId stsInfo = commonFunctionService.findDateInLeave(calcDate, leavetListMain, empIdNew);
 

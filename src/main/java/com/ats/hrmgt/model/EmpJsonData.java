@@ -19,6 +19,9 @@ public class EmpJsonData {
 	private int salaryTypeId;  
 	private String salBasis;  
 	private String cmpJoiningDate;
+	private int holidayCatId;
+	private int weekEndCatId;
+	
 	public int getEmpId() {
 		return empId;
 	}
@@ -115,13 +118,26 @@ public class EmpJsonData {
 	public void setCmpJoiningDate(String cmpJoiningDate) {
 		this.cmpJoiningDate = cmpJoiningDate;
 	}
+	public int getHolidayCatId() {
+		return holidayCatId;
+	}
+	public void setHolidayCatId(int holidayCatId) {
+		this.holidayCatId = holidayCatId;
+	}
+	public int getWeekEndCatId() {
+		return weekEndCatId;
+	}
+	public void setWeekEndCatId(int weekEndCatId) {
+		this.weekEndCatId = weekEndCatId;
+	}
 	@Override
 	public String toString() {
 		return "EmpJsonData [empId=" + empId + ", empCode=" + empCode + ", cmpCode=" + cmpCode + ", empType=" + empType
 				+ ", departId=" + departId + ", designationId=" + designationId + ", locationId=" + locationId
 				+ ", firstName=" + firstName + ", middleName=" + middleName + ", surname=" + surname + ", isEmp="
 				+ isEmp + ", currentShiftid=" + currentShiftid + ", empCategory=" + empCategory + ", salaryTypeId="
-				+ salaryTypeId + ", salBasis=" + salBasis + ", cmpJoiningDate=" + cmpJoiningDate + "]";
+				+ salaryTypeId + ", salBasis=" + salBasis + ", cmpJoiningDate=" + cmpJoiningDate + ", holidayCatId="
+				+ holidayCatId + ", weekEndCatId=" + weekEndCatId + "]";
 	}
 	
 	

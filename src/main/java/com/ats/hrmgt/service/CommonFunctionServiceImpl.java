@@ -20,7 +20,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 	@Override
 	public Integer findDateInWeekEnd(String fromDate, String toDate, List<WeeklyOff> weeklyList,
-			List<WeeklyOffShit> weeklyOffShitList, int locationId) {
+			List<WeeklyOffShit> weeklyOffShitList, int locationId, int weekendCatId) {
 
 		int sts = 2;
 
@@ -35,7 +35,8 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 				for (int i = 0; i < weeklyList.size(); i++) {
 
-					if (locationId == Integer.parseInt(weeklyList.get(i).getLocId())) {
+					if (locationId == Integer.parseInt(weeklyList.get(i).getLocId())
+							&& weekendCatId == weeklyList.get(i).getExInt1()) {
 
 						if (Integer.parseInt(weeklyList.get(i).getWoType()) == 0) {
 
@@ -490,7 +491,8 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 	}
 
 	@Override
-	public Integer findDateInHoliday(String fromDate, String toDate, List<Holiday> holidayList, int locationId) {
+	public Integer findDateInHoliday(String fromDate, String toDate, List<Holiday> holidayList, int locationId,
+			int holidayCatId) {
 		int sts = 4;
 		try {
 
@@ -501,7 +503,8 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 				if (locationId == Integer.parseInt(holidayList.get(i).getLocId())
 						&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayFromdt())) >= 0
-						&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayTodt())) <= 0) {
+						&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayTodt())) <= 0
+						&& holidayCatId == holidayList.get(i).getExInt1()) {
 
 					sts = 3;
 					break;
@@ -597,7 +600,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 							if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())) {
 
 								String dt = dddate.format(j);
-								dates.add(dt); 
+								dates.add(dt);
 							}
 							j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
@@ -644,7 +647,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
@@ -703,7 +706,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
@@ -762,7 +765,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
@@ -821,7 +824,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
@@ -879,7 +882,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
 												&& m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
@@ -910,7 +913,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
 												&& n.compareTo(wkfstdt1) >= 0 && n.compareTo(wklstdt1) <= 0) {
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
@@ -968,7 +971,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
 												&& m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
@@ -999,7 +1002,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
 												&& n.compareTo(wkfstdt1) >= 0 && n.compareTo(wklstdt1) <= 0) {
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
@@ -1031,7 +1034,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
 												&& o.compareTo(wkfstdt3) >= 0 && o.compareTo(wklstdt3) <= 0) {
 											String dt = dddate.format(j);
-											dates.add(dt); 
+											dates.add(dt);
 										}
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 

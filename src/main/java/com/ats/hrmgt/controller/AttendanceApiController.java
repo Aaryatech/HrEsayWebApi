@@ -184,7 +184,8 @@ public class AttendanceApiController {
 				empJsonData.setSalaryTypeId(empList.get(i).getSalaryTypeId());
 				empJsonData.setSalBasis(empList.get(i).getSalBasis());
 				empJsonData.setSurname(empList.get(i).getSurname());
-
+				empJsonData.setHolidayCatId(empList.get(i).getHolidayCategory());
+				empJsonData.setWeekEndCatId(empList.get(i).getWeekendCategory());
 				ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 				String json = ow.writeValueAsString(empJsonData);
 
@@ -533,10 +534,10 @@ public class AttendanceApiController {
 
 					int weekEndStatus = commonFunctionService.findDateInWeekEnd(sf.format(defaultDate),
 							sf.format(defaultDate), weeklyOfflist, weeklyOffShitList,
-							dailyAttendanceList.get(i).getLocationId());
+							dailyAttendanceList.get(i).getLocationId(),employee.getWeekEndCatId());
 
 					int holidayStatus = commonFunctionService.findDateInHoliday(sf.format(defaultDate),
-							sf.format(defaultDate), holidayList, dailyAttendanceList.get(i).getLocationId());
+							sf.format(defaultDate), holidayList, dailyAttendanceList.get(i).getLocationId(),employee.getHolidayCatId());
 
 					LeaveStsAndLeaveId stsInfo = commonFunctionService.findDateInLeave(sf.format(defaultDate),
 							leavetList, dailyAttendanceList.get(i).getEmpId());

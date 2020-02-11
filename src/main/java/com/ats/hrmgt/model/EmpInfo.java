@@ -142,7 +142,13 @@ public class EmpInfo {
 	
 	@Column(name="cmp_joining_date")
 	private String cmpJoiningDate;
-
+	
+	@Column(name="holiday_category")
+	private int holidayCategory;
+	
+	@Column(name="weekend_category")
+	private int weekendCategory;
+	 
 	public int getEmpId() {
 		return empId;
 	}
@@ -495,6 +501,22 @@ public class EmpInfo {
 		this.cmpJoiningDate = cmpJoiningDate;
 	}
 
+	public int getHolidayCategory() {
+		return holidayCategory;
+	}
+
+	public void setHolidayCategory(int holidayCategory) {
+		this.holidayCategory = holidayCategory;
+	}
+
+	public int getWeekendCategory() {
+		return weekendCategory;
+	}
+
+	public void setWeekendCategory(int weekendCategory) {
+		this.weekendCategory = weekendCategory;
+	}
+
 	@Override
 	public String toString() {
 		return "EmpInfo [empId=" + empId + ", empCode=" + empCode + ", cmpCode=" + cmpCode + ", empType=" + empType
@@ -511,7 +533,8 @@ public class EmpInfo {
 				+ ", earnLeaveOpeningBalance=" + earnLeaveOpeningBalance + ", empCategory=" + empCategory
 				+ ", exgratiaPerc=" + exgratiaPerc + ", newBasicRate=" + newBasicRate + ", newHraRate=" + newHraRate
 				+ ", newDaRate=" + newDaRate + ", salaryTypeId=" + salaryTypeId + ", salBasis=" + salBasis
-				+ ", cmpJoiningDate=" + cmpJoiningDate + "]";
+				+ ", cmpJoiningDate=" + cmpJoiningDate + ", holidayCategory=" + holidayCategory + ", weekendCategory="
+				+ weekendCategory + "]";
 	}
 	
 	
