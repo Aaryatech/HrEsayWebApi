@@ -117,6 +117,12 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	@Modifying
 	@Query(value = "UPDATE m_employees SET  holiday_category   =:holiCatId WHERE emp_id IN(:empIdList)", nativeQuery = true)
 	int assignHoliCat(@Param("empIdList") List<Integer> empIdList, @Param("holiCatId") String holiCatId);
+	
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET  weekend_category =:holiCatId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int weekHoliCat(@Param("empIdList") List<Integer> empIdList, @Param("holiCatId") String holiCatId);
 
 
 	

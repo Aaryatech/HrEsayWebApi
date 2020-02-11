@@ -58,6 +58,20 @@ public class EmpShiftAssignApiController {
 
 		return list;
 	}
+	
+	
+	@RequestMapping(value = { "/getAllEmplistForWeekOffCatAssign" }, method = RequestMethod.GET)
+	public List<GetEmployeeDetails> getAllEmplistForWeekOffCatAssign() {
+		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
+		try {
+			list = getEmployeeDetailsRepo.getAllEmplistForWeekoffCatAssign();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+	}
 
 	@RequestMapping(value = { "/getEmpDetailListByLocId" }, method = RequestMethod.POST)
 	public List<GetEmployeeDetails> getEmpDetailListByLocId(@RequestParam("locationIds") List<Integer> locationIds) {
@@ -219,6 +233,41 @@ public class EmpShiftAssignApiController {
 		return info;
 
 	}
+	
+	
+	  
+		@RequestMapping(value = { "/weekoffCatAssignmentUpdate" }, method = RequestMethod.POST)
+		public @ResponseBody Info weekoffCatAssignmentUpdate(@RequestParam("empIdList") List<Integer> empIdList,
+				@RequestParam("holiCatId") String holiCatId) {
+
+			Info info = new Info();
+			try {
+				
+				System.err.println("hii");
+
+				int res = 0;
+				res = employeeMasterRepository.weekHoliCat(empIdList, holiCatId);
+
+				if (res > 0) {
+					info.setError(false);
+					info.setMsg("success");
+
+				} else {
+					info.setError(true);
+					info.setMsg("failed");
+
+				}
+			} catch (Exception e) {
+
+				System.err.println("Exce in deleteService  " + e.getMessage());
+				e.printStackTrace();
+				info.setError(true);
+				info.setMsg("excep");
+			}
+
+			return info;
+
+		}
 
 	// **************************MstEmpType*******************************************
 	@Autowired
