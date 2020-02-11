@@ -578,7 +578,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 	@Override
 	public List<String> getDatesOfWeeklyOfForShiftingDate(String fromDate, String toDate, List<WeeklyOff> weeklyList,
-			int locationId) {
+			int locationId,int holidayCatId) {
 
 		List<String> dates = new ArrayList<>();
 		try {
@@ -587,7 +587,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 			for (int i = 0; i < weeklyList.size(); i++) {
 
-				if (locationId == Integer.parseInt(weeklyList.get(i).getLocId())) {
+				if (locationId == Integer.parseInt(weeklyList.get(i).getLocId()) && holidayCatId==weeklyList.get(i).getExInt1()) {
 
 					if (Integer.parseInt(weeklyList.get(i).getWoType()) == 0) {
 

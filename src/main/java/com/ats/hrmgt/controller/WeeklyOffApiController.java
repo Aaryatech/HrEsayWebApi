@@ -86,8 +86,6 @@ public class WeeklyOffApiController {
 		return save;
 	}
 
-	
-	
 	@RequestMapping(value = { "/getWeeklyOffList" }, method = RequestMethod.GET)
 	public @ResponseBody List<WeeklyOff> getWeeklyOffList() {
 
@@ -717,7 +715,8 @@ public class WeeklyOffApiController {
 
 	@RequestMapping(value = { "/getWeeklyOffDatesToChange" }, method = RequestMethod.POST)
 	public @ResponseBody List<String> getWeeklyOffDatesToChange(@RequestParam("companyId") int companyId,
-			@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("locId") int locId) {
+			@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("locId") int locId,
+			@RequestParam("holidayCatId") int holidayCatId) {
 		List<WeeklyOffShit> sht = new ArrayList<WeeklyOffShit>();
 
 		List<String> datesList = new ArrayList<>();
@@ -749,20 +748,20 @@ public class WeeklyOffApiController {
 			try {
 				List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 				datesList = commonFunctionService.getDatesOfWeeklyOfForShiftingDate(fromDate, toDate, weeklyOfflist,
-						locId);
+						locId,holidayCatId);
 				// System.out.println("datesList: " + datesList.toString());
 
 				if (sht != null) {
-					
+
 					for (int j = 0; j < sht.size(); j++) {
-					for (int i = 0; i < datesList.size(); i++) {
-						 
-						if (datesList.get(i).equals(DateConvertor.convertToDMY(sht.get(j).getWeekofffromdate()))) {
-							// System.err.println("matched" + datesList.get(i));
-							datesList.remove(i);
-							break;
+						for (int i = 0; i < datesList.size(); i++) {
+
+							if (datesList.get(i).equals(DateConvertor.convertToDMY(sht.get(j).getWeekofffromdate()))) {
+								// System.err.println("matched" + datesList.get(i));
+								datesList.remove(i);
+								break;
+							}
 						}
-					}
 					}
 				}
 
@@ -781,7 +780,7 @@ public class WeeklyOffApiController {
 		return datesList;
 
 	}
-	
+
 	@RequestMapping(value = { "/saveWeeklyOffShit" }, method = RequestMethod.POST)
 	public @ResponseBody WeeklyOffShit saveWeeklyOffShit(@RequestBody WeeklyOffShit weeklyOff) {
 
@@ -789,15 +788,13 @@ public class WeeklyOffApiController {
 		try {
 
 			save = weeklyOffShitRepository.saveAndFlush(weeklyOff);
- 
 
 		} catch (Exception e) {
-			 
+
 			e.printStackTrace();
 		}
 
 		return save;
 	}
-
 
 }
