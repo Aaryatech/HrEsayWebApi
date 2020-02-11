@@ -501,14 +501,21 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 			for (int i = 0; i < holidayList.size(); i++) {
 
-				if (locationId == Integer.parseInt(holidayList.get(i).getLocId())
-						&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayFromdt())) >= 0
-						&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayTodt())) <= 0
-						&& holidayCatId == holidayList.get(i).getExInt1()) {
+				String[] locIds = holidayList.get(i).getLocId().split(",");
+				for (int j = 0; j < locIds.length; j++) {
+					if (locationId == Integer.parseInt(locIds[j])
+							&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayFromdt())) >= 0
+							&& frmdt.compareTo(yydate.parse(holidayList.get(i).getHolidayTodt())) <= 0
+							&& holidayCatId == holidayList.get(i).getExInt1()) {
 
-					sts = 3;
+						sts = 3;
+						break;
+
+					}
+				}
+				
+				if(sts==3) {
 					break;
-
 				}
 
 			}
@@ -578,7 +585,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 	@Override
 	public List<String> getDatesOfWeeklyOfForShiftingDate(String fromDate, String toDate, List<WeeklyOff> weeklyList,
-			int locationId,int holidayCatId) {
+			int locationId, int holidayCatId) {
 
 		List<String> dates = new ArrayList<>();
 		try {
@@ -587,7 +594,8 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 			for (int i = 0; i < weeklyList.size(); i++) {
 
-				if (locationId == Integer.parseInt(weeklyList.get(i).getLocId()) && holidayCatId==weeklyList.get(i).getExInt1()) {
+				if (locationId == Integer.parseInt(weeklyList.get(i).getLocId())
+						&& holidayCatId == weeklyList.get(i).getExInt1()) {
 
 					if (Integer.parseInt(weeklyList.get(i).getWoType()) == 0) {
 

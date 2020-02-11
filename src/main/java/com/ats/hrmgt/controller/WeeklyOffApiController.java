@@ -207,6 +207,11 @@ public class WeeklyOffApiController {
 			arryadate.clear();
 			datearry = new String();
 
+			int weekendCatId = weeklyOffRepo.getweekendCatId(empId);
+			int holidayCatId = weeklyOffRepo.getholidayCatId(empId);
+
+			System.out.println(weekendCatId);
+			System.out.println(holidayCatId);
 			weeklyList = weeklyOffRepo.getWeeklyOffListByEmpId(empId);
 			holidayList = holidayRepo.getHolidayByEmpIdAndFromDateTodate(empId, fromDate, toDate);
 			arryadate = new ArrayList<>();
@@ -215,429 +220,435 @@ public class WeeklyOffApiController {
 
 				// System.out.println("in for ");
 
-				if (Integer.parseInt(weeklyList.get(i).getWoType()) == 0) {
+				if (weekendCatId == weeklyList.get(i).getExInt1()) {
 
-					for (Date j = yydate.parse(fromDate); j.compareTo(yydate.parse(toDate)) <= 0;) {
+					if (Integer.parseInt(weeklyList.get(i).getWoType()) == 0) {
 
-						Calendar c = Calendar.getInstance();
-						c.setTime(j);
-						int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+						for (Date j = yydate.parse(fromDate); j.compareTo(yydate.parse(toDate)) <= 0;) {
 
-						if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())) {
+							Calendar c = Calendar.getInstance();
+							c.setTime(j);
+							int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
 
-							arryadate.add(j);
-							datearry = datearry + "," + dddate.format(j);
-							// System.out.println("add in all" + dddate.format(j));
-							totalcount++;
+							if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())) {
+
+								arryadate.add(j);
+								datearry = datearry + "," + dddate.format(j);
+								// System.out.println("add in all" + dddate.format(j));
+								totalcount++;
+							}
+							j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
+
 						}
-						j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
-					}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 3) {
 
-				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 3) {
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
 
-					Date frmdt = yydate.parse(fromDate);
-					Date todt = yydate.parse(toDate);
-					Calendar fc = Calendar.getInstance();
-					fc.setTime(frmdt);
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
 
-					Calendar tc = Calendar.getInstance();
-					tc.setTime(todt);
+						// System.out.println("year " + year);
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = temp.get(Calendar.YEAR);
 
-					// System.out.println("year " + year);
-					Calendar temp = Calendar.getInstance();
-					temp.setTime(yydate.parse(fromDate));
-					int k = temp.get(Calendar.MONTH) + 1;
-					int year = temp.get(Calendar.YEAR);
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
 
-					for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+							String fd = year + "-" + k + "-01";
+							String ld = year + "-" + k + "-07";
 
-						String fd = year + "-" + k + "-01";
-						String ld = year + "-" + k + "-07";
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+							// System.out.println(wkfstdt + " " + wklstdt);
+							// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
 
-						Date wkfstdt = yydate.parse(fd);
-						Date wklstdt = yydate.parse(ld);
-						// System.out.println(wkfstdt + " " + wklstdt);
-						// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
+							for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
 
-						for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
 
-							if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
 
-								for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+										Calendar tempc = Calendar.getInstance();
+										tempc.setTime(j);
+										int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
 
-									Calendar tempc = Calendar.getInstance();
-									tempc.setTime(j);
-									int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(yydate.parse(fromDate)) >= 0
+												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
-									if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
-											&& m.compareTo(yydate.parse(fromDate)) >= 0
-											&& m.compareTo(yydate.parse(toDate)) <= 0) {
+											arryadate.add(m);
+											datearry = datearry + "," + dddate.format(m);
+											// System.out.println("dayOfWeek"+dayOfWeek+"Integer.parseInt(weeklyList.get(i).getWoDay())"
+											// + Integer.parseInt(weeklyList.get(i).getWoDay())+"add in 1st" +
+											// dddate.format(m) + " " +m);
+											totalcount++;
+										}
 
-										arryadate.add(m);
-										datearry = datearry + "," + dddate.format(m);
-										// System.out.println("dayOfWeek"+dayOfWeek+"Integer.parseInt(weeklyList.get(i).getWoDay())"
-										// + Integer.parseInt(weeklyList.get(i).getWoDay())+"add in 1st" +
-										// dddate.format(m) + " " +m);
-										totalcount++;
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 									}
 
-									j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 								}
-
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
 							}
-							m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+
 						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 4) {
 
-						String dt = year + "-" + (k + 1) + "-0";
-						e = yydate.parse(dt);
-						e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
-						Calendar a = Calendar.getInstance();
-						a.setTime(e);
-						year = a.get(Calendar.YEAR);
-						k = a.get(Calendar.MONTH) + 1;
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
 
-					}
-				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 4) {
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
 
-					Date frmdt = yydate.parse(fromDate);
-					Date todt = yydate.parse(toDate);
-					Calendar fc = Calendar.getInstance();
-					fc.setTime(frmdt);
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = temp.get(Calendar.YEAR);
+						// System.out.println("year " + year);
 
-					Calendar tc = Calendar.getInstance();
-					tc.setTime(todt);
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
 
-					Calendar temp = Calendar.getInstance();
-					temp.setTime(yydate.parse(fromDate));
-					int k = temp.get(Calendar.MONTH) + 1;
-					int year = temp.get(Calendar.YEAR);
-					// System.out.println("year " + year);
+							String fd = year + "-" + k + "-08";
+							String ld = year + "-" + k + "-14";
 
-					for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
 
-						String fd = year + "-" + k + "-08";
-						String ld = year + "-" + k + "-14";
+							// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
 
-						Date wkfstdt = yydate.parse(fd);
-						Date wklstdt = yydate.parse(ld);
+							for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
 
-						// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
 
-						for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
 
-							if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+										Calendar tempc = Calendar.getInstance();
+										tempc.setTime(j);
+										int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
 
-								for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(yydate.parse(fromDate)) >= 0
+												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
-									Calendar tempc = Calendar.getInstance();
-									tempc.setTime(j);
-									int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
+											arryadate.add(m);
+											datearry = datearry + "," + dddate.format(m);
+											// System.out.println("add in 2nd" + dddate.format(m));
+											totalcount++;
+										}
 
-									if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
-											&& m.compareTo(yydate.parse(fromDate)) >= 0
-											&& m.compareTo(yydate.parse(toDate)) <= 0) {
-
-										arryadate.add(m);
-										datearry = datearry + "," + dddate.format(m);
-										// System.out.println("add in 2nd" + dddate.format(m));
-										totalcount++;
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 									}
 
-									j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 								}
-
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
 							}
-							m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
 						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 5) {
 
-						String dt = year + "-" + (k + 1) + "-0";
-						e = yydate.parse(dt);
-						e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
-						Calendar a = Calendar.getInstance();
-						a.setTime(e);
-						year = a.get(Calendar.YEAR);
-						k = a.get(Calendar.MONTH) + 1;
-					}
-				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 5) {
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
 
-					Date frmdt = yydate.parse(fromDate);
-					Date todt = yydate.parse(toDate);
-					Calendar fc = Calendar.getInstance();
-					fc.setTime(frmdt);
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
 
-					Calendar tc = Calendar.getInstance();
-					tc.setTime(todt);
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = temp.get(Calendar.YEAR);
+						// System.out.println("year " + year);
 
-					Calendar temp = Calendar.getInstance();
-					temp.setTime(yydate.parse(fromDate));
-					int k = temp.get(Calendar.MONTH) + 1;
-					int year = temp.get(Calendar.YEAR);
-					// System.out.println("year " + year);
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
 
-					for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+							String fd = year + "-" + k + "-15";
+							String ld = year + "-" + k + "-21";
 
-						String fd = year + "-" + k + "-15";
-						String ld = year + "-" + k + "-21";
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
 
-						Date wkfstdt = yydate.parse(fd);
-						Date wklstdt = yydate.parse(ld);
+							// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
 
-						// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
+							for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
 
-						for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
 
-							if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
 
-								for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+										Calendar tempc = Calendar.getInstance();
+										tempc.setTime(j);
+										int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
 
-									Calendar tempc = Calendar.getInstance();
-									tempc.setTime(j);
-									int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(yydate.parse(fromDate)) >= 0
+												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
-									if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
-											&& m.compareTo(yydate.parse(fromDate)) >= 0
-											&& m.compareTo(yydate.parse(toDate)) <= 0) {
+											arryadate.add(m);
+											datearry = datearry + "," + dddate.format(m);
+											// System.out.println("add in 3rd" + dddate.format(m));
+											totalcount++;
+										}
 
-										arryadate.add(m);
-										datearry = datearry + "," + dddate.format(m);
-										// System.out.println("add in 3rd" + dddate.format(m));
-										totalcount++;
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 									}
 
-									j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 								}
-
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
 							}
-							m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
 						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 6) {
 
-						String dt = year + "-" + (k + 1) + "-0";
-						e = yydate.parse(dt);
-						e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
-						Calendar a = Calendar.getInstance();
-						a.setTime(e);
-						year = a.get(Calendar.YEAR);
-						k = a.get(Calendar.MONTH) + 1;
-					}
-				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 6) {
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
 
-					Date frmdt = yydate.parse(fromDate);
-					Date todt = yydate.parse(toDate);
-					Calendar fc = Calendar.getInstance();
-					fc.setTime(frmdt);
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
 
-					Calendar tc = Calendar.getInstance();
-					tc.setTime(todt);
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = temp.get(Calendar.YEAR);
+						// System.out.println("year " + year);
 
-					Calendar temp = Calendar.getInstance();
-					temp.setTime(yydate.parse(fromDate));
-					int k = temp.get(Calendar.MONTH) + 1;
-					int year = temp.get(Calendar.YEAR);
-					// System.out.println("year " + year);
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
 
-					for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+							String fd = year + "-" + k + "-22";
+							String ld = year + "-" + k + "-28";
 
-						String fd = year + "-" + k + "-22";
-						String ld = year + "-" + k + "-28";
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
 
-						Date wkfstdt = yydate.parse(fd);
-						Date wklstdt = yydate.parse(ld);
+							// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
 
-						// System.out.println(wkfstdt + " " + fd + " " + wklstdt + " " + ld);
+							for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
 
-						for (Date m = yydate.parse(fromDate); m.compareTo(yydate.parse(toDate)) <= 0;) {
+								if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
 
-							if (m.compareTo(wkfstdt) >= 0 && m.compareTo(wklstdt) <= 0) {
+									for (Date j = m; j.compareTo(wklstdt) <= 0;) {
 
-								for (Date j = m; j.compareTo(wklstdt) <= 0;) {
+										Calendar tempc = Calendar.getInstance();
+										tempc.setTime(j);
+										int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
 
-									Calendar tempc = Calendar.getInstance();
-									tempc.setTime(j);
-									int dayOfWeek = tempc.get(Calendar.DAY_OF_WEEK) - 1;
+										if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
+												&& m.compareTo(yydate.parse(fromDate)) >= 0
+												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
-									if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())
-											&& m.compareTo(yydate.parse(fromDate)) >= 0
-											&& m.compareTo(yydate.parse(toDate)) <= 0) {
+											arryadate.add(m);
+											datearry = datearry + "," + dddate.format(m);
+											// System.out.println("add in 4th" + dddate.format(m));
+											totalcount++;
+										}
 
-										arryadate.add(m);
-										datearry = datearry + "," + dddate.format(m);
-										// System.out.println("add in 4th" + dddate.format(m));
-										totalcount++;
+										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 									}
 
-									j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 								}
-
+								m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
 							}
-							m.setTime(m.getTime() + 1000 * 60 * 60 * 24);
+
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+
 						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 1) {
 
-						String dt = year + "-" + (k + 1) + "-0";
-						e = yydate.parse(dt);
-						e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
-						Calendar a = Calendar.getInstance();
-						a.setTime(e);
-						year = a.get(Calendar.YEAR);
-						k = a.get(Calendar.MONTH) + 1;
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
 
-					}
-				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 1) {
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
 
-					Date frmdt = yydate.parse(fromDate);
-					Date todt = yydate.parse(toDate);
-					Calendar fc = Calendar.getInstance();
-					fc.setTime(frmdt);
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = temp.get(Calendar.YEAR);
+						// System.out.println("year " + year);
 
-					Calendar tc = Calendar.getInstance();
-					tc.setTime(todt);
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
 
-					Calendar temp = Calendar.getInstance();
-					temp.setTime(yydate.parse(fromDate));
-					int k = temp.get(Calendar.MONTH) + 1;
-					int year = temp.get(Calendar.YEAR);
-					// System.out.println("year " + year);
+							String fd = year + "-" + k + "-08";
+							String ld = year + "-" + k + "-14";
 
-					for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
 
-						String fd = year + "-" + k + "-08";
-						String ld = year + "-" + k + "-14";
+							int cnt1 = diffrence(wkfstdt, wklstdt, frmdt, todt,
+									Integer.parseInt(weeklyList.get(i).getWoDay()));
 
-						Date wkfstdt = yydate.parse(fd);
-						Date wklstdt = yydate.parse(ld);
-						frmdt = yydate.parse(fromDate);
-						todt = yydate.parse(toDate);
+							String fd1 = year + "-" + k + "-22";
+							String ld1 = year + "-" + k + "-28";
 
-						int cnt1 = diffrence(wkfstdt, wklstdt, frmdt, todt,
-								Integer.parseInt(weeklyList.get(i).getWoDay()));
+							Date wkfstdt1 = yydate.parse(fd1);
+							Date wklstdt1 = yydate.parse(ld1);
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
 
-						String fd1 = year + "-" + k + "-22";
-						String ld1 = year + "-" + k + "-28";
+							int cnt2 = diffrence(wkfstdt1, wklstdt1, frmdt, todt,
+									Integer.parseInt(weeklyList.get(i).getWoDay()));
 
-						Date wkfstdt1 = yydate.parse(fd1);
-						Date wklstdt1 = yydate.parse(ld1);
-						frmdt = yydate.parse(fromDate);
-						todt = yydate.parse(toDate);
+							totalcount = totalcount + cnt1 + cnt2;
 
-						int cnt2 = diffrence(wkfstdt1, wklstdt1, frmdt, todt,
-								Integer.parseInt(weeklyList.get(i).getWoDay()));
+							// System.out.println("cnt1 " + cnt1 + "cnt2 " + cnt2 + " wkfstdt1 " + wkfstdt1
+							// + " wklstdt1 " + wklstdt1 + " " + weeklyList.get(i).getWoType());
 
-						totalcount = totalcount + cnt1 + cnt2;
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+						}
+					} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 2) {
 
-						// System.out.println("cnt1 " + cnt1 + "cnt2 " + cnt2 + " wkfstdt1 " + wkfstdt1
-						// + " wklstdt1 " + wklstdt1 + " " + weeklyList.get(i).getWoType());
+						Date frmdt = yydate.parse(fromDate);
+						Date todt = yydate.parse(toDate);
+						Calendar fc = Calendar.getInstance();
+						fc.setTime(frmdt);
 
-						String dt = year + "-" + (k + 1) + "-0";
-						e = yydate.parse(dt);
-						e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
-						Calendar a = Calendar.getInstance();
-						a.setTime(e);
-						year = a.get(Calendar.YEAR);
-						k = a.get(Calendar.MONTH) + 1;
-					}
-				} else if (Integer.parseInt(weeklyList.get(i).getWoType()) == 2) {
+						Calendar tc = Calendar.getInstance();
+						tc.setTime(todt);
 
-					Date frmdt = yydate.parse(fromDate);
-					Date todt = yydate.parse(toDate);
-					Calendar fc = Calendar.getInstance();
-					fc.setTime(frmdt);
+						Calendar temp = Calendar.getInstance();
+						temp.setTime(yydate.parse(fromDate));
+						int k = temp.get(Calendar.MONTH) + 1;
+						int year = temp.get(Calendar.YEAR);
+						// System.out.println("year " + year);
 
-					Calendar tc = Calendar.getInstance();
-					tc.setTime(todt);
+						for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
 
-					Calendar temp = Calendar.getInstance();
-					temp.setTime(yydate.parse(fromDate));
-					int k = temp.get(Calendar.MONTH) + 1;
-					int year = temp.get(Calendar.YEAR);
-					// System.out.println("year " + year);
+							String fd = year + "-" + k + "-01";
+							String ld = year + "-" + k + "-07";
 
-					for (Date e = yydate.parse(fromDate); e.compareTo(yydate.parse(toDate)) <= 0;) {
+							Date wkfstdt = yydate.parse(fd);
+							Date wklstdt = yydate.parse(ld);
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
 
-						String fd = year + "-" + k + "-01";
-						String ld = year + "-" + k + "-07";
+							int cnt1 = diffrence(wkfstdt, wklstdt, frmdt, todt,
+									Integer.parseInt(weeklyList.get(i).getWoDay()));
 
-						Date wkfstdt = yydate.parse(fd);
-						Date wklstdt = yydate.parse(ld);
-						frmdt = yydate.parse(fromDate);
-						todt = yydate.parse(toDate);
+							String fd1 = year + "-" + k + "-15";
+							String ld1 = year + "-" + k + "-21";
 
-						int cnt1 = diffrence(wkfstdt, wklstdt, frmdt, todt,
-								Integer.parseInt(weeklyList.get(i).getWoDay()));
+							Date wkfstdt1 = yydate.parse(fd1);
+							Date wklstdt1 = yydate.parse(ld1);
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
 
-						String fd1 = year + "-" + k + "-15";
-						String ld1 = year + "-" + k + "-21";
+							int cnt2 = diffrence(wkfstdt1, wklstdt1, frmdt, todt,
+									Integer.parseInt(weeklyList.get(i).getWoDay()));
 
-						Date wkfstdt1 = yydate.parse(fd1);
-						Date wklstdt1 = yydate.parse(ld1);
-						frmdt = yydate.parse(fromDate);
-						todt = yydate.parse(toDate);
+							String fd3 = year + "-" + k + "-29";
+							String ld3 = year + "-" + (k + 1) + "-0";
 
-						int cnt2 = diffrence(wkfstdt1, wklstdt1, frmdt, todt,
-								Integer.parseInt(weeklyList.get(i).getWoDay()));
+							Date wkfstdt3 = yydate.parse(fd3);
+							Date wklstdt3 = yydate.parse(ld3);
 
-						String fd3 = year + "-" + k + "-29";
-						String ld3 = year + "-" + (k + 1) + "-0";
+							frmdt = yydate.parse(fromDate);
+							todt = yydate.parse(toDate);
 
-						Date wkfstdt3 = yydate.parse(fd3);
-						Date wklstdt3 = yydate.parse(ld3);
+							int cnt3 = diffrence(wkfstdt3, wklstdt3, frmdt, todt,
+									Integer.parseInt(weeklyList.get(i).getWoDay()));
 
-						frmdt = yydate.parse(fromDate);
-						todt = yydate.parse(toDate);
+							totalcount = totalcount + cnt1 + cnt2 + cnt3;
 
-						int cnt3 = diffrence(wkfstdt3, wklstdt3, frmdt, todt,
-								Integer.parseInt(weeklyList.get(i).getWoDay()));
-
-						totalcount = totalcount + cnt1 + cnt2 + cnt3;
-
-						String dt = year + "-" + (k + 1) + "-0";
-						e = yydate.parse(dt);
-						e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
-						Calendar a = Calendar.getInstance();
-						a.setTime(e);
-						year = a.get(Calendar.YEAR);
-						k = a.get(Calendar.MONTH) + 1;
+							String dt = year + "-" + (k + 1) + "-0";
+							e = yydate.parse(dt);
+							e.setTime(e.getTime() + 1000 * 60 * 60 * 24);
+							Calendar a = Calendar.getInstance();
+							a.setTime(e);
+							year = a.get(Calendar.YEAR);
+							k = a.get(Calendar.MONTH) + 1;
+						}
 					}
 				}
-
 			}
 
 			for (int i = 0; i < holidayList.size(); i++) {
 
 				// alert("Data " +JSON.stringify(data.holidayList[i]));
+				if (holidayCatId == holidayList.get(i).getExInt1()) {
 
-				Date frmdt = yydate.parse(fromDate);
-				Date todt = yydate.parse(toDate);
+					Date frmdt = yydate.parse(fromDate);
+					Date todt = yydate.parse(toDate);
 
-				int tempdiff = difffun(holidayList.get(i).getHolidayFromdt(), holidayList.get(i).getHolidayTodt());
+					int tempdiff = difffun(holidayList.get(i).getHolidayFromdt(), holidayList.get(i).getHolidayTodt());
 
-				String[] a = {};
-				// datearry.substring(1 ,datearry.length());
+					String[] a = {};
+					// datearry.substring(1 ,datearry.length());
 
-				// System.out.println(datearry);
-				try {
+					// System.out.println(datearry);
+					try {
 
-					a = datearry.split(",");
+						a = datearry.split(",");
 
-				} catch (Exception e) {
+					} catch (Exception e) {
 
-				}
-
-				for (int j = 1; j < a.length; j++) {
-
-					System.out.println(dddate.parse(a[j]) + " arryadate.get(j) "
-							+ yydate.parse(holidayList.get(i).getHolidayFromdt()) + " "
-							+ yydate.parse(holidayList.get(i).getHolidayTodt()));
-
-					if (dddate.parse(a[j]).compareTo(yydate.parse(holidayList.get(i).getHolidayFromdt())) >= 0
-							&& dddate.parse(a[j]).compareTo(yydate.parse(holidayList.get(i).getHolidayTodt())) <= 0) {
-
-						tempdiff--;
 					}
+
+					for (int j = 1; j < a.length; j++) {
+
+						/*
+						 * System.out.println(dddate.parse(a[j]) + " arryadate.get(j) " +
+						 * yydate.parse(holidayList.get(i).getHolidayFromdt()) + " " +
+						 * yydate.parse(holidayList.get(i).getHolidayTodt()));
+						 */
+
+						if (dddate.parse(a[j]).compareTo(yydate.parse(holidayList.get(i).getHolidayFromdt())) >= 0
+								&& dddate.parse(a[j])
+										.compareTo(yydate.parse(holidayList.get(i).getHolidayTodt())) <= 0) {
+
+							tempdiff--;
+						}
+					}
+
+					totalcount = totalcount + tempdiff;
 				}
-
-				totalcount = totalcount + tempdiff;
 			}
-
 			diff = diff - totalcount;
 
 			leaveCount.setHolidaycount(totalcount);
@@ -748,7 +759,7 @@ public class WeeklyOffApiController {
 			try {
 				List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 				datesList = commonFunctionService.getDatesOfWeeklyOfForShiftingDate(fromDate, toDate, weeklyOfflist,
-						locId,holidayCatId);
+						locId, holidayCatId);
 				// System.out.println("datesList: " + datesList.toString());
 
 				if (sht != null) {

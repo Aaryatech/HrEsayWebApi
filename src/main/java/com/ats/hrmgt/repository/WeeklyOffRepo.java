@@ -35,4 +35,11 @@ public interface WeeklyOffRepo extends JpaRepository<WeeklyOff, Integer> {
 	
 	List<WeeklyOff> findByExInt1AndDelStatus(int hoCatId,int i);
 
+	@Query(value = " select weekend_category from m_employees   where emp_id=:empId", nativeQuery = true)
+	int getweekendCatId(@Param("empId")int empId);
+
+	@Query(value = " select holiday_category from m_employees   where emp_id=:empId", nativeQuery = true)
+	int getholidayCatId(@Param("empId")int empId);
+	 
+
 }
