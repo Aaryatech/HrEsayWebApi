@@ -534,10 +534,11 @@ public class AttendanceApiController {
 
 					int weekEndStatus = commonFunctionService.findDateInWeekEnd(sf.format(defaultDate),
 							sf.format(defaultDate), weeklyOfflist, weeklyOffShitList,
-							dailyAttendanceList.get(i).getLocationId(),employee.getWeekEndCatId());
+							dailyAttendanceList.get(i).getLocationId(), employee.getWeekEndCatId());
 
 					int holidayStatus = commonFunctionService.findDateInHoliday(sf.format(defaultDate),
-							sf.format(defaultDate), holidayList, dailyAttendanceList.get(i).getLocationId(),employee.getHolidayCatId());
+							sf.format(defaultDate), holidayList, dailyAttendanceList.get(i).getLocationId(),
+							employee.getHolidayCatId());
 
 					LeaveStsAndLeaveId stsInfo = commonFunctionService.findDateInLeave(sf.format(defaultDate),
 							leavetList, dailyAttendanceList.get(i).getEmpId());
@@ -1579,13 +1580,14 @@ public class AttendanceApiController {
 
 	@RequestMapping(value = { "/getDatesOfWeeklyOfForShiftingDate" }, method = RequestMethod.POST)
 	public @ResponseBody List<String> getDatesOfWeeklyOfForShiftingDate(@RequestParam("fromDate") String fromDate,
-			@RequestParam("toDate") String toDate, @RequestParam("locationId") int locationId) {
+			@RequestParam("toDate") String toDate, @RequestParam("locationId") int locationId,
+			@RequestParam("weekCatId") int weekCatId) {
 
 		List<String> datesList = new ArrayList<>();
 		try {
 			List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 			datesList = commonFunctionService.getDatesOfWeeklyOfForShiftingDate(fromDate, toDate, weeklyOfflist,
-					locationId);
+					locationId, weekCatId);
 
 		} catch (Exception e) {
 
