@@ -749,6 +749,27 @@ public class PayrollApiController {
 						case "OTFD":
 
 							break;
+						case "WOT":
+
+							ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
+									amount_round);
+
+							tempVal = otwageswo(salaryTermList.get(j).getPercentage(),
+									getSalaryTempList.get(i).getSalBasis(),
+									getSalaryTempList.get(i).getTotalDaysInmonth(),
+									getSalaryTempList.get(i).getWeeklyOffPresent(),
+									getSalaryTempList.get(i).getWorkingDays(), ammt, mstEmpType, amount_round);
+							getSalaryTempList.get(i).setOtWages(tempVal);
+							salaryTermList.get(j).setValue(tempVal);
+
+							/*
+							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
+							 * " termid " + salaryTermList.get(j).getSalTermId() + " value " +
+							 * salaryTermList.get(j).getValue() + " basic" +
+							 * getSalaryTempList.get(i).getBasic());
+							 */
+
+							break;
 						case "FD":
 							tempVal = fundwages(salaryTermList.get(j).getPercentage(),
 									getSalaryTempList.get(i).getSalBasis(), ammt, amount_round);
@@ -1104,6 +1125,25 @@ public class PayrollApiController {
 			else {
 				val = ((ammt / workingHour) * otHr) * otMultiplication;
 			}
+			val = castNumber(val, amount_round);
+		}
+
+		return val;
+	}
+
+	public double otwageswo(float percentage, String salBasis, int totalDays, float woPresent, float workingDays,
+			double ammt, MstEmpType mstEmpType, int amount_round) {
+
+		double perDayGrossSal = (ammt / totalDays) * woPresent;
+		 
+		// basic+DAy
+		// metaf: amount / month_day
+		double val = 0;
+ 
+
+		if (mstEmpType.getOtApplicable().equalsIgnoreCase("yes")) {
+			  
+			val = perDayGrossSal;
 			val = castNumber(val, amount_round);
 		}
 
