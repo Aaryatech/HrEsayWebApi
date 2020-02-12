@@ -211,6 +211,7 @@ public class AttendanceApiController {
 					dailyAttendance.setEmpJson(json);
 					dailyAttendance.setRecStatus("O");
 					dailyAttendance.setAttStatus("NA");
+					dailyAttendance.setLateMark("0");
 					dailyAttendanceList.add(dailyAttendance);
 					j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
