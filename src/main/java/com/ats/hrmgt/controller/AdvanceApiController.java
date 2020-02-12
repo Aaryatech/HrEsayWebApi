@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ats.hrmgt.advance.repository.AdvanceDetailsRepo;
 import com.ats.hrmgt.advance.repository.AdvanceRepo;
 import com.ats.hrmgt.advance.repository.GetAdvanceRepo;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.User;
 import com.ats.hrmgt.model.advance.Advance;
+import com.ats.hrmgt.model.advance.AdvanceDetails;
 import com.ats.hrmgt.model.advance.GetAdvance;
 import com.ats.hrmgt.repository.UserRepo;
 
@@ -113,6 +115,49 @@ public class AdvanceApiController {
 		return list;
 
 	}
+	
+	@Autowired
+	AdvanceDetailsRepo advanceDetailsRepo;
+	@RequestMapping(value = { "/getAdvanceDetailsByAdvanceIdId" }, method = RequestMethod.POST)
+	public @ResponseBody List<AdvanceDetails> getAdvanceDetailsByAdvanceIdId(@RequestParam("advId") int advId) {
+
+		List<AdvanceDetails> list = new ArrayList<AdvanceDetails>();
+		try {
+
+			list = advanceDetailsRepo.findByAdvId(advId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	
+
+	@RequestMapping(value = { "/saveAdvanceDetails" }, method = RequestMethod.POST)
+	public @ResponseBody AdvanceDetails saveAdvanceDetails(@RequestBody AdvanceDetails leaveType) {
+
+		AdvanceDetails save = new AdvanceDetails();
+		try {
+
+			save = advanceDetailsRepo.saveAndFlush(leaveType);
+			if (save == null) {
+
+				save = new AdvanceDetails();
+
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+
 
 	@RequestMapping(value = { "/deleteAdvance" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteLMstEmpType(@RequestParam("advId") int advId) {
@@ -145,13 +190,13 @@ public class AdvanceApiController {
 	
 	
 	@RequestMapping(value = { "/updateSkipAdvance" }, method = RequestMethod.POST)
-	public @ResponseBody Info updateSkipAdvance(@RequestParam("dateTimeUpdate") String dateTimeUpdate,@RequestParam("userId") int userId,@RequestParam("skipStr") String skipStr,@RequestParam("count") int count,@RequestParam("advId") int advId,@RequestParam("dedMonth") int dedMonth,@RequestParam("dedYear") int dedYear) {
+	public @ResponseBody Info updateSkipAdvance(@RequestParam("dateTimeUpdate") String dateTimeUpdate,@RequestParam("userId") int userId,@RequestParam("advId") int advId,@RequestParam("dedMonth") int dedMonth,@RequestParam("dedYear") int dedYear) {
 
 		Info info = new Info();
 
 		try {
 
-			int delete = advanceRepo.skipAdvance(advId,userId,count,skipStr,dateTimeUpdate,dedYear,dedMonth);
+			int delete = advanceRepo.skipAdvance(advId,dedYear,dedMonth,dateTimeUpdate,userId);
 
 			if (delete > 0) {
 				info.setError(false);
