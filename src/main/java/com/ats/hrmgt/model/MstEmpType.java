@@ -40,9 +40,11 @@ public class MstEmpType {
 	@Column(name="minwork_applicable")
 	private String minworkApplicable; 
 	 
+
+	
 	@Column(name="ot_applicable")
 	private String otApplicable ;
-	
+	 
 	@Column(name="ot_time")
 	private String otTime;
 	
@@ -76,7 +78,62 @@ public class MstEmpType {
 	@Column(name="del_status")
 	private int delStatus;
 	
+	@Column(name="ex_int1")
+	private int exInt1;
 	
+	@Column(name="ex_int2")
+	private int exInt2;
+	
+	@Column(name="ex_var1")
+	private String exVar1;
+	
+	@Column(name="ex_var2")
+	private String exVar2;
+
+	@Column(name="prod_incentive_app")
+	private String prodIncentiveApp ;
+	
+	
+
+	public String getProdIncentiveApp() {
+		return prodIncentiveApp;
+	}
+
+	public void setProdIncentiveApp(String prodIncentiveApp) {
+		this.prodIncentiveApp = prodIncentiveApp;
+	}
+
+	public int getExInt1() {
+		return exInt1;
+	}
+
+	public void setExInt1(int exInt1) {
+		this.exInt1 = exInt1;
+	}
+
+	public int getExInt2() {
+		return exInt2;
+	}
+
+	public void setExInt2(int exInt2) {
+		this.exInt2 = exInt2;
+	}
+
+	public String getExVar1() {
+		return exVar1;
+	}
+
+	public void setExVar1(String exVar1) {
+		this.exVar1 = exVar1;
+	}
+
+	public String getExVar2() {
+		return exVar2;
+	}
+
+	public void setExVar2(String exVar2) {
+		this.exVar2 = exVar2;
+	}
 
 	public int getDelStatus() {
 		return delStatus;
@@ -250,16 +307,13 @@ public class MstEmpType {
 	public String toString() {
 		return "MstEmpType [empTypeId=" + empTypeId + ", name=" + name + ", category=" + category + ", attType="
 				+ attType + ", lmApplicable=" + lmApplicable + ", halfDay=" + halfDay + ", whWork=" + whWork
-				+ ", minWorkHr=" + minWorkHr + ", minworkApplicable=" + minworkApplicable + ", otApplicable="
-				+ otApplicable + ", otTime=" + otTime + ", details=" + details + ", otType=" + otType + ", companyId="
-				+ companyId + ", weeklyHolidayLateAllowed=" + weeklyHolidayLateAllowed
-				+ ", weeklyHolidayLateAllowedMin=" + weeklyHolidayLateAllowedMin + ", earlyGoingAllowed="
-				+ earlyGoingAllowed + ", earlyGoingMin=" + earlyGoingMin + ", maxLateTimeAllowed=" + maxLateTimeAllowed
-				+ ", status=" + status + ", delStatus=" + delStatus + "]";
+				+ ", minWorkHr=" + minWorkHr + ", minworkApplicable=" + minworkApplicable + ", prodIncentiveApp="
+				+ prodIncentiveApp + ", otApplicable=" + otApplicable + ", otTime=" + otTime + ", details=" + details
+				+ ", otType=" + otType + ", companyId=" + companyId + ", weeklyHolidayLateAllowed="
+				+ weeklyHolidayLateAllowed + ", weeklyHolidayLateAllowedMin=" + weeklyHolidayLateAllowedMin
+				+ ", earlyGoingAllowed=" + earlyGoingAllowed + ", earlyGoingMin=" + earlyGoingMin
+				+ ", maxLateTimeAllowed=" + maxLateTimeAllowed + ", status=" + status + ", delStatus=" + delStatus
+				+ ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
 	}
-
-	 
-	
-	
-	
+ 
 }

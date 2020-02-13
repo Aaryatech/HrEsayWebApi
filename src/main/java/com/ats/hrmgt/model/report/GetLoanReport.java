@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 @Entity
 public class GetLoanReport {
@@ -106,8 +108,8 @@ public class GetLoanReport {
 	public void setLoanTenure(int loanTenure) {
 		this.loanTenure = loanTenure;
 	}
-
-	public Date getLoanRepayStart() {
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+ 	public Date getLoanRepayStart() {
 		return loanRepayStart;
 	}
 
@@ -118,8 +120,8 @@ public class GetLoanReport {
 	public Date getLoanRepayEnd() {
 		return loanRepayEnd;
 	}
-
-	public void setLoanRepayEnd(Date loanRepayEnd) {
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
+ 	public void setLoanRepayEnd(Date loanRepayEnd) {
 		this.loanRepayEnd = loanRepayEnd;
 	}
 

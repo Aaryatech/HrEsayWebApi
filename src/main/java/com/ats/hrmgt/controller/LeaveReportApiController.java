@@ -24,9 +24,11 @@ import com.ats.hrmgt.model.report.EmpAttendeanceRep;
 import com.ats.hrmgt.model.report.GetLoanReport;
 import com.ats.hrmgt.model.report.GetYearlyAdvance;
 import com.ats.hrmgt.model.report.GetYearlyAdvanceNew;
+import com.ats.hrmgt.model.report.GetYearlyLoan;
 import com.ats.hrmgt.repo.report.EmpAttendeanceRepRepo;
 import com.ats.hrmgt.repo.report.GetLoanReportRepo;
 import com.ats.hrmgt.repo.report.GetYearlyAdvanceRepo;
+import com.ats.hrmgt.repo.report.GetYearlyLoanRepo;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
@@ -246,13 +248,13 @@ public class LeaveReportApiController {
 		return list;
 
 	}
-
+//*********************LoanReport*****************************
 	@Autowired
 	GetLoanReportRepo getLoanReportRepo;
 
 	@RequestMapping(value = { "/getLoanReport" }, method = RequestMethod.POST)
-	public @ResponseBody List<GetLoanReport> getLoanReport(@RequestParam("companyId") int companyId,
-			@RequestParam("year") int year, @RequestParam("month") int month) {
+	public @ResponseBody List<GetLoanReport> getLoanReport(@RequestParam("month") int month,
+			@RequestParam("year") int year ) {
 
 		List<GetLoanReport> loanList = new ArrayList<GetLoanReport>();
 
@@ -266,4 +268,28 @@ public class LeaveReportApiController {
 		return loanList;
 
 	}
+	
+	@Autowired
+	GetYearlyLoanRepo getYearlyLoanRepo;
+	
+	@RequestMapping(value = { "/getLoanYearlyReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetYearlyLoan> getLoanYearlyReport(@RequestParam("companyId") int companyId,
+			@RequestParam("year") int year) {
+
+		List<GetYearlyLoan> advYearList = new ArrayList<GetYearlyLoan>();
+ 
+		try {
+			advYearList = getYearlyLoanRepo.getSpecEmpAdvForReport( year);
+
+			 
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
+
+	}
+
 }

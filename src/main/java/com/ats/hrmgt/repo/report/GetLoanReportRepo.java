@@ -34,9 +34,9 @@ public interface GetLoanReportRepo extends JpaRepository<GetLoanReport, Integer>
 			"    tbl_loan_main.current_outstanding,\n" + 
 			"    tbl_loan_main.loan_status,\n" + 
 			"    tbl_loan_main.skip_id,\n" + 
-			"    tbl_loan_main.login_name,\n" + 
-			"    tbl_loan_main.login_time,\n" + 
-			"    tbl_loan_main.skip_remarks,\n" + 
+			"    tbl_loan_main.skip_login_name,\n" + 
+			"    tbl_loan_main.skip_login_time,\n" + 
+			"    tbl_loan_main.skip_remarks,'-' as remark,'-' as skip_login_name,\n" + 
 			"  CONCAT(\n" + 
 			"        e.first_name,\n" + 
 			"        ' ' ,e.middle_name,\n" + 
@@ -49,7 +49,7 @@ public interface GetLoanReportRepo extends JpaRepository<GetLoanReport, Integer>
 			"    tbl_loan_main, m_employees e,tbl_loan_main loan \n" + 
 			"WHERE\n" + 
 			"    m_employees.emp_id = tbl_loan_main.emp_id AND tbl_loan_main.del_status=1 AND MONTH(tbl_loan_main.loan_repay_start)=:month AND YEAR(tbl_loan_main.loan_repay_start)=:year AND  e.emp_id=loan.skip_login_name AND loan.id=tbl_loan_main.id",nativeQuery=true)
-	List<GetLoanReport> getSpecEmpAdvForReport(@Param("year") int year,@Param("year") int month);
+	List<GetLoanReport> getSpecEmpAdvForReport(@Param("year") int year,@Param("month") int month);
 	
 	
 
