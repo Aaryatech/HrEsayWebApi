@@ -190,13 +190,13 @@ public class AdvanceApiController {
 	
 	
 	@RequestMapping(value = { "/updateSkipAdvance" }, method = RequestMethod.POST)
-	public @ResponseBody Info updateSkipAdvance(@RequestParam("dateTimeUpdate") String dateTimeUpdate,@RequestParam("userId") int userId,@RequestParam("advId") int advId,@RequestParam("dedMonth") int dedMonth,@RequestParam("dedYear") int dedYear) {
+	public @ResponseBody Info updateSkipAdvance(@RequestParam("dateTimeUpdate") String dateTimeUpdate,@RequestParam("userId") int userId,@RequestParam("advId") int advId,@RequestParam("dedMonth") int dedMonth,@RequestParam("dedYear") int dedYear,@RequestParam("count") int count) {
 
 		Info info = new Info();
 
 		try {
 
-			int delete = advanceRepo.skipAdvance(advId,dedYear,dedMonth,dateTimeUpdate,userId);
+			int delete = advanceRepo.skipAdvance(advId,dedYear,dedMonth,dateTimeUpdate,userId,count);
 
 			if (delete > 0) {
 				info.setError(false);
