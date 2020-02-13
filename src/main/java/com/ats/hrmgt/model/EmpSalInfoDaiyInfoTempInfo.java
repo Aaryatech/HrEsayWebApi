@@ -72,7 +72,8 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	private double societyContributionDytemp;
 	private String empCategory;
 	private double basicDefault;
-
+	private double abDeduction;
+	
 	// tbl_emp_salary_info
 	private int salaryInfoId; 
 	private int salaryTypeId;
@@ -966,6 +967,12 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	public void setDob(String dob) {
 		this.dob = dob;
 	}
+	public double getAbDeduction() {
+		return abDeduction;
+	}
+	public void setAbDeduction(double abDeduction) {
+		this.abDeduction = abDeduction;
+	}
 	@Override
 	public String toString() {
 		return "EmpSalInfoDaiyInfoTempInfo [uuid=" + uuid + ", id=" + id + ", cmpId=" + cmpId + ", empId=" + empId
@@ -987,11 +994,11 @@ public class EmpSalInfoDaiyInfoTempInfo {
 				+ ", mlwfApplicableDytemp=" + mlwfApplicableDytemp + ", ptApplicableDytemp=" + ptApplicableDytemp
 				+ ", payDed=" + payDed + ", commentsForItBonus=" + commentsForItBonus + ", societyContributionDytemp="
 				+ societyContributionDytemp + ", empCategory=" + empCategory + ", basicDefault=" + basicDefault
-				+ ", salaryInfoId=" + salaryInfoId + ", salaryTypeId=" + salaryTypeId + ", basic=" + basic + ", da="
-				+ da + ", hra=" + hra + ", spa=" + spa + ", pfApplicable=" + pfApplicable + ", pfType=" + pfType
-				+ ", pfEmpPer=" + pfEmpPer + ", pfEmplrPer=" + pfEmplrPer + ", esicApplicable=" + esicApplicable
-				+ ", cmpJoiningDate=" + cmpJoiningDate + ", cmpLeavingDate=" + cmpLeavingDate + ", epfJoiningDate="
-				+ epfJoiningDate + ", leavingReason=" + leavingReason + ", salBasis=" + salBasis
+				+ ", abDeduction=" + abDeduction + ", salaryInfoId=" + salaryInfoId + ", salaryTypeId=" + salaryTypeId
+				+ ", basic=" + basic + ", da=" + da + ", hra=" + hra + ", spa=" + spa + ", pfApplicable=" + pfApplicable
+				+ ", pfType=" + pfType + ", pfEmpPer=" + pfEmpPer + ", pfEmplrPer=" + pfEmplrPer + ", esicApplicable="
+				+ esicApplicable + ", cmpJoiningDate=" + cmpJoiningDate + ", cmpLeavingDate=" + cmpLeavingDate
+				+ ", epfJoiningDate=" + epfJoiningDate + ", leavingReason=" + leavingReason + ", salBasis=" + salBasis
 				+ ", ceilingLimitEmpApplicable=" + ceilingLimitEmpApplicable + ", ceilingLimitEmployerApplicable="
 				+ ceilingLimitEmployerApplicable + ", leavingReasonEsic=" + leavingReasonEsic + ", leavingReasonPf="
 				+ leavingReasonPf + ", mlwfApplicable=" + mlwfApplicable + ", ptApplicable=" + ptApplicable

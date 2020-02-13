@@ -72,6 +72,7 @@ public class SalaryCalc {
 	private double societyContribution;
 	private String  empCategory;
 	private double basicDefault;
+	private double abDeduction;
 	public int getId() {
 		return id;
 	}
@@ -426,6 +427,12 @@ public class SalaryCalc {
 	public void setBasicDefault(double basicDefault) {
 		this.basicDefault = basicDefault;
 	}
+	public double getAbDeduction() {
+		return abDeduction;
+	}
+	public void setAbDeduction(double abDeduction) {
+		this.abDeduction = abDeduction;
+	}
 	@Override
 	public String toString() {
 		return "SalaryCalc [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode + ", empType="
@@ -446,7 +453,7 @@ public class SalaryCalc {
 				+ ", loginName=" + loginName + ", loginTime=" + loginTime + ", mlwfApplicable=" + mlwfApplicable
 				+ ", ptApplicable=" + ptApplicable + ", payDed=" + payDed + ", commentsForItBonus=" + commentsForItBonus
 				+ ", societyContribution=" + societyContribution + ", empCategory=" + empCategory + ", basicDefault="
-				+ basicDefault + "]";
+				+ basicDefault + ", abDeduction=" + abDeduction + "]";
 	}
 	 
 	 

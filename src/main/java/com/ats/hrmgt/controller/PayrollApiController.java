@@ -780,6 +780,18 @@ public class PayrollApiController {
 							 */
 
 							break;
+						case "AB":
+
+							ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
+									amount_round);
+
+							tempVal = castNumber((ammt / getSalaryTempList.get(i).getTotalDaysInmonth()), amount_round);
+							double deductValue = tempVal*getSalaryTempList.get(i).getAbsentDays()*2;
+							getSalaryTempList.get(i).setAbDeduction(deductValue);
+							//assign to table Filed
+							salaryTermList.get(j).setValue(deductValue);
+
+							break;
 						case "FD":
 							tempVal = fundwages(salaryTermList.get(j).getPercentage(),
 									getSalaryTempList.get(i).getSalBasis(), ammt, amount_round);
@@ -1269,6 +1281,7 @@ public class PayrollApiController {
 				SalaryCalc.setEmpCategory(salList.get(i).getSalBasis());
 				SalaryCalc.setBasicDefault(salList.get(i).getBasicDefault());
 				SalaryCalc.setCmpId(salList.get(i).getCmpId());
+				SalaryCalc.setAbDeduction(salList.get(i).getAbDeduction());
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 
 				List<SalAllownceCal> allowlist = new ArrayList<>();
