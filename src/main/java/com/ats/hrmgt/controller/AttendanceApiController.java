@@ -1015,6 +1015,7 @@ public class AttendanceApiController {
 				float paidHoliday = 0;
 				float layOff = 0;
 				float legalStrike = 0;
+				float wot = 0;
 				int absentLeave = 0;
 				int lateMin = 0;
 				int lateMark = 0;
@@ -1060,6 +1061,12 @@ public class AttendanceApiController {
 						if (dailyDailyInformationList.get(j).getLvSumupId() == 22) { // 21=HD
 
 							absentLeave = (int) (absentLeave + (dailyDailyInformationList.get(j).getDaycount()));
+
+						}
+
+						if (dailyDailyInformationList.get(j).getLvSumupId() == 14) { // 14=WO-OT
+
+							wot = wot + dailyDailyInformationList.get(j).getDaycount();
 
 						}
 
@@ -1135,6 +1142,7 @@ public class AttendanceApiController {
 				summaryDailyAttendanceList.get(i).setNcpDays(layOff + legalStrike);
 				summaryDailyAttendanceList.get(i).setAbsentDays(absentLeave);
 				summaryDailyAttendanceList.get(i).setTotalDaysInmonth(totalDaysInmonth);
+				summaryDailyAttendanceList.get(i).setWeeklyOffPresent(wot);
 				workingDays = totalDaysInmonth - summaryDailyAttendanceList.get(i).getWeeklyOff()
 						- summaryDailyAttendanceList.get(i).getPaidHoliday();
 				summaryDailyAttendanceList.get(i).setWorkingDays(workingDays);

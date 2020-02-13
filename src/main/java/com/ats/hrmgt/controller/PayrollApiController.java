@@ -232,6 +232,7 @@ public class PayrollApiController {
 				salaryCalcTempsave.setSalTypeId(list.get(i).getSalaryTypeId());
 				salaryCalcTempsave.setLoginName(String.valueOf(userId));
 				salaryCalcTempsave.setLoginTime(sf.format(date));
+				salaryCalcTempsave.setCmpId(list.get(i).getSubCmpId());
 				SalaryCalcTemp saveres = salaryCalcTempRepo.save(salaryCalcTempsave);
 
 				List<SalAllownceTemp> allowlist = new ArrayList<>();
@@ -563,6 +564,7 @@ public class PayrollApiController {
 						if (!salaryTermList.get(j).getFromColumn().equals("")) {
 							if (salaryTermList.get(j).getFromColumn().equals("basic")) {
 								ammt = getSalaryTempList.get(i).getBasic();
+								// System.out.println(ammt);
 							} else if (salaryTermList.get(j).getFromColumn().equals("performance_bouns_cal")) {
 								ammt = getSalaryTempList.get(i).getPerformanceBonus();
 							} else if (salaryTermList.get(j).getFromColumn().equals("society_contribution")) {
@@ -701,26 +703,30 @@ public class PayrollApiController {
 							}
 							salaryTermList.get(j).setValue(temp);
 							break;
+						case "NET":
+							temp = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
+									amount_round);
+							getSalaryTempList.get(i).setNetSalary(temp);
+							salaryTermList.get(j).setValue(temp);
+							break;
 						case "Y":
 							// tempVal = castNumber(ammt);
 
 							if (salaryTermList.get(j).getFieldName().equals("performance_bouns_cal")) {
 								getSalaryTempList.get(i).setPerformanceBonus(ammt);
-							} else if (salaryTermList.get(j).getFieldName().equals("basic")) {
+							} else if (salaryTermList.get(j).getFieldName().equals("basic_default")) {
 								getSalaryTempList.get(i).setBasicDefault(ammt);
 							} else if (salaryTermList.get(j).getFieldName().equals("society_contribution")) {
 								getSalaryTempList.get(i).setSocietyContributionDytemp(ammt);
 							}
 							salaryTermList.get(j).setValue(ammt);
 
-							/*
-							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
-							 * " termid " + salaryTermList.get(j).getSalTermId() + " value " +
-							 * salaryTermList.get(j).getValue() + " basic" +
-							 * getSalaryTempList.get(i).getBasic());
-							 */
+							// System.out.println(salaryTermList.get(j).getFieldName()+ " " +
+							// getSalaryTempList.get(i).getBasicDefault());
+
 							/* System.out.println(salaryTermList); */
 							break;
+
 						case "C1":
 
 							break;
@@ -749,18 +755,22 @@ public class PayrollApiController {
 						case "OTFD":
 
 							break;
-						case "WOT":
+						case "WOP":
 
-							ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
-									amount_round);
+							if (findAll == 1) {
+								ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
+										amount_round);
 
-							tempVal = otwageswo(salaryTermList.get(j).getPercentage(),
-									getSalaryTempList.get(i).getSalBasis(),
-									getSalaryTempList.get(i).getTotalDaysInmonth(),
-									getSalaryTempList.get(i).getWeeklyOffPresent(),
-									getSalaryTempList.get(i).getWorkingDays(), ammt, mstEmpType, amount_round);
-							getSalaryTempList.get(i).setOtWages(tempVal);
-							salaryTermList.get(j).setValue(tempVal);
+								tempVal = otwageswo(salaryTermList.get(j).getPercentage(),
+										getSalaryTempList.get(i).getSalBasis(),
+										getSalaryTempList.get(i).getTotalDaysInmonth(),
+										getSalaryTempList.get(i).getWeeklyOffPresent(),
+										getSalaryTempList.get(i).getWorkingDays(), ammt, mstEmpType, amount_round);
+								getSalaryTempList.get(i).getGetAllowanceTempList().get(index)
+										.setAllowanceValueCal(tempVal);
+								salaryTermList.get(j).setValue(tempVal);
+								System.out.println(ammt + "oTTTTT" + tempVal);
+							}
 
 							/*
 							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
@@ -937,16 +947,13 @@ public class PayrollApiController {
 				getSalaryTempList.get(i).setTotEdliAdminCh(castNumber(
 						(getSalaryTempList.get(i).getEpsWages() * tot_edli_admin_ch_percentage), amount_round));
 				getSalaryTempList.get(i).setStatusDytemp(1);
-				getSalaryTempList.get(i).setNetSalary(castNumber((getSalaryTempList.get(i).getGrossSalaryDytemp()
-						+ getSalaryTempList.get(i).getPerformanceBonus() + getSalaryTempList.get(i).getMiscExpAdd()
-						+ getSalaryTempList.get(i).getOtWages())
-						- (getSalaryTempList.get(i).getEsic() + getSalaryTempList.get(i).getTds()
-								+ getSalaryTempList.get(i).getItded() + getSalaryTempList.get(i).getPtDed()
-								+ getSalaryTempList.get(i).getAdvanceDed() + getSalaryTempList.get(i).getLoanDed()
-								+ getSalaryTempList.get(i).getEmployeePf() + getSalaryTempList.get(i).getPayDed()
-								+ getSalaryTempList.get(i).getSocietyContributionDytemp()),
-						amount_round));
+				getSalaryTempList.get(i).setNetSalary(
+						castNumber((getSalaryTempList.get(i).getNetSalary() + getSalaryTempList.get(i).getMiscExpAdd())
+								- (getSalaryTempList.get(i).getAdvanceDed() + getSalaryTempList.get(i).getLoanDed()
+										+ getSalaryTempList.get(i).getPayDed()),
+								amount_round));
 				getSalaryTempList.get(i).setLoginName(String.valueOf(userId));
+				// System.out.println(getSalaryTempList.get(i).getBasicDefault());
 			}
 
 			// System.out.println(getSalaryTempList);
@@ -1135,14 +1142,13 @@ public class PayrollApiController {
 			double ammt, MstEmpType mstEmpType, int amount_round) {
 
 		double perDayGrossSal = (ammt / totalDays) * woPresent;
-		 
+
 		// basic+DAy
 		// metaf: amount / month_day
 		double val = 0;
- 
 
 		if (mstEmpType.getOtApplicable().equalsIgnoreCase("yes")) {
-			  
+
 			val = perDayGrossSal;
 			val = castNumber(val, amount_round);
 		}
@@ -1262,6 +1268,7 @@ public class PayrollApiController {
 				SalaryCalc.setSocietyContribution(salList.get(i).getSocietyContributionDytemp());
 				SalaryCalc.setEmpCategory(salList.get(i).getSalBasis());
 				SalaryCalc.setBasicDefault(salList.get(i).getBasicDefault());
+				SalaryCalc.setCmpId(salList.get(i).getCmpId());
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 
 				List<SalAllownceCal> allowlist = new ArrayList<>();

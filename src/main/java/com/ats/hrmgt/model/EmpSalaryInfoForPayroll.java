@@ -162,6 +162,9 @@ public class EmpSalaryInfoForPayroll {
 	@Column(name="sum_id")
 	private int sumId;
 	
+	@Column(name="sub_cmp_id")
+	private int subCmpId;
+	
 	@Transient
 	List<EmpAllowanceList> empAllowanceList;
 	
@@ -557,6 +560,14 @@ public class EmpSalaryInfoForPayroll {
 		this.sumId = sumId;
 	}
 
+	public int getSubCmpId() {
+		return subCmpId;
+	}
+
+	public void setSubCmpId(int subCmpId) {
+		this.subCmpId = subCmpId;
+	}
+
 	@Override
 	public String toString() {
 		return "EmpSalaryInfoForPayroll [empId=" + empId + ", salaryInfoId=" + salaryInfoId + ", salaryTypeId="
@@ -575,7 +586,7 @@ public class EmpSalaryInfoForPayroll {
 				+ ", salTypeName=" + salTypeName + ", designation=" + designation + ", deptName=" + deptName
 				+ ", empName=" + empName + ", locName=" + locName + ", empTypeId=" + empTypeId + ", locId=" + locId
 				+ ", departId=" + departId + ", contractorId=" + contractorId + ", desigId=" + desigId + ", sumId="
-				+ sumId + ", empAllowanceList=" + empAllowanceList + "]";
+				+ sumId + ", subCmpId=" + subCmpId + ", empAllowanceList=" + empAllowanceList + "]";
 	}
 	
 	

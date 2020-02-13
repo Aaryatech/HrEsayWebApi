@@ -11,7 +11,7 @@ import com.ats.hrmgt.model.EmpSalaryInfoForPayroll;
 public interface EmpSalaryInfoForPayrollRepository extends JpaRepository<EmpSalaryInfoForPayroll, Integer> {
 
 	@Query(value = "select\n" + 
-			"        e.emp_code,\n" + 
+			"        e.emp_code,e.sub_cmp_id,\n" + 
 			"        et.name as emp_type_name,\n" + 
 			"        et.emp_type_id,\n" + 
 			"        l.loc_name,\n" + 
@@ -62,7 +62,7 @@ public interface EmpSalaryInfoForPayrollRepository extends JpaRepository<EmpSala
 			@Param("year") int year);
 
 	@Query(value = "select\n" + 
-			"        e.emp_code,\n" + 
+			"        e.emp_code,e.sub_cmp_id,\n" + 
 			"        et.name as emp_type_name,\n" + 
 			"        et.emp_type_id,\n" + 
 			"        l.loc_name,\n" + 
