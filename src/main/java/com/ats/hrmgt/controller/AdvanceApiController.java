@@ -71,7 +71,7 @@ public class AdvanceApiController {
 
 	@RequestMapping(value = { "/getAdvanceHistory" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetAdvance> getAdvanceHistory(@RequestParam("empId") int empId,
-			@RequestParam("calYrId") String calYrId, @RequestParam("companyId") int companyId ) {
+			@RequestParam("calYrId") String calYrId, @RequestParam("companyId") int companyId) {
 
 		List<GetAdvance> list = new ArrayList<GetAdvance>();
 		try {
@@ -89,7 +89,6 @@ public class AdvanceApiController {
 				list = getAdvanceRepo.getAllAdv(companyId);
 			}
 
- 
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -115,9 +114,10 @@ public class AdvanceApiController {
 		return list;
 
 	}
-	
+
 	@Autowired
 	AdvanceDetailsRepo advanceDetailsRepo;
+
 	@RequestMapping(value = { "/getAdvanceDetailsByAdvanceIdId" }, method = RequestMethod.POST)
 	public @ResponseBody List<AdvanceDetails> getAdvanceDetailsByAdvanceIdId(@RequestParam("advId") int advId) {
 
@@ -136,6 +136,22 @@ public class AdvanceApiController {
 	}
 	
 	
+	@RequestMapping(value = { "/getAllAdvanceDetails" }, method = RequestMethod.POST)
+	public @ResponseBody List<AdvanceDetails> getAllAdvanceDetails() {
+
+		List<AdvanceDetails> list = new ArrayList<AdvanceDetails>();
+		try {
+
+			list = advanceDetailsRepo.findAllByDelStatus();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
 
 	@RequestMapping(value = { "/saveAdvanceDetails" }, method = RequestMethod.POST)
 	public @ResponseBody AdvanceDetails saveAdvanceDetails(@RequestBody AdvanceDetails leaveType) {
@@ -157,7 +173,6 @@ public class AdvanceApiController {
 		return save;
 
 	}
-
 
 	@RequestMapping(value = { "/deleteAdvance" }, method = RequestMethod.POST)
 	public @ResponseBody Info deleteLMstEmpType(@RequestParam("advId") int advId) {
@@ -187,16 +202,17 @@ public class AdvanceApiController {
 
 	}
 
-	
-	
 	@RequestMapping(value = { "/updateSkipAdvance" }, method = RequestMethod.POST)
-	public @ResponseBody Info updateSkipAdvance(@RequestParam("dateTimeUpdate") String dateTimeUpdate,@RequestParam("userId") int userId,@RequestParam("advId") int advId,@RequestParam("dedMonth") int dedMonth,@RequestParam("dedYear") int dedYear,@RequestParam("count") int count) {
-
-		Info info = new Info();
+	public @ResponseBody Info updateSkipAdvance(@RequestParam("dateTimeUpdate") String dateTimeUpdate,
+			@RequestParam("userId") int userId, @RequestParam("advId") int advId,
+			@RequestParam("dedMonth") int dedMonth, @RequestParam("dedYear") int dedYear,
+			@RequestParam("count") int count,@RequestParam("skipStr") String skipStr) {
+ 
+ 		Info info = new Info();
 
 		try {
 
-			int delete = advanceRepo.skipAdvance(advId,dedYear,dedMonth,dateTimeUpdate,userId,count);
+			int delete = advanceRepo.skipAdvance(advId, dedYear, dedMonth, dateTimeUpdate, userId, count,skipStr);
 
 			if (delete > 0) {
 				info.setError(false);
@@ -239,28 +255,27 @@ public class AdvanceApiController {
 		return info;
 
 	}
+
 	@Autowired
 	UserRepo userRepo;
-	
+
 	@RequestMapping(value = { "/getUserInfoByEmpIdPass" }, method = RequestMethod.POST)
-	public @ResponseBody User getUserInfoByEmpIdPass(@RequestParam("empId") int empId,@RequestParam("password") String password) {
+	public @ResponseBody User getUserInfoByEmpIdPass(@RequestParam("empId") int empId,
+			@RequestParam("password") String password) {
 
 		User user = new User();
 		try {
 
-			user = userRepo.getSpecificUserRecord(empId,password);
-			
-			if(user==null) {
+			user = userRepo.getSpecificUserRecord(empId, password);
+
+			if (user == null) {
 				user = new User();
 				user.setError(true);
-			}else {
+			} else {
 				user.setError(false);
-				
 
 			}
-			
-		  
-			
+
 			System.out.println(user);
 
 		} catch (Exception e) {
@@ -271,16 +286,16 @@ public class AdvanceApiController {
 		return user;
 
 	}
-	
 
 	@RequestMapping(value = { "/updateUserPass" }, method = RequestMethod.POST)
-	public @ResponseBody Info updateUserPass(@RequestParam("empId") int empId,@RequestParam("password") String password) {
+	public @ResponseBody Info updateUserPass(@RequestParam("empId") int empId,
+			@RequestParam("password") String password) {
 
 		Info info = new Info();
 
 		try {
 
-			int delete = userRepo.updateUserPassword(empId,password);
+			int delete = userRepo.updateUserPassword(empId, password);
 
 			if (delete > 0) {
 				info.setError(false);

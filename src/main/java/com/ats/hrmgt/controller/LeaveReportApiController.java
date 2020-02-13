@@ -21,9 +21,11 @@ import com.ats.hrmgt.model.GetDailyDailyRecordRepository;
 import com.ats.hrmgt.model.LeaveApply;
 import com.ats.hrmgt.model.advance.GetAdvance;
 import com.ats.hrmgt.model.report.EmpAttendeanceRep;
+import com.ats.hrmgt.model.report.GetLoanReport;
 import com.ats.hrmgt.model.report.GetYearlyAdvance;
 import com.ats.hrmgt.model.report.GetYearlyAdvanceNew;
 import com.ats.hrmgt.repo.report.EmpAttendeanceRepRepo;
+import com.ats.hrmgt.repo.report.GetLoanReportRepo;
 import com.ats.hrmgt.repo.report.GetYearlyAdvanceRepo;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
@@ -178,80 +180,90 @@ public class LeaveReportApiController {
 		return newList;
 
 	}
-	
-	
+
 	@Autowired
 	GetDailyDailyRecordRepository getDailyDailyRecordRepository;
+
 	@RequestMapping(value = { "/getAttendenceRegReport" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetDailyDailyRecord> getAttendenceRegReport(@RequestParam("companyId") int companyId,
 			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
 
 		List<GetDailyDailyRecord> list = new ArrayList<GetDailyDailyRecord>();
-		
-	
+
 		try {
 
-			list = getDailyDailyRecordRepository.summaryDailyAttendanceListAll1(fromDate, toDate,companyId);
-
-		 
+			list = getDailyDailyRecordRepository.summaryDailyAttendanceListAll1(fromDate, toDate, companyId);
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
 
-		return  list;
+		return list;
 
 	}
+
 	@Autowired
 	EmpAttendeanceRepRepo empAttendeanceRepRepo;
-	
-	
+
 	@RequestMapping(value = { "/getDailyAttendenceReport" }, method = RequestMethod.POST)
 	public @ResponseBody List<EmpAttendeanceRep> getDailyAttendenceReport(@RequestParam("companyId") int companyId,
 			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
 
 		List<EmpAttendeanceRep> list = new ArrayList<EmpAttendeanceRep>();
-		
-	
+
 		try {
 
-			list = empAttendeanceRepRepo.getSpecEmpAdvForReport(companyId,fromDate, toDate);
-
-		 
+			list = empAttendeanceRepRepo.getSpecEmpAdvForReport(companyId, fromDate, toDate);
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
 
-		return  list;
+		return list;
 
 	}
-	
+
 	@Autowired
 	DailyAttendanceRepository dailyAttendanceRepository;
-	
+
 	@RequestMapping(value = { "/getEmpLateMarkReport" }, method = RequestMethod.POST)
 	public @ResponseBody List<DailyAttendance> getEmpLateMarkReport(@RequestParam("companyId") int companyId,
 			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
 
 		List<DailyAttendance> list = new ArrayList<DailyAttendance>();
-		
-	
+
 		try {
 
-			list = dailyAttendanceRepository.dailyAttendanceListAll1(companyId,fromDate, toDate);
-
-		 
+			list = dailyAttendanceRepository.dailyAttendanceListAll1(companyId, fromDate, toDate);
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
 
-		return  list;
+		return list;
 
 	}
 
+	@Autowired
+	GetLoanReportRepo getLoanReportRepo;
+
+	@RequestMapping(value = { "/getLoanReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetLoanReport> getLoanReport(@RequestParam("companyId") int companyId,
+			@RequestParam("year") int year, @RequestParam("month") int month) {
+
+		List<GetLoanReport> loanList = new ArrayList<GetLoanReport>();
+
+		try {
+			loanList = getLoanReportRepo.getSpecEmpAdvForReport(year, month);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return loanList;
+
+	}
 }
