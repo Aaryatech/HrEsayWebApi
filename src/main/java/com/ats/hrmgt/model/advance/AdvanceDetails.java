@@ -1,10 +1,14 @@
 package com.ats.hrmgt.model.advance;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name="tbl_advance_details")
@@ -19,7 +23,7 @@ public class AdvanceDetails {
 	
 	private int skipLoginId ;
 	
-	private String skipLoginTime;
+	private Date skipLoginTime;
  	
  	private String skipRemarks;
  	
@@ -59,11 +63,13 @@ public class AdvanceDetails {
 		this.skipLoginId = skipLoginId;
 	}
 
-	public String getSkipLoginTime() {
+	
+	@JsonFormat(locale = "Locale.ENGLISH", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm:ss a")// 
+  	public Date getSkipLoginTime() {
 		return skipLoginTime;
 	}
 
-	public void setSkipLoginTime(String skipLoginTime) {
+	public void setSkipLoginTime(Date skipLoginTime) {
 		this.skipLoginTime = skipLoginTime;
 	}
 

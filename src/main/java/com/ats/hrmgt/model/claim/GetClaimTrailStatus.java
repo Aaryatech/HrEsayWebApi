@@ -108,7 +108,7 @@ public class GetClaimTrailStatus {
 		this.userName = userName;
 	}
 
-	@JsonFormat(locale = "Locale.ENGLISH", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm:ss a")// 
+	@JsonFormat(locale = "Locale.ENGLISH", timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy hh:mm:ss a")
 	public Date getMakerEnterDatetime() {
 		return makerEnterDatetime;
 	}
