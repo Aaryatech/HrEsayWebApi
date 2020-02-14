@@ -491,6 +491,8 @@ public class PayrollApiController {
 			double ceiling_limit = 0;
 			double eps_age_limit = 0;
 			double esic_limit = 0;
+			double employer_esic_percentage = 0;
+			double employee_esic_percentage = 0;
 			double tot_pf_admin_ch_percentage = 0;
 			double tot_edli_ch_percentage = 0;
 			double tot_edli_admin_ch_percentage = 0;
@@ -512,7 +514,11 @@ public class PayrollApiController {
 					eps_age_limit = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("esic_limit")) {
 					esic_limit = Float.parseFloat(settingList.get(k).getValue());
-				} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_pf_admin_ch")) {
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("employer_esic_percentage")) {
+					employer_esic_percentage = Float.parseFloat(settingList.get(k).getValue());
+				}else if (settingList.get(k).getKey().equalsIgnoreCase("employee_esic_percentage")) {
+					employee_esic_percentage = Float.parseFloat(settingList.get(k).getValue());
+				}else if (settingList.get(k).getKey().equalsIgnoreCase("tot_pf_admin_ch")) {
 					tot_pf_admin_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_edli_ch")) {
 					tot_edli_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
@@ -531,6 +537,10 @@ public class PayrollApiController {
 			SalaryTypesMaster salaryType = new SalaryTypesMaster();
 
 			for (int i = 0; i < getSalaryTempList.size(); i++) {
+				
+				if(getSalaryTempList.get(i).getPfEmpPer()>0) {
+					epf_percentage = getSalaryTempList.get(i).getPfEmpPer();
+				}
 
 				for (int j = 0; j < salaryTermList.size(); j++) {
 					salaryTermList.get(j).setValue(0);
@@ -859,14 +869,15 @@ public class PayrollApiController {
 						// ok
 						// echo $value->pf_type;
 						try {
-							if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("statutory")) {
-								getSalaryTempList.get(i)
-										.setEmployeePf(castNumber((epf_wages_employee * epf_percentage), amount_round));
-
-							} // strtolower($value->pf_type) == 'statutory'
-							else if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("voluntary")) {
+							if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("voluntary")) {
 								getSalaryTempList.get(i).setEmployeePf(castNumber(
 										(epf_wages_employee * getSalaryTempList.get(i).getPfEmpPer()), amount_round));
+
+							} // strtolower($value->pf_type) == 'statutory'
+							else  {
+								//if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("statutory"))
+								getSalaryTempList.get(i)
+								.setEmployeePf(castNumber((epf_wages_employee * epf_percentage), amount_round));
 							} // strtolower($value->pf_type) == 'voluntary'
 								// ok
 								// eps_age_limit
@@ -933,10 +944,7 @@ public class PayrollApiController {
 					else {
 
 						getSalaryTempList.get(i).setEsicStatus(1);
-
-						double employee_esic_percentage = getSalaryTempList.get(i).getEmployeeEsicPercentage();
-						double employer_esic_percentage = getSalaryTempList.get(i).getEmployerEsicPercentage();
-
+ 
 						// we have not add any code to avoid esci deduction. as it mendatory to deduct
 						// esic till some month, but kishore has changed the code to cut the esic
 						if (getSalaryTempList.get(i).getEsicWagesDec() >= esic_limit) {
@@ -953,8 +961,7 @@ public class PayrollApiController {
 											(getSalaryTempList.get(i).getEsicWagesCal() * employee_esic_percentage),
 											amount_round));
 						}
-						System.out.println("ESIC  ====  " + getSalaryTempList.get(i).getEsicWagesCal() + "##"
-								+ employee_esic_percentage);
+						//System.out.println("ESIC  ====  " + getSalaryTempList.get(i).getEsicWagesCal() + "##" + employee_esic_percentage);
 
 					}
 				} catch (Exception e) {
