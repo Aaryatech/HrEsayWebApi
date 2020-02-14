@@ -1,6 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import com.ats.hrmgt.model.EmployeDoc;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.EmployeeRelatedTbls;
 import com.ats.hrmgt.model.GetEmployeeDetails;
-import com.ats.hrmgt.model.Info;
+ import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.model.TblEmpBankInfo;
 import com.ats.hrmgt.model.TblEmpInfo;
@@ -216,7 +217,7 @@ public class EmployeeApiController {
 		return empSave;
 
 	}
-	
+
 	/*
 	 * @RequestMapping(value = { "/updateDriverDetails" }, method =
 	 * RequestMethod.POST) public Info updateDriverDetails(@RequestParam EmpDriver
@@ -504,6 +505,8 @@ public class EmployeeApiController {
 		return empAllowance;
 
 	}
+ 
+	 
 
 	/**************************************************************************/
 	@RequestMapping(value = { "/getAllEmpDocTypes" }, method = RequestMethod.POST)
