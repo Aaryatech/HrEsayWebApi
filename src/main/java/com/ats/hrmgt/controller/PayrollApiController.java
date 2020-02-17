@@ -452,7 +452,6 @@ public class PayrollApiController {
 			@RequestParam("year") int year, @RequestParam("empIds") List<Integer> empIds,
 			@RequestParam("userId") int userId) {
 
-		Info info = new Info();
 		List<EmpSalInfoDaiyInfoTempInfo> getSalaryTempList = new ArrayList<>();
 		try {
 
@@ -487,10 +486,11 @@ public class PayrollApiController {
 			double eps_Cal = 0;
 			double epf_percentage = 0;
 			double cealing_limit_eps_wages = 0;
-			double eps_percentage = 0;
-			double ceiling_limit = 0;
+			double employer_eps_percentage = 0;
+			double employer_eps_ceiling_limit = 0;
 			double eps_age_limit = 0;
 			double esic_limit = 0;
+			double employer_epf_percentage = 0;
 			double employer_esic_percentage = 0;
 			double employee_esic_percentage = 0;
 			double tot_pf_admin_ch_percentage = 0;
@@ -500,16 +500,17 @@ public class PayrollApiController {
 			int febmonthptamount_condtioncheck = 0;
 			double febmonthptamount = 0;
 			int amount_round = 0;
+			double diff_epfwages_limit = 0;
 
 			for (int k = 0; k < settingList.size(); k++) {
 				if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit_eps_wages")) {
 					cealing_limit_eps_wages = Float.parseFloat(settingList.get(k).getValue());
-				} else if (settingList.get(k).getKey().equalsIgnoreCase("eps_percentage")) {
-					eps_percentage = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("employer_eps_percentage")) {
+					employer_eps_percentage = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("epf_percentage")) {
 					epf_percentage = Float.parseFloat(settingList.get(k).getValue());
-				} else if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit")) {
-					ceiling_limit = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("employer_eps_ceiling_limit")) {
+					employer_eps_ceiling_limit = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("eps_age_limit")) {
 					eps_age_limit = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("esic_limit")) {
@@ -530,8 +531,10 @@ public class PayrollApiController {
 					febmonthptamount = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("ammount_format_Insert")) {
 					amount_round = Integer.parseInt(settingList.get(k).getValue());
-				}else if (settingList.get(k).getKey().equalsIgnoreCase("ab_deduction")) {
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("ab_deduction")) {
 					ab_deduction = Integer.parseInt(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("employer_epf_percentage")) {
+					employer_epf_percentage = Float.parseFloat(settingList.get(k).getValue());
 				}
 			}
 
@@ -714,7 +717,7 @@ public class PayrollApiController {
 								getSalaryTempList.get(i).setEsicWagesDec(temp);
 								salaryTermList.get(j).setValue(temp);
 							} else {
-								salaryTermList.get(j).setValue(0);
+								salaryTermList.get(j).setValue(temp);
 							}
 
 							break;
@@ -798,9 +801,9 @@ public class PayrollApiController {
 									amount_round);
 
 							tempVal = ammt / getSalaryTempList.get(i).getTotalDaysInmonth();
-							double deductValue = castNumber((tempVal * getSalaryTempList.get(i).getAbsentDays() * ab_deduction),
-									amount_round);
-							//System.out.println(ammt + "oTTTTT" + tempVal);
+							double deductValue = castNumber(
+									(tempVal * getSalaryTempList.get(i).getAbsentDays() * ab_deduction), amount_round);
+							// System.out.println(ammt + "oTTTTT" + tempVal);
 							getSalaryTempList.get(i).setAbDeduction(deductValue);
 							// assign to table Filed
 							salaryTermList.get(j).setValue(deductValue);
@@ -830,107 +833,101 @@ public class PayrollApiController {
 					// getSalaryTempList.get(i).getPfApplicable()+"#"+getSalaryTempList.get(i).getEpfWages());
 					if (getSalaryTempList.get(i).getPfApplicable().equalsIgnoreCase("yes")) {
 
-						try {
-							if (getSalaryTempList.get(i).getCeilingLimitEmpApplicable().equalsIgnoreCase("yes")
-									&& getSalaryTempList.get(i).getEpfWages() > ceiling_limit) {
-								epf_wages_employee = ceiling_limit;
-							} else {
-								epf_wages_employee = getSalaryTempList.get(i).getEpfWages();
-							}
-						} catch (Exception e) {
-							// e.printStackTrace();
-							epf_wages_employee = getSalaryTempList.get(i).getEpfWages();
-						}
-
-						try {
-							if (getSalaryTempList.get(i).getCeilingLimitEmployerApplicable().equalsIgnoreCase("yes")
-									&& getSalaryTempList.get(i).getEpfWages() > ceiling_limit) {
-								epf_wages_employeR = ceiling_limit;
-
-							} else {
-								epf_wages_employeR = getSalaryTempList.get(i).getEpfWages();
-							}
-						} catch (Exception e) {
-							epf_wages_employeR = getSalaryTempList.get(i).getEpfWages();
-						}
-						getSalaryTempList.get(i).setEpfWagesEmployer(epf_wages_employeR);
-
-						try {
-							if (getSalaryTempList.get(i).getEpsWages() > cealing_limit_eps_wages) {
-								eps_Cal = cealing_limit_eps_wages;
-							} // $this->emp_sal_terms_col[$emp_id]['eps_wages'] > $sealing_limit_eps_wages
-							else {
-								eps_Cal = getSalaryTempList.get(i).getEpsWages();
-							}
-						} catch (Exception e) {
-							// e.printStackTrace();
-						}
-
 						getSalaryTempList.get(i).setPfStatus(1);
-						// ok
-						// echo $value->pf_type;
+						epf_wages_employee = getSalaryTempList.get(i).getEpfWages();
 						try {
 							if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("voluntary")) {
 								getSalaryTempList.get(i).setEmployeePf(castNumber(
 										(epf_wages_employee * getSalaryTempList.get(i).getPfEmpPer()), amount_round));
+								getSalaryTempList.get(i).setEpfPercentage(getSalaryTempList.get(i).getPfEmpPer());
 
-							} // strtolower($value->pf_type) == 'statutory'
-							else {
-								// if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("statutory"))
+							} else {
+
 								getSalaryTempList.get(i)
 										.setEmployeePf(castNumber((epf_wages_employee * epf_percentage), amount_round));
-							} // strtolower($value->pf_type) == 'voluntary'
-								// ok
-								// eps_age_limit
-								// $age = $this->mpayroll->calculateAge($value->dob);
+								getSalaryTempList.get(i).setEpfPercentage(epf_percentage);
+							}
 
 						} catch (Exception e) {
 							// e.printStackTrace();
 						}
 
 						String[] dob = getSalaryTempList.get(i).getDob().split("-");
-						// System.out.println("dob[2]" + dob[2] +"dob[1]" + dob[1]+"dob[0]" + dob[0] );
+
 						LocalDate birthDate = LocalDate.of(Integer.parseInt(dob[0]), Integer.parseInt(dob[1]),
 								Integer.parseInt(dob[2]));
 						int age = calculateAge(birthDate, LocalDate.of(Integer.parseInt(dates[0]),
 								Integer.parseInt(dates[1]), Integer.parseInt(dates[2])));
 
-						// System.out.println("age " + age);
-						// int age = 60;
 						if (age <= eps_age_limit) {
-							// employer_eps
-							double employer_eps = eps_Cal * eps_percentage;
-							getSalaryTempList.get(i).setEmployerEps(castNumber(employer_eps, amount_round));
-							getSalaryTempList.get(i).setEpsWages(castNumber(eps_Cal, amount_round));
-							/*
-							 * $this->emp_sal_terms_col[$emp_id]['employer_eps'] = round($employer_eps);
-							 * $this->emp_sal_terms_col[$emp_id]['eps_wages'] = $eps_Cal;
-							 */
-							// ok
-						} // $age <= $eps_age_limit
-						else {
-							getSalaryTempList.get(i).setEmployerEps(0);
-							getSalaryTempList.get(i).setEpsWages(0);
 
+							if (getSalaryTempList.get(i).getEpfWages() > employer_eps_ceiling_limit) {
+								epf_wages_employeR = employer_eps_ceiling_limit;
+
+							} else {
+								epf_wages_employeR = getSalaryTempList.get(i).getEpfWages();
+							}
+
+							double employer_eps_default = getSalaryTempList.get(i).getEpfWages()
+									* employer_eps_percentage;
+							double employer_eps = epf_wages_employeR * employer_eps_percentage;
+
+							// employer_eps
+							getSalaryTempList.get(i).setEpsWages(castNumber(epf_wages_employeR, amount_round));
+							getSalaryTempList.get(i).setEpsDefault(castNumber(employer_eps_default, amount_round));
+							getSalaryTempList.get(i)
+									.setEmployerEps(castNumber(castNumber(employer_eps, amount_round), amount_round));
+							getSalaryTempList.get(i).setEpsEmployerPercentage(employer_eps_percentage);
+
+							// employer_epf
+							double employer_epf_default = getSalaryTempList.get(i).getEpfWages()
+									* employer_epf_percentage;
+							getSalaryTempList.get(i).setEpfWagesEmployer(
+									castNumber(getSalaryTempList.get(i).getEpfWages(), amount_round));
+							getSalaryTempList.get(i)
+									.setEpmloyerEpfDefault(castNumber(employer_epf_default, amount_round));
+							getSalaryTempList.get(i).setEpfEmployerPercentage(employer_epf_percentage);
+
+							if (employer_eps < employer_eps_default) {
+								getSalaryTempList.get(i).setEpmloyerEpfExtra(
+										castNumber((employer_eps_default - employer_eps), amount_round));
+							}
+							getSalaryTempList.get(i)
+									.setEmployerPf(castNumber(getSalaryTempList.get(i).getEpmloyerEpfDefault()
+											+ getSalaryTempList.get(i).getEpmloyerEpfExtra(), amount_round));
+						} else {
+							getSalaryTempList.get(i).setEpsWages(0);
+							getSalaryTempList.get(i).setEpsDefault(0);
+							getSalaryTempList.get(i).setEmployerEps(0);
+							getSalaryTempList.get(i).setEpsEmployerPercentage(0);
+
+							getSalaryTempList.get(i).setEpfWagesEmployer(0);
+							getSalaryTempList.get(i).setEpmloyerEpfDefault(0);
+							getSalaryTempList.get(i).setEpfEmployerPercentage(0);
+							getSalaryTempList.get(i).setEpmloyerEpfExtra(0);
+							getSalaryTempList.get(i).setEmployerPf(0);
 						}
 						// employer_pf calculation
-						getSalaryTempList.get(i).setEmployerPf(castNumber(
-								((epf_wages_employeR * epf_percentage) - getSalaryTempList.get(i).getEmployerEps()),
-								amount_round));
 
 					} // strtolower($value->pf_applicable) == 'yes'
 					else // $emp->pf_applicable)=='no'
 					{
-						getSalaryTempList.get(i).setEmployerPf(0);
-						getSalaryTempList.get(i).setPfStatus(0);
-						getSalaryTempList.get(i).setEmployerEps(0);
 						getSalaryTempList.get(i).setEmployeePf(0);
-						getSalaryTempList.get(i).setEpfWages(0);
-						getSalaryTempList.get(i).setEpsWages(0);
 						getSalaryTempList.get(i).setEpfPercentage(0);
+						getSalaryTempList.get(i).setPfStatus(0);
+						getSalaryTempList.get(i).setEpfWages(0);
 						getSalaryTempList.get(i).setEpsEmployeePercentage(0);
-						getSalaryTempList.get(i).setEpfEmployerPercentage(0);
+
+						getSalaryTempList.get(i).setEpsWages(0);
+						getSalaryTempList.get(i).setEpsDefault(0);
+						getSalaryTempList.get(i).setEmployerEps(0);
 						getSalaryTempList.get(i).setEpsEmployerPercentage(0);
+
+						getSalaryTempList.get(i).setEpfWagesEmployer(0);
+						getSalaryTempList.get(i).setEpmloyerEpfDefault(0);
+						getSalaryTempList.get(i).setEpfEmployerPercentage(0);
+						getSalaryTempList.get(i).setEpmloyerEpfExtra(0);
+						getSalaryTempList.get(i).setEmployerPf(0);
 
 					}
 				} catch (Exception e) {
@@ -980,6 +977,10 @@ public class PayrollApiController {
 						castNumber((getSalaryTempList.get(i).getEpsWages() * tot_edli_ch_percentage), amount_round));
 				getSalaryTempList.get(i).setTotEdliAdminCh(castNumber(
 						(getSalaryTempList.get(i).getEpsWages() * tot_edli_admin_ch_percentage), amount_round));
+				getSalaryTempList.get(i).setPfAdminChPercentage(tot_pf_admin_ch_percentage);
+				getSalaryTempList.get(i).setEdliPercentage(tot_edli_ch_percentage);
+				getSalaryTempList.get(i).setEdliAdminPercentage(tot_edli_admin_ch_percentage);
+				
 				getSalaryTempList.get(i).setStatusDytemp(1);
 				getSalaryTempList.get(i).setNetSalary(castNumber((getSalaryTempList.get(i).getGrossSalaryDytemp()
 						+ getSalaryTempList.get(i).getPerformanceBonus() + getSalaryTempList.get(i).getMiscExpAdd()
@@ -996,11 +997,8 @@ public class PayrollApiController {
 
 			// System.out.println(getSalaryTempList);
 
-			info.setError(false);
-			info.setMsg("success");
 		} catch (Exception e) {
-			info.setError(true);
-			info.setMsg("failed");
+
 			e.printStackTrace();
 		}
 
@@ -1330,7 +1328,13 @@ public class PayrollApiController {
 				SalaryCalc.setEpsEmployeePercentage(salList.get(i).getEpsEmployeePercentage());
 				SalaryCalc.setEpfEmployerPercentage(salList.get(i).getEpfEmployerPercentage());
 				SalaryCalc.setEpsEmployerPercentage(salList.get(i).getEpsEmployerPercentage());
-
+				SalaryCalc.setEpsDefault(salList.get(i).getEpsDefault());
+				SalaryCalc.setEpmloyerEpfDefault(salList.get(i).getEpmloyerEpfDefault());
+				SalaryCalc.setEpmloyerEpfExtra(salList.get(i).getEpmloyerEpfExtra());
+				SalaryCalc.setPfAdminChPercentage(salList.get(i).getPfAdminChPercentage());
+				SalaryCalc.setEdliPercentage(salList.get(i).getEdliPercentage());
+				SalaryCalc.setEdliAdminPercentage(salList.get(i).getEdliAdminPercentage());
+				
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 
 				List<SalAllownceCal> allowlist = new ArrayList<>();

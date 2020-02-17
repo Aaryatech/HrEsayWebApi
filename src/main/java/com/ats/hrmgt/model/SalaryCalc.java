@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "tbl_salary_calc")
@@ -80,6 +81,12 @@ public class SalaryCalc {
 	private double epsEmployerPercentage;
 	private double presentInsentive;
 	private double nightAllow;
+	private double epsDefault; 
+	private double epmloyerEpfDefault; 
+	private double epmloyerEpfExtra; 
+	private double pfAdminChPercentage; 
+	private double edliPercentage; 
+	private double edliAdminPercentage; 
 	
 	public int getId() {
 		return id;
@@ -483,6 +490,42 @@ public class SalaryCalc {
 	public void setNightAllow(double nightAllow) {
 		this.nightAllow = nightAllow;
 	}
+	public double getEpsDefault() {
+		return epsDefault;
+	}
+	public void setEpsDefault(double epsDefault) {
+		this.epsDefault = epsDefault;
+	}
+	public double getEpmloyerEpfDefault() {
+		return epmloyerEpfDefault;
+	}
+	public void setEpmloyerEpfDefault(double epmloyerEpfDefault) {
+		this.epmloyerEpfDefault = epmloyerEpfDefault;
+	}
+	public double getEpmloyerEpfExtra() {
+		return epmloyerEpfExtra;
+	}
+	public void setEpmloyerEpfExtra(double epmloyerEpfExtra) {
+		this.epmloyerEpfExtra = epmloyerEpfExtra;
+	}
+	public double getPfAdminChPercentage() {
+		return pfAdminChPercentage;
+	}
+	public void setPfAdminChPercentage(double pfAdminChPercentage) {
+		this.pfAdminChPercentage = pfAdminChPercentage;
+	}
+	public double getEdliPercentage() {
+		return edliPercentage;
+	}
+	public void setEdliPercentage(double edliPercentage) {
+		this.edliPercentage = edliPercentage;
+	}
+	public double getEdliAdminPercentage() {
+		return edliAdminPercentage;
+	}
+	public void setEdliAdminPercentage(double edliAdminPercentage) {
+		this.edliAdminPercentage = edliAdminPercentage;
+	}
 	@Override
 	public String toString() {
 		return "SalaryCalc [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode + ", empType="
@@ -506,7 +549,10 @@ public class SalaryCalc {
 				+ basicDefault + ", abDeduction=" + abDeduction + ", epfPercentage=" + epfPercentage
 				+ ", epsEmployeePercentage=" + epsEmployeePercentage + ", productionInsentive=" + productionInsentive
 				+ ", epfEmployerPercentage=" + epfEmployerPercentage + ", epsEmployerPercentage="
-				+ epsEmployerPercentage + ", presentInsentive=" + presentInsentive + ", nightAllow=" + nightAllow + "]";
+				+ epsEmployerPercentage + ", presentInsentive=" + presentInsentive + ", nightAllow=" + nightAllow
+				+ ", epsDefault=" + epsDefault + ", epmloyerEpfDefault=" + epmloyerEpfDefault + ", epmloyerEpfExtra="
+				+ epmloyerEpfExtra + ", pfAdminChPercentage=" + pfAdminChPercentage + ", edliPercentage="
+				+ edliPercentage + ", edliAdminPercentage=" + edliAdminPercentage + "]";
 	}
 	 
 	 
