@@ -626,7 +626,7 @@ public class PayrollApiController {
 										.setAllowanceValueCal(tempVal);
 								salaryTermList.get(j).setValue(tempVal);
 
-								System.out.println(salaryTermList.get(j).getFromColumn() + " " + tempVal + ""
+								System.out.println(salaryTermList.get(j).getSalTermId() + " " + tempVal + ""
 										+ getSalaryTempList.get(i).getGetAllowanceTempList().get(index).getShortName());
 
 							}
@@ -785,7 +785,7 @@ public class PayrollApiController {
 									getSalaryTempList.get(i).getWorkingDays(), ammt, mstEmpType, amount_round);
 							getSalaryTempList.get(i).setProductionInsentive(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
-							// System.out.println(ammt + "oTTTTT" + tempVal);
+							  System.out.println(ammt + "oTTTTT" + tempVal);
 
 							/*
 							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
