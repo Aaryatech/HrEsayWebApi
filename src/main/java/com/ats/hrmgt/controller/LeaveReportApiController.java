@@ -22,11 +22,13 @@ import com.ats.hrmgt.model.LeaveApply;
 import com.ats.hrmgt.model.advance.GetAdvance;
 import com.ats.hrmgt.model.report.EmpAttendeanceRep;
 import com.ats.hrmgt.model.report.GetLoanReport;
+import com.ats.hrmgt.model.report.GetSalaryCalcReport;
 import com.ats.hrmgt.model.report.GetYearlyAdvance;
 import com.ats.hrmgt.model.report.GetYearlyAdvanceNew;
 import com.ats.hrmgt.model.report.GetYearlyLoan;
 import com.ats.hrmgt.repo.report.EmpAttendeanceRepRepo;
 import com.ats.hrmgt.repo.report.GetLoanReportRepo;
+import com.ats.hrmgt.repo.report.GetSalaryCalcReportRepo;
 import com.ats.hrmgt.repo.report.GetYearlyAdvanceRepo;
 import com.ats.hrmgt.repo.report.GetYearlyLoanRepo;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
@@ -291,5 +293,31 @@ public class LeaveReportApiController {
 		return advYearList;
 
 	}
+	
+	
+	//*************PF Statement*************************
+	@Autowired
+	GetSalaryCalcReportRepo getSalaryCalcReportRepo;
+	
+	@RequestMapping(value = { "/getPfStatement" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetSalaryCalcReport> getPfStatement(@RequestParam("companyId") int companyId,
+			@RequestParam("year") int year,@RequestParam("month") int month) {
+
+		List<GetSalaryCalcReport> advYearList = new ArrayList<GetSalaryCalcReport>();
+ 
+		try {
+			advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReport(companyId, year,month);
+
+			 
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
+
+	}
+	
 
 }

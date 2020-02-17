@@ -13,7 +13,7 @@ public interface GetYearlyLoanRepo extends JpaRepository<GetYearlyLoan, Integer>
 	 
 
 	@Query(value=" SELECT\n" + 
-			"    UUID() AS id, SUM(tbl_loan_main.loan_amt) AS loan_amt,\n" + 
+			"    UUID() AS unique_id, SUM(tbl_loan_main.loan_amt) AS loan_amt,\n" + 
 			"    SUM(tbl_loan_main.loan_repay_amt) AS loan_repay_amt,\n" + 
 			"    SUM(tbl_loan_main.current_totpaid) AS current_totpaid,\n" + 
 			"    MONTH(tbl_loan_main.loan_repay_start) AS MONTH,\n" + 
