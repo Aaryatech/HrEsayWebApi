@@ -25,6 +25,10 @@ public class LeaveType {
 	@Column(name="lv_title_short")
 	private String lvTitleShort;
 	
+	@Column(name="is_file")
+ 	private int isFile;
+
+	
 	@Column(name="lv_sumup_id")
 	private int lvSumupId;
 	
@@ -73,6 +77,16 @@ public class LeaveType {
 	@Transient
 	private boolean error;
 
+
+	
+	
+	public int getIsFile() {
+		return isFile;
+	}
+
+	public void setIsFile(int isFile) {
+		this.isFile = isFile;
+	}
 
 	public boolean isError() {
 		return error;
@@ -235,21 +249,20 @@ public class LeaveType {
 	public void setExVar3(String exVar3) {
 		this.exVar3 = exVar3;
 	}
-	
-	
-	
-	
 
 	@Override
 	public String toString() {
 		return "LeaveType [lvTypeId=" + lvTypeId + ", companyId=" + companyId + ", lvTitle=" + lvTitle
-				+ ", lvTitleShort=" + lvTitleShort + ", lvSumupId=" + lvSumupId + ", lvWorkingHrs=" + lvWorkingHrs
-				+ ", lvColor=" + lvColor + ", isStructured=" + isStructured + ", lvRmarks=" + lvRmarks + ", delStatus="
-				+ delStatus + ", isActive=" + isActive + ", makerUserId=" + makerUserId + ", makerEnterDatetime="
-				+ makerEnterDatetime + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exInt3=" + exInt3 + ", exVar1="
-				+ exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3 + "]";
+				+ ", lvTitleShort=" + lvTitleShort + ", isFile=" + isFile + ", lvSumupId=" + lvSumupId
+				+ ", lvWorkingHrs=" + lvWorkingHrs + ", lvColor=" + lvColor + ", isStructured=" + isStructured
+				+ ", lvRmarks=" + lvRmarks + ", delStatus=" + delStatus + ", isActive=" + isActive + ", makerUserId="
+				+ makerUserId + ", makerEnterDatetime=" + makerEnterDatetime + ", exInt1=" + exInt1 + ", exInt2="
+				+ exInt2 + ", exInt3=" + exInt3 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", exVar3=" + exVar3
+				+ ", error=" + error + "]";
 	}
 	
+	
+	 
 	
 }
 	
