@@ -68,7 +68,8 @@ public interface EmpSalInfoDaiyInfoTempInfoRepo extends JpaRepository<EmpSalInfo
 			"        sdt.comments_for_it_bonus,\n" + 
 			"        sdt.society_contribution as society_contribution_dytemp,\n" + 
 			"        sdt.emp_category,\n" + 
-			"        sdt.basic_default,sdt.ab_deduction,\n" + 
+			"        sdt.basic_default,sdt.ab_deduction,sdt.epf_percentage,sdt.eps_employee_percentage,sdt.production_insentive,sdt.epf_employer_percentage"
+			+ ",sdt.eps_employer_percentage,sdt.present_insentive,sdt.night_allow,\n" + 
 			"        si.salary_info_id,\n" + 
 			"        si.salary_type_id,\n" + 
 			"        si.basic,\n" + 

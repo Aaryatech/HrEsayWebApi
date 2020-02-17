@@ -496,7 +496,7 @@ public class PayrollApiController {
 			double tot_pf_admin_ch_percentage = 0;
 			double tot_edli_ch_percentage = 0;
 			double tot_edli_admin_ch_percentage = 0;
-
+			int ab_deduction = 0;
 			int febmonthptamount_condtioncheck = 0;
 			double febmonthptamount = 0;
 			int amount_round = 0;
@@ -516,9 +516,9 @@ public class PayrollApiController {
 					esic_limit = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("employer_esic_percentage")) {
 					employer_esic_percentage = Float.parseFloat(settingList.get(k).getValue());
-				}else if (settingList.get(k).getKey().equalsIgnoreCase("employee_esic_percentage")) {
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("employee_esic_percentage")) {
 					employee_esic_percentage = Float.parseFloat(settingList.get(k).getValue());
-				}else if (settingList.get(k).getKey().equalsIgnoreCase("tot_pf_admin_ch")) {
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_pf_admin_ch")) {
 					tot_pf_admin_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("tot_edli_ch")) {
 					tot_edli_ch_percentage = Float.parseFloat(settingList.get(k).getValue());
@@ -530,6 +530,8 @@ public class PayrollApiController {
 					febmonthptamount = Float.parseFloat(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("ammount_format_Insert")) {
 					amount_round = Integer.parseInt(settingList.get(k).getValue());
+				}else if (settingList.get(k).getKey().equalsIgnoreCase("ab_deduction")) {
+					ab_deduction = Integer.parseInt(settingList.get(k).getValue());
 				}
 			}
 
@@ -537,8 +539,8 @@ public class PayrollApiController {
 			SalaryTypesMaster salaryType = new SalaryTypesMaster();
 
 			for (int i = 0; i < getSalaryTempList.size(); i++) {
-				
-				if(getSalaryTempList.get(i).getPfEmpPer()>0) {
+
+				if (getSalaryTempList.get(i).getPfEmpPer() > 0) {
 					epf_percentage = getSalaryTempList.get(i).getPfEmpPer();
 				}
 
@@ -770,20 +772,17 @@ public class PayrollApiController {
 							break;
 						case "WOP":
 
-							if (findAll == 1) {
-								ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
-										amount_round);
+							ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
+									amount_round);
 
-								tempVal = otwageswo(salaryTermList.get(j).getPercentage(),
-										getSalaryTempList.get(i).getSalBasis(),
-										getSalaryTempList.get(i).getTotalDaysInmonth(),
-										getSalaryTempList.get(i).getWeeklyOffPresent(),
-										getSalaryTempList.get(i).getWorkingDays(), ammt, mstEmpType, amount_round);
-								getSalaryTempList.get(i).getGetAllowanceTempList().get(index)
-										.setAllowanceValueCal(tempVal);
-								salaryTermList.get(j).setValue(tempVal);
-								System.out.println(ammt + "oTTTTT" + tempVal);
-							}
+							tempVal = otwageswo(salaryTermList.get(j).getPercentage(),
+									getSalaryTempList.get(i).getSalBasis(),
+									getSalaryTempList.get(i).getTotalDaysInmonth(),
+									getSalaryTempList.get(i).getWeeklyOffPresent(),
+									getSalaryTempList.get(i).getWorkingDays(), ammt, mstEmpType, amount_round);
+							getSalaryTempList.get(i).setProductionInsentive(tempVal);
+							salaryTermList.get(j).setValue(tempVal);
+							// System.out.println(ammt + "oTTTTT" + tempVal);
 
 							/*
 							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
@@ -798,8 +797,10 @@ public class PayrollApiController {
 							ammt = calculatePdata(salaryTermList.get(j), salaryTermList, getSalaryTempList.get(i),
 									amount_round);
 
-							tempVal = castNumber((ammt / getSalaryTempList.get(i).getTotalDaysInmonth()), amount_round);
-							double deductValue = tempVal * getSalaryTempList.get(i).getAbsentDays() * 2;
+							tempVal = ammt / getSalaryTempList.get(i).getTotalDaysInmonth();
+							double deductValue = castNumber((tempVal * getSalaryTempList.get(i).getAbsentDays() * ab_deduction),
+									amount_round);
+							//System.out.println(ammt + "oTTTTT" + tempVal);
 							getSalaryTempList.get(i).setAbDeduction(deductValue);
 							// assign to table Filed
 							salaryTermList.get(j).setValue(deductValue);
@@ -850,7 +851,7 @@ public class PayrollApiController {
 								epf_wages_employeR = getSalaryTempList.get(i).getEpfWages();
 							}
 						} catch (Exception e) {
-							// e.printStackTrace();
+							epf_wages_employeR = getSalaryTempList.get(i).getEpfWages();
 						}
 						getSalaryTempList.get(i).setEpfWagesEmployer(epf_wages_employeR);
 
@@ -874,10 +875,10 @@ public class PayrollApiController {
 										(epf_wages_employee * getSalaryTempList.get(i).getPfEmpPer()), amount_round));
 
 							} // strtolower($value->pf_type) == 'statutory'
-							else  {
-								//if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("statutory"))
+							else {
+								// if (getSalaryTempList.get(i).getPfType().equalsIgnoreCase("statutory"))
 								getSalaryTempList.get(i)
-								.setEmployeePf(castNumber((epf_wages_employee * epf_percentage), amount_round));
+										.setEmployeePf(castNumber((epf_wages_employee * epf_percentage), amount_round));
 							} // strtolower($value->pf_type) == 'voluntary'
 								// ok
 								// eps_age_limit
@@ -926,6 +927,11 @@ public class PayrollApiController {
 						getSalaryTempList.get(i).setEmployeePf(0);
 						getSalaryTempList.get(i).setEpfWages(0);
 						getSalaryTempList.get(i).setEpsWages(0);
+						getSalaryTempList.get(i).setEpfPercentage(0);
+						getSalaryTempList.get(i).setEpsEmployeePercentage(0);
+						getSalaryTempList.get(i).setEpfEmployerPercentage(0);
+						getSalaryTempList.get(i).setEpsEmployerPercentage(0);
+
 					}
 				} catch (Exception e) {
 					// e.printStackTrace();
@@ -944,7 +950,7 @@ public class PayrollApiController {
 					else {
 
 						getSalaryTempList.get(i).setEsicStatus(1);
- 
+
 						// we have not add any code to avoid esci deduction. as it mendatory to deduct
 						// esic till some month, but kishore has changed the code to cut the esic
 						if (getSalaryTempList.get(i).getEsicWagesDec() >= esic_limit) {
@@ -961,7 +967,8 @@ public class PayrollApiController {
 											(getSalaryTempList.get(i).getEsicWagesCal() * employee_esic_percentage),
 											amount_round));
 						}
-						//System.out.println("ESIC  ====  " + getSalaryTempList.get(i).getEsicWagesCal() + "##" + employee_esic_percentage);
+						// System.out.println("ESIC ==== " + getSalaryTempList.get(i).getEsicWagesCal()
+						// + "##" + employee_esic_percentage);
 
 					}
 				} catch (Exception e) {
@@ -974,16 +981,15 @@ public class PayrollApiController {
 				getSalaryTempList.get(i).setTotEdliAdminCh(castNumber(
 						(getSalaryTempList.get(i).getEpsWages() * tot_edli_admin_ch_percentage), amount_round));
 				getSalaryTempList.get(i).setStatusDytemp(1);
-				getSalaryTempList.get(i)
-						.setNetSalary(castNumber((getSalaryTempList.get(i).getGrossSalaryDytemp()
-								+ getSalaryTempList.get(i).getPerformanceBonus()
-								+ getSalaryTempList.get(i).getMiscExpAdd() + getSalaryTempList.get(i).getOtWages())
-								- (getSalaryTempList.get(i).getAdvanceDed() + getSalaryTempList.get(i).getLoanDed()
-										+ getSalaryTempList.get(i).getPayDed() + getSalaryTempList.get(i).getEsic()
-										+ getSalaryTempList.get(i).getEmployeePf() + getSalaryTempList.get(i).getPtDed()
-										+ getSalaryTempList.get(i).getItded() + getSalaryTempList.get(i).getTds()
-										+ getSalaryTempList.get(i).getSocietyContributionDytemp()),
-								amount_round));
+				getSalaryTempList.get(i).setNetSalary(castNumber((getSalaryTempList.get(i).getGrossSalaryDytemp()
+						+ getSalaryTempList.get(i).getPerformanceBonus() + getSalaryTempList.get(i).getMiscExpAdd()
+						+ getSalaryTempList.get(i).getOtWages() + getSalaryTempList.get(i).getProductionInsentive())
+						- (getSalaryTempList.get(i).getAdvanceDed() + getSalaryTempList.get(i).getLoanDed()
+								+ getSalaryTempList.get(i).getPayDed() + getSalaryTempList.get(i).getEsic()
+								+ getSalaryTempList.get(i).getEmployeePf() + getSalaryTempList.get(i).getPtDed()
+								+ getSalaryTempList.get(i).getItded() + getSalaryTempList.get(i).getTds()
+								+ getSalaryTempList.get(i).getSocietyContributionDytemp()),
+						amount_round));
 				getSalaryTempList.get(i).setLoginName(String.valueOf(userId));
 				// System.out.println(salaryTermList);
 			}
@@ -1194,7 +1200,7 @@ public class PayrollApiController {
 		// metaf: amount / month_day
 		double val = 0;
 
-		if (mstEmpType.getOtApplicable().equalsIgnoreCase("yes")) {
+		if (mstEmpType.getProdIncentiveApp().equalsIgnoreCase("1")) {
 
 			val = perDayGrossSal;
 			val = castNumber(val, amount_round);
@@ -1317,6 +1323,14 @@ public class PayrollApiController {
 				SalaryCalc.setBasicDefault(salList.get(i).getBasicDefault());
 				SalaryCalc.setCmpId(salList.get(i).getCmpId());
 				SalaryCalc.setAbDeduction(salList.get(i).getAbDeduction());
+				SalaryCalc.setProductionInsentive(salList.get(i).getProductionInsentive());
+				SalaryCalc.setPresentInsentive(salList.get(i).getPresentInsentive());
+				SalaryCalc.setNightAllow(salList.get(i).getNightAllow());
+				SalaryCalc.setEpfPercentage(salList.get(i).getEpfPercentage());
+				SalaryCalc.setEpsEmployeePercentage(salList.get(i).getEpsEmployeePercentage());
+				SalaryCalc.setEpfEmployerPercentage(salList.get(i).getEpfEmployerPercentage());
+				SalaryCalc.setEpsEmployerPercentage(salList.get(i).getEpsEmployerPercentage());
+
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 
 				List<SalAllownceCal> allowlist = new ArrayList<>();

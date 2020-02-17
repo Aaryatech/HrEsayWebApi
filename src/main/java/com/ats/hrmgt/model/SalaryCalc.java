@@ -73,6 +73,14 @@ public class SalaryCalc {
 	private String  empCategory;
 	private double basicDefault;
 	private double abDeduction;
+	private double epfPercentage;
+	private double epsEmployeePercentage;
+	private double productionInsentive;
+	private double epfEmployerPercentage;
+	private double epsEmployerPercentage;
+	private double presentInsentive;
+	private double nightAllow;
+	
 	public int getId() {
 		return id;
 	}
@@ -433,6 +441,48 @@ public class SalaryCalc {
 	public void setAbDeduction(double abDeduction) {
 		this.abDeduction = abDeduction;
 	}
+	public double getEpfPercentage() {
+		return epfPercentage;
+	}
+	public void setEpfPercentage(double epfPercentage) {
+		this.epfPercentage = epfPercentage;
+	}
+	public double getEpsEmployeePercentage() {
+		return epsEmployeePercentage;
+	}
+	public void setEpsEmployeePercentage(double epsEmployeePercentage) {
+		this.epsEmployeePercentage = epsEmployeePercentage;
+	}
+	public double getProductionInsentive() {
+		return productionInsentive;
+	}
+	public void setProductionInsentive(double productionInsentive) {
+		this.productionInsentive = productionInsentive;
+	}
+	public double getEpfEmployerPercentage() {
+		return epfEmployerPercentage;
+	}
+	public void setEpfEmployerPercentage(double epfEmployerPercentage) {
+		this.epfEmployerPercentage = epfEmployerPercentage;
+	}
+	public double getEpsEmployerPercentage() {
+		return epsEmployerPercentage;
+	}
+	public void setEpsEmployerPercentage(double epsEmployerPercentage) {
+		this.epsEmployerPercentage = epsEmployerPercentage;
+	}
+	public double getPresentInsentive() {
+		return presentInsentive;
+	}
+	public void setPresentInsentive(double presentInsentive) {
+		this.presentInsentive = presentInsentive;
+	}
+	public double getNightAllow() {
+		return nightAllow;
+	}
+	public void setNightAllow(double nightAllow) {
+		this.nightAllow = nightAllow;
+	}
 	@Override
 	public String toString() {
 		return "SalaryCalc [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode + ", empType="
@@ -453,7 +503,10 @@ public class SalaryCalc {
 				+ ", loginName=" + loginName + ", loginTime=" + loginTime + ", mlwfApplicable=" + mlwfApplicable
 				+ ", ptApplicable=" + ptApplicable + ", payDed=" + payDed + ", commentsForItBonus=" + commentsForItBonus
 				+ ", societyContribution=" + societyContribution + ", empCategory=" + empCategory + ", basicDefault="
-				+ basicDefault + ", abDeduction=" + abDeduction + "]";
+				+ basicDefault + ", abDeduction=" + abDeduction + ", epfPercentage=" + epfPercentage
+				+ ", epsEmployeePercentage=" + epsEmployeePercentage + ", productionInsentive=" + productionInsentive
+				+ ", epfEmployerPercentage=" + epfEmployerPercentage + ", epsEmployerPercentage="
+				+ epsEmployerPercentage + ", presentInsentive=" + presentInsentive + ", nightAllow=" + nightAllow + "]";
 	}
 	 
 	 
