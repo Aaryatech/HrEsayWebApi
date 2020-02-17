@@ -23,6 +23,12 @@ public class LeaveStructureDetails {
 
 	@Column(name = "lvs_alloted_leaves")
 	private int lvsAllotedLeaves;
+	
+	@Column(name = "min_no_days")
+	private int minNoDays;
+	
+	@Column(name = "max_no_days")
+	private int maxNoDays;
 
 	@Column(name = "del_status")
 	private int delStatus;
@@ -143,13 +149,35 @@ public class LeaveStructureDetails {
 	public void setMakerDatetime(String makerDatetime) {
 		this.makerDatetime = makerDatetime;
 	}
+	
+	
+	
+
+	public int getMinNoDays() {
+		return minNoDays;
+	}
+
+	public void setMinNoDays(int minNoDays) {
+		this.minNoDays = minNoDays;
+	}
+
+	public int getMaxNoDays() {
+		return maxNoDays;
+	}
+
+	public void setMaxNoDays(int maxNoDays) {
+		this.maxNoDays = maxNoDays;
+	}
 
 	@Override
 	public String toString() {
 		return "LeaveStructureDetails [lvsDetailsId=" + lvsDetailsId + ", lvsId=" + lvsId + ", lvTypeId=" + lvTypeId
-				+ ", lvsAllotedLeaves=" + lvsAllotedLeaves + ", delStatus=" + delStatus + ", isActive=" + isActive
-				+ ", makerUserId=" + makerUserId + ", makerDatetime=" + makerDatetime + ", exInt1=" + exInt1
-				+ ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
+				+ ", lvsAllotedLeaves=" + lvsAllotedLeaves + ", minNoDays=" + minNoDays + ", maxNoDays=" + maxNoDays
+				+ ", delStatus=" + delStatus + ", isActive=" + isActive + ", makerUserId=" + makerUserId
+				+ ", makerDatetime=" + makerDatetime + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1="
+				+ exVar1 + ", exVar2=" + exVar2 + "]";
 	}
+
+	 
 
 }
