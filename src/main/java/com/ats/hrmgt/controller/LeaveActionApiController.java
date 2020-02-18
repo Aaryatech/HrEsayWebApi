@@ -386,13 +386,15 @@ public class LeaveActionApiController {
 	@RequestMapping(value = { "/checkDateForRepetedLeaveValidation" }, method = RequestMethod.POST)
 	public @ResponseBody Info checkDateForRepetedLeaveValidation(@RequestParam("fromDate") String fromDate,
 			@RequestParam("toDate") String toDate, @RequestParam("empId") int empId,
-			@RequestParam("leaveTypeId") int leaveTypeId) {
+			@RequestParam("leaveTypeId") int leaveTypeId, @RequestParam("shortName") String shortName,
+			@RequestParam("noOfDays") int noOfDays) {
 
 		Info info = new Info();
 
 		try {
 
 			Setting setting = settingRepo.findByKey("CONTILEAVE");
+			Setting TYPEVALIDATION = settingRepo.findByKey("TYPEVALIDATION");
 
 			List<LeaveApply> list = leaveApplyRepository.checkDateForRepetedLeaveValidation(fromDate, toDate, empId);
 

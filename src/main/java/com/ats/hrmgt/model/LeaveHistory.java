@@ -25,7 +25,7 @@ public class LeaveHistory {
 	
 	private float sactionLeave;
 	
-	
+	private int isFile;
 
 	public int getLvsId() {
 		return lvsId;
@@ -91,16 +91,19 @@ public class LeaveHistory {
 		this.sactionLeave = sactionLeave;
 	}
 
+	public int getIsFile() {
+		return isFile;
+	}
+
+	public void setIsFile(int isFile) {
+		this.isFile = isFile;
+	}
+
 	@Override
 	public String toString() {
-		return "LeaveHistory [lvTypeId=" + lvTypeId + ", lvTitleShort=" + lvTitleShort + ", lvTitle=" + lvTitle
-				+ ", lvsAllotedLeaves=" + lvsAllotedLeaves + ", balLeave=" + balLeave + ", aplliedLeaeve="
-				+ aplliedLeaeve + ", sactionLeave=" + sactionLeave + ", getLvTitle()=" + getLvTitle()
-				+ ", getLvTypeId()=" + getLvTypeId() + ", getLvTitleShort()=" + getLvTitleShort()
-				+ ", getLvsAllotedLeaves()=" + getLvsAllotedLeaves() + ", getBalLeave()=" + getBalLeave()
-				+ ", getAplliedLeaeve()=" + getAplliedLeaeve() + ", getSactionLeave()=" + getSactionLeave()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
-				+ "]";
+		return "LeaveHistory [lvTypeId=" + lvTypeId + ", lvsId=" + lvsId + ", lvTitleShort=" + lvTitleShort
+				+ ", lvTitle=" + lvTitle + ", lvsAllotedLeaves=" + lvsAllotedLeaves + ", balLeave=" + balLeave
+				+ ", aplliedLeaeve=" + aplliedLeaeve + ", sactionLeave=" + sactionLeave + ", isFile=" + isFile + "]";
 	}
 
 	
