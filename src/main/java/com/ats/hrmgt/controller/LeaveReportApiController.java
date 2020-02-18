@@ -19,21 +19,25 @@ import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.GetDailyDailyRecord;
 import com.ats.hrmgt.model.GetDailyDailyRecordRepository;
 import com.ats.hrmgt.model.LeaveApply;
+import com.ats.hrmgt.model.SlabMaster;
 import com.ats.hrmgt.model.advance.GetAdvance;
 import com.ats.hrmgt.model.report.EmpAttendeanceRep;
 import com.ats.hrmgt.model.report.GetLoanReport;
+import com.ats.hrmgt.model.report.GetPtChallan;
 import com.ats.hrmgt.model.report.GetSalaryCalcReport;
 import com.ats.hrmgt.model.report.GetYearlyAdvance;
 import com.ats.hrmgt.model.report.GetYearlyAdvanceNew;
 import com.ats.hrmgt.model.report.GetYearlyLoan;
 import com.ats.hrmgt.repo.report.EmpAttendeanceRepRepo;
 import com.ats.hrmgt.repo.report.GetLoanReportRepo;
+import com.ats.hrmgt.repo.report.GetPtChallanRepo;
 import com.ats.hrmgt.repo.report.GetSalaryCalcReportRepo;
 import com.ats.hrmgt.repo.report.GetYearlyAdvanceRepo;
 import com.ats.hrmgt.repo.report.GetYearlyLoanRepo;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
+import com.ats.hrmgt.repository.SlabMasterRepository;
 
 @RestController
 
@@ -299,8 +303,7 @@ public class LeaveReportApiController {
 
 	@RequestMapping(value = { "/getPfStatement" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetSalaryCalcReport> getPfStatement(@RequestParam("companyId") int companyId,
-			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate 
-			 ) {
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
 
 		List<GetSalaryCalcReport> advYearList = new ArrayList<GetSalaryCalcReport>();
 
@@ -313,7 +316,8 @@ public class LeaveReportApiController {
 				advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReport(from[2], from[1], to[2], to[1]);
 
 			} else {
-				advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReportSunCmpwise(companyId, from[2], from[1], to[2], to[1]);
+				advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReportSunCmpwise(companyId, from[2], from[1],
+						to[2], to[1]);
 
 			}
 
@@ -344,6 +348,69 @@ public class LeaveReportApiController {
 		}
 
 		return advYearList;
+
+	}
+
+	@Autowired
+	GetPtChallanRepo getPtChallanRepo;
+
+	@Autowired
+	SlabMasterRepository slabMasterRepository;
+
+	@RequestMapping(value = { "/getPtChallanRep" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetPtChallan> getPtChallanRep(@RequestParam("companyId") int companyId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<GetPtChallan> advYearList = new ArrayList<GetPtChallan>();
+		List<SlabMaster> slabList = new ArrayList<SlabMaster>();
+		List<GetPtChallan> advYearListNew = new ArrayList<GetPtChallan>();
+
+		String from[] = fromDate.split("-");
+		String to[] = toDate.split("-");
+
+		try {
+			advYearList = getPtChallanRepo.getPtChallan(from[2], from[1], to[2], to[1], companyId);
+
+			slabList = slabMasterRepository.findAll();
+
+			for (int i = 0; i < slabList.size(); i++) {
+
+				GetPtChallan temp = new GetPtChallan();
+
+				int flag = 0;
+
+				for (int j = 0; j < advYearList.size(); j++) {
+
+					if (slabList.get(i).getSlabId() == advYearList.get(j).getSlabId()) {
+
+						flag = 1;
+ 						temp = advYearList.get(j);
+						break;
+
+					}
+
+				}
+
+				if (flag != 1) {
+
+					temp.setEmpCount(0);
+					temp.setMaxVal(slabList.get(i).getMaxVal());
+					temp.setMinVal(slabList.get(i).getMinVal());
+					temp.setSlabId(slabList.get(i).getSlabId());
+					temp.setTotal(0);
+
+				}
+
+				advYearListNew.add(temp);
+
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearListNew;
 
 	}
 
