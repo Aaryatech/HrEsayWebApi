@@ -411,21 +411,30 @@ public class LeaveActionApiController {
 
 				if (Integer.parseInt(setting.getValue()) == 1) {
 
-					list = leaveApplyRepository.checkContinueDateLeave(fromDate, toDate, empId, leaveTypeId);
-					if (list.size() > 0) {
-						info.setError(true);
-						info.setMsg("You Cannot Apply Continue Leave As Diffrent Type. ");
-					} else {
-						/*
-						 * info.setError(false); info.setMsg("you can apply");
-						 */
+					if (shortName.equalsIgnoreCase("LWP") || shortName.equalsIgnoreCase("SL")) {
 
 						info = LeaveTypeValidation(empId, leaveTypeId, shortName, noOfDays);
+					} else {
+						
+						list = leaveApplyRepository.checkContinueDateLeave(fromDate, toDate, empId, leaveTypeId);
+						if (list.size() > 0) {
+
+							info.setError(true);
+							info.setMsg("You Cannot Apply Continue Leave As Diffrent Type. ");
+
+						} else {
+							/*
+							 * info.setError(false); info.setMsg("you can apply");
+							 */
+
+							info = LeaveTypeValidation(empId, leaveTypeId, shortName, noOfDays);
+						}
 					}
 
 				} else {
-					/*info.setError(false);
-					info.setMsg("you can apply");*/
+					/*
+					 * info.setError(false); info.setMsg("you can apply");
+					 */
 					info = LeaveTypeValidation(empId, leaveTypeId, shortName, noOfDays);
 				}
 
@@ -450,7 +459,7 @@ public class LeaveActionApiController {
 				LeaveTypeWithLimit leaveTypeWithLimit = leaveTypeWithLimitRepository.LeaveTypeWithLimit(empId,
 						leaveTypeId, calendearYear.getCalYrId());
 
-				//System.out.println(leaveTypeWithLimit.getMaxNoDays() + " " + noOfDays);
+				// System.out.println(leaveTypeWithLimit.getMaxNoDays() + " " + noOfDays);
 				if (leaveTypeWithLimit.getMaxNoDays() != 0 && leaveTypeWithLimit.getMaxNoDays() < noOfDays) {
 
 					info.setError(true);
