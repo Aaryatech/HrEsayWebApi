@@ -483,7 +483,6 @@ public class PayrollApiController {
 
 			double epf_wages_employee = 0;
 			double epf_wages_employeR = 0;
-			double eps_Cal = 0;
 			double epf_percentage = 0;
 			double cealing_limit_eps_wages = 0;
 			double employer_eps_percentage = 0;
@@ -500,7 +499,8 @@ public class PayrollApiController {
 			int febmonthptamount_condtioncheck = 0;
 			double febmonthptamount = 0;
 			int amount_round = 0;
-			double diff_epfwages_limit = 0;
+			double employee_mlwf = 0;
+			double employer_mlwf = 0;
 
 			for (int k = 0; k < settingList.size(); k++) {
 				if (settingList.get(k).getKey().equalsIgnoreCase("ceiling_limit_eps_wages")) {
@@ -535,6 +535,10 @@ public class PayrollApiController {
 					ab_deduction = Integer.parseInt(settingList.get(k).getValue());
 				} else if (settingList.get(k).getKey().equalsIgnoreCase("employer_epf_percentage")) {
 					employer_epf_percentage = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("employer_mlwf_value_ded")) {
+					employer_mlwf = Float.parseFloat(settingList.get(k).getValue());
+				} else if (settingList.get(k).getKey().equalsIgnoreCase("mlwf_value_ded")) {
+					employee_mlwf = Float.parseFloat(settingList.get(k).getValue());
 				}
 			}
 
@@ -824,8 +828,14 @@ public class PayrollApiController {
 
 				}
 
-				if (!getSalaryTempList.get(i).getMlwfApplicable().equalsIgnoreCase("yes")) {
+				if (getSalaryTempList.get(i).getMlwfApplicable().equalsIgnoreCase("yes")) {
+					if (month == 6 || month == 12) {
+						getSalaryTempList.get(i).setMlwf(employee_mlwf);
+						getSalaryTempList.get(i).setEmployerMlwf(employer_mlwf);
+					}
+				} else {
 					getSalaryTempList.get(i).setMlwf(0);
+					getSalaryTempList.get(i).setEmployerMlwf(0);
 				}
 
 				try {
@@ -1336,6 +1346,7 @@ public class PayrollApiController {
 				SalaryCalc.setEdliAdminPercentage(salList.get(i).getEdliAdminPercentage());
 				SalaryCalc.setEmployeeEsicPercentage(salList.get(i).getEmployeeEsicPercentage());
 				SalaryCalc.setEmployerEsicPercentage(salList.get(i).getEmployerEsicPercentage());
+				SalaryCalc.setEmployerMlwf(salList.get(i).getEmployerMlwf());
 				
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 

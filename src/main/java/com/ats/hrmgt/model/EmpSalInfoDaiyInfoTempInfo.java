@@ -96,6 +96,8 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	private double employerEsicPercentageSal;
 	@Transient
 	private double employeeEsicPercentageSal;
+	@Transient
+	private double employerMlwf;
 	
 	// tbl_emp_salary_info
 	private int salaryInfoId; 
@@ -1086,6 +1088,12 @@ public class EmpSalInfoDaiyInfoTempInfo {
 	public void setEmployeeEsicPercentageSal(double employeeEsicPercentageSal) {
 		this.employeeEsicPercentageSal = employeeEsicPercentageSal;
 	}
+	public double getEmployerMlwf() {
+		return employerMlwf;
+	}
+	public void setEmployerMlwf(double employerMlwf) {
+		this.employerMlwf = employerMlwf;
+	}
 	@Override
 	public String toString() {
 		return "EmpSalInfoDaiyInfoTempInfo [uuid=" + uuid + ", id=" + id + ", cmpId=" + cmpId + ", empId=" + empId
@@ -1115,11 +1123,11 @@ public class EmpSalInfoDaiyInfoTempInfo {
 				+ ", pfAdminChPercentage=" + pfAdminChPercentage + ", edliPercentage=" + edliPercentage
 				+ ", edliAdminPercentage=" + edliAdminPercentage + ", employerEsicPercentageSal="
 				+ employerEsicPercentageSal + ", employeeEsicPercentageSal=" + employeeEsicPercentageSal
-				+ ", salaryInfoId=" + salaryInfoId + ", salaryTypeId=" + salaryTypeId + ", basic=" + basic + ", da="
-				+ da + ", hra=" + hra + ", spa=" + spa + ", pfApplicable=" + pfApplicable + ", pfType=" + pfType
-				+ ", pfEmpPer=" + pfEmpPer + ", pfEmplrPer=" + pfEmplrPer + ", esicApplicable=" + esicApplicable
-				+ ", cmpJoiningDate=" + cmpJoiningDate + ", cmpLeavingDate=" + cmpLeavingDate + ", epfJoiningDate="
-				+ epfJoiningDate + ", leavingReason=" + leavingReason + ", salBasis=" + salBasis
+				+ ", employerMlwf=" + employerMlwf + ", salaryInfoId=" + salaryInfoId + ", salaryTypeId=" + salaryTypeId
+				+ ", basic=" + basic + ", da=" + da + ", hra=" + hra + ", spa=" + spa + ", pfApplicable=" + pfApplicable
+				+ ", pfType=" + pfType + ", pfEmpPer=" + pfEmpPer + ", pfEmplrPer=" + pfEmplrPer + ", esicApplicable="
+				+ esicApplicable + ", cmpJoiningDate=" + cmpJoiningDate + ", cmpLeavingDate=" + cmpLeavingDate
+				+ ", epfJoiningDate=" + epfJoiningDate + ", leavingReason=" + leavingReason + ", salBasis=" + salBasis
 				+ ", ceilingLimitEmpApplicable=" + ceilingLimitEmpApplicable + ", ceilingLimitEmployerApplicable="
 				+ ceilingLimitEmployerApplicable + ", leavingReasonEsic=" + leavingReasonEsic + ", leavingReasonPf="
 				+ leavingReasonPf + ", mlwfApplicable=" + mlwfApplicable + ", ptApplicable=" + ptApplicable
