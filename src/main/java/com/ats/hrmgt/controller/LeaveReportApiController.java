@@ -250,13 +250,14 @@ public class LeaveReportApiController {
 		return list;
 
 	}
+
 //*********************LoanReport*****************************
 	@Autowired
 	GetLoanReportRepo getLoanReportRepo;
 
 	@RequestMapping(value = { "/getLoanReport" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetLoanReport> getLoanReport(@RequestParam("month") int month,
-			@RequestParam("year") int year ) {
+			@RequestParam("year") int year) {
 
 		List<GetLoanReport> loanList = new ArrayList<GetLoanReport>();
 
@@ -270,20 +271,18 @@ public class LeaveReportApiController {
 		return loanList;
 
 	}
-	
+
 	@Autowired
 	GetYearlyLoanRepo getYearlyLoanRepo;
-	
+
 	@RequestMapping(value = { "/getLoanYearlyReport" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetYearlyLoan> getLoanYearlyReport(@RequestParam("companyId") int companyId,
 			@RequestParam("year") int year) {
 
 		List<GetYearlyLoan> advYearList = new ArrayList<GetYearlyLoan>();
- 
-		try {
-			advYearList = getYearlyLoanRepo.getSpecEmpAdvForReport( year);
 
-			 
+		try {
+			advYearList = getYearlyLoanRepo.getSpecEmpAdvForReport(year);
 
 		} catch (Exception e) {
 
@@ -293,22 +292,30 @@ public class LeaveReportApiController {
 		return advYearList;
 
 	}
-	
-	
-	//*************PF Statement*************************
+
+	// *************PF Statement*************************
 	@Autowired
 	GetSalaryCalcReportRepo getSalaryCalcReportRepo;
-	
+
 	@RequestMapping(value = { "/getPfStatement" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetSalaryCalcReport> getPfStatement(@RequestParam("companyId") int companyId,
-			@RequestParam("year") int year,@RequestParam("month") int month) {
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate 
+			 ) {
 
 		List<GetSalaryCalcReport> advYearList = new ArrayList<GetSalaryCalcReport>();
- 
-		try {
-			advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReport(companyId, year,month);
 
-			 
+		String from[] = fromDate.split("-");
+		String to[] = toDate.split("-");
+
+		try {
+
+			if (companyId != 0) {
+				advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReport(from[2], from[1], to[2], to[1]);
+
+			} else {
+				advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReportSunCmpwise(companyId, from[2], from[1], to[2], to[1]);
+
+			}
 
 		} catch (Exception e) {
 
@@ -318,6 +325,26 @@ public class LeaveReportApiController {
 		return advYearList;
 
 	}
-	
+
+	@RequestMapping(value = { "/getEmpPfStatement" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetSalaryCalcReport> getEmpPfStatement(@RequestParam("empId") int empId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<GetSalaryCalcReport> advYearList = new ArrayList<GetSalaryCalcReport>();
+
+		String from[] = fromDate.split("-");
+		String to[] = toDate.split("-");
+
+		try {
+			advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReportEmpWise(from[1], from[0], to[1], to[0], empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
+
+	}
 
 }

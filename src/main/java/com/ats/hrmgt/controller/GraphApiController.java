@@ -154,7 +154,7 @@ public class GraphApiController {
 			List<String> dateList = DateConvertor.getAllMonth(emp.getCmpJoiningDate());
 
 			List<Advance> attList = advanceRepo.findByEmpIdAndDelStatus(empId, 1);
-			System.err.println("  attList" + attList.toString());
+		//	System.err.println("  attList" + attList.toString());
 			for (int i = 0; i < dateList.size(); i++) {
 				EmpAdvanceGraph dailyrec = new EmpAdvanceGraph();
 
@@ -274,10 +274,10 @@ public class GraphApiController {
 
 			List<String> dateList = DateConvertor.getAllMonthBetDates(date1, date2);
 
-			System.err.println("  dateList" + dateList.toString());
+			//System.err.println("  dateList" + dateList.toString());
 
 			List<Advance> advanceList = advanceRepo.findByEmpIdAndDelStatus(empId, 1);
-			System.err.println("  advanceList" + advanceList.toString());
+			//System.err.println("  advanceList" + advanceList.toString());
 			for (int i = 0; i < dateList.size(); i++) {
 				EmpAdvanceGraph dailyrec = new EmpAdvanceGraph();
 
@@ -402,10 +402,10 @@ public class GraphApiController {
 
 			List<String> dateList = DateConvertor.getAllMonthBetDates(date1, date2);
 
-			System.err.println("  dateList" + dateList.toString());
+			//System.err.println("  dateList" + dateList.toString());
 
 			List<LoanMain> loanList = loanMainRepo.findByEmpIdAndDelStatus(empId, 1);
-			System.err.println("  loanList" + loanList.toString());
+			//System.err.println("  loanList" + loanList.toString());
 			for (int i = 0; i < dateList.size(); i++) {
 				EmpLoanGraph dailyrec = new EmpLoanGraph();
 

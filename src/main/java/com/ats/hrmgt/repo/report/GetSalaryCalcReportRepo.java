@@ -14,41 +14,80 @@ public interface GetSalaryCalcReportRepo extends JpaRepository<GetSalaryCalcRepo
 	
 
 	@Query(value=" SELECT\n" + 
-			"    tbl_salary_calc.id,\n" + 
-			"    tbl_salary_calc.cmp_id,\n" + 
-			"    tbl_salary_calc.emp_id,\n" + 
-			"    tbl_salary_calc.emp_code,\n" + 
-			"    tbl_salary_calc.calc_month,\n" + 
-			"    tbl_salary_calc.calc_year,\n" + 
-			"    tbl_salary_calc.epf_wages,\n" + 
-			"    tbl_salary_calc.epf_wages_employer,\n" + 
-			"    tbl_salary_calc.eps_default,\n" + 
-			"    tbl_salary_calc.esic_wages_cal,\n" + 
-			"    tbl_salary_calc.gross_salary,\n" + 
-			"    tbl_salary_calc.eps_wages,\n" + 
-			"    tbl_salary_calc.esic_wages_dec,\n" + 
-			"    tbl_salary_calc.employee_pf,\n" + 
-			"    tbl_salary_calc.employer_eps,\n" + 
-			"    tbl_salary_calc.employer_pf,\n" + 
-			"    tbl_salary_calc.employer_esic,\n" + 
-			"    tbl_salary_calc.esic_status,\n" + 
-			"    tbl_salary_calc.pf_status,\n" + 
-			"    tbl_salary_calc.epf_percentage,\n" + 
-			"    tbl_salary_calc.eps_employee_percentage,\n" + 
-			"    tbl_salary_calc.epf_employer_percentage,\n" + 
-			"    tbl_salary_calc.eps_employer_percentage,\n" + 
+			"    salc.*,\n" + 
 			"    CONCAT(\n" + 
-			"        m_employees.first_name,\n" + 
+			"        emp.first_name,\n" + 
 			"        ' ',\n" + 
-			"        m_employees.middle_name,\n" + 
+			"        emp.middle_name,\n" + 
 			"        ' ',\n" + 
-			"        m_employees.surname\n" + 
-			"    ) AS emp_name\n" + 
+			"        emp.surname\n" + 
+			"    ) AS emp_name,\n" + 
+			"    company_name,\n" + 
+			"    name_sd\n" + 
 			"FROM\n" + 
-			"    tbl_salary_calc,\n" + 
-			"    m_employees\n" + 
+			"    tbl_salary_calc salc\n" + 
+			"INNER JOIN m_employees emp ON\n" + 
+			"    salc.emp_id = emp.emp_id\n" + 
+			"LEFT JOIN tbl_mst_sub_company subcomp ON\n" + 
+			"    salc.cmp_id = subcomp.company_id\n" + 
 			"WHERE\n" + 
-			"    tbl_salary_calc.pf_status = 1 AND tbl_salary_calc.calc_month =:month AND tbl_salary_calc.calc_year = :year AND m_employees.emp_id = tbl_salary_calc.emp_id AND tbl_salary_calc.cmp_id =:companyId",nativeQuery=true)
-	List<GetSalaryCalcReport> getSpecEmpAdvForReport(@Param("companyId") int companyId,@Param("year") int year,@Param("month") int month);
+			"    salc.pf_status = 1 AND (\n" + 
+			"        salc.calc_month >= :fromMonth AND salc.calc_year = :fromYear\n" + 
+			"    ) OR(\n" + 
+			"        salc.calc_month <=:toMonth AND salc.calc_year = :toYear\n" + 
+			"    )  ",nativeQuery=true)
+	List<GetSalaryCalcReport> getSpecEmpAdvForReport(@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth);
+	
+	
+	@Query(value=" SELECT\n" + 
+			"    salc.*,\n" + 
+			"    CONCAT(\n" + 
+			"        emp.first_name,\n" + 
+			"        ' ',\n" + 
+			"        emp.middle_name,\n" + 
+			"        ' ',\n" + 
+			"        emp.surname\n" + 
+			"    ) AS emp_name,\n" + 
+			"    company_name,\n" + 
+			"    name_sd\n" + 
+			"FROM\n" + 
+			"    tbl_salary_calc salc\n" + 
+			"INNER JOIN m_employees emp ON\n" + 
+			"    salc.emp_id = emp.emp_id\n" + 
+			"LEFT JOIN tbl_mst_sub_company subcomp ON\n" + 
+			"    salc.cmp_id = subcomp.company_id\n" + 
+			"WHERE\n" + 
+			"    salc.pf_status = 1 AND (\n" + 
+			"        salc.calc_month >=:fromMonth AND salc.calc_year = :fromYear\n" + 
+			"    ) OR(\n" + 
+			"        salc.calc_month <=:toMonth AND salc.calc_year = :toYear\n" + 
+			"    )  AND salc.cmp_id =:companyId",nativeQuery=true)
+	List<GetSalaryCalcReport> getSpecEmpAdvForReportSunCmpwise(@Param("companyId") int companyId,@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth);
+	
+	
+	@Query(value="SELECT salc\n" + 
+			"    .*,\n" + 
+			"    CONCAT(\n" + 
+			"        emp.first_name,\n" + 
+			"        ' ',\n" + 
+			"        emp.middle_name,\n" + 
+			"        ' ',\n" + 
+			"        emp.surname\n" + 
+			"    ) AS emp_name,\n" + 
+			"    company_name,\n" + 
+			"    name_sd\n" + 
+			"FROM\n" + 
+			"    tbl_salary_calc salc\n" + 
+			"INNER JOIN m_employees emp ON\n" + 
+			"    salc.emp_id = emp.emp_id\n" + 
+			"LEFT JOIN tbl_mst_sub_company subcomp ON\n" + 
+			"    salc.cmp_id = subcomp.company_id\n" + 
+			"WHERE\n" + 
+			"    salc.pf_status = 1 AND(\n" + 
+			"        salc.calc_month >=:fromMonth AND salc.calc_year =:fromYear\n" + 
+			"    ) OR(\n" + 
+			"        salc.calc_month <=:toMonth AND salc.calc_year =:toYear\n" + 
+			"    ) AND salc.emp_id=:empId",nativeQuery=true)
+	List<GetSalaryCalcReport> getSpecEmpAdvForReportEmpWise(@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth,@Param("empId") int empId);
 
 }
