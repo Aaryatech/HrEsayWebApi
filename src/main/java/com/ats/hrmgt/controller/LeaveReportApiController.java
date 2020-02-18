@@ -367,12 +367,20 @@ public class LeaveReportApiController {
 
 		String from[] = fromDate.split("-");
 		String to[] = toDate.split("-");
-
+		  
 		try {
-			advYearList = getPtChallanRepo.getPtChallan(from[2], from[1], to[2], to[1], companyId);
+			
+			if(companyId!=0) {
+				advYearList = getPtChallanRepo.getPtChallan(from[2].trim(), from[1].trim(), to[2].trim(), to[1].trim(), companyId);
+
+			}else {
+				advYearList = getPtChallanRepo.getPtChallanAllCmp(from[2].trim(), from[1].trim(), to[2].trim(), to[1].trim());
+
+			}
 
 			slabList = slabMasterRepository.findAll();
 
+			//System.err.println("advYearList" + advYearList.toString());
 			for (int i = 0; i < slabList.size(); i++) {
 
 				GetPtChallan temp = new GetPtChallan();
@@ -384,7 +392,7 @@ public class LeaveReportApiController {
 					if (slabList.get(i).getSlabId() == advYearList.get(j).getSlabId()) {
 
 						flag = 1;
- 						temp = advYearList.get(j);
+						temp = advYearList.get(j);
 						break;
 
 					}
