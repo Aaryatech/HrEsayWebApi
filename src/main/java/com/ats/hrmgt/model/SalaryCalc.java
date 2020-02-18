@@ -86,8 +86,8 @@ public class SalaryCalc {
 	private double pfAdminChPercentage; 
 	private double edliPercentage; 
 	private double edliAdminPercentage;  
-	private double employerEsicPercentageSal; 
-	private double employeeEsicPercentageSal;
+	private double employerEsicPercentage; 
+	private double employeeEsicPercentage;
 	
 	public int getId() {
 		return id;
@@ -527,17 +527,18 @@ public class SalaryCalc {
 	public void setEdliAdminPercentage(double edliAdminPercentage) {
 		this.edliAdminPercentage = edliAdminPercentage;
 	}
-	public double getEmployerEsicPercentageSal() {
-		return employerEsicPercentageSal;
+	 
+	public double getEmployerEsicPercentage() {
+		return employerEsicPercentage;
 	}
-	public void setEmployerEsicPercentageSal(double employerEsicPercentageSal) {
-		this.employerEsicPercentageSal = employerEsicPercentageSal;
+	public void setEmployerEsicPercentage(double employerEsicPercentage) {
+		this.employerEsicPercentage = employerEsicPercentage;
 	}
-	public double getEmployeeEsicPercentageSal() {
-		return employeeEsicPercentageSal;
+	public double getEmployeeEsicPercentage() {
+		return employeeEsicPercentage;
 	}
-	public void setEmployeeEsicPercentageSal(double employeeEsicPercentageSal) {
-		this.employeeEsicPercentageSal = employeeEsicPercentageSal;
+	public void setEmployeeEsicPercentage(double employeeEsicPercentage) {
+		this.employeeEsicPercentage = employeeEsicPercentage;
 	}
 	@Override
 	public String toString() {
@@ -565,8 +566,8 @@ public class SalaryCalc {
 				+ epsEmployerPercentage + ", presentInsentive=" + presentInsentive + ", nightAllow=" + nightAllow
 				+ ", epsDefault=" + epsDefault + ", epmloyerEpfDefault=" + epmloyerEpfDefault + ", epmloyerEpfExtra="
 				+ epmloyerEpfExtra + ", pfAdminChPercentage=" + pfAdminChPercentage + ", edliPercentage="
-				+ edliPercentage + ", edliAdminPercentage=" + edliAdminPercentage + ", employerEsicPercentageSal="
-				+ employerEsicPercentageSal + ", employeeEsicPercentageSal=" + employeeEsicPercentageSal + "]";
+				+ edliPercentage + ", edliAdminPercentage=" + edliAdminPercentage + ", employerEsicPercentage="
+				+ employerEsicPercentage + ", employeeEsicPercentage=" + employeeEsicPercentage + "]";
 	}
 	 
 	 

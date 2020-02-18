@@ -1334,8 +1334,8 @@ public class PayrollApiController {
 				SalaryCalc.setPfAdminChPercentage(salList.get(i).getPfAdminChPercentage());
 				SalaryCalc.setEdliPercentage(salList.get(i).getEdliPercentage());
 				SalaryCalc.setEdliAdminPercentage(salList.get(i).getEdliAdminPercentage());
-				SalaryCalc.setEmployeeEsicPercentageSal(salList.get(i).getEmployeeEsicPercentage());
-				SalaryCalc.setEmployerEsicPercentageSal(salList.get(i).getEmployerEsicPercentage());
+				SalaryCalc.setEmployeeEsicPercentage(salList.get(i).getEmployeeEsicPercentage());
+				SalaryCalc.setEmployerEsicPercentage(salList.get(i).getEmployerEsicPercentage());
 				
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 
