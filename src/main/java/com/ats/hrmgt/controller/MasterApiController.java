@@ -552,6 +552,23 @@ public class MasterApiController {
 		return list;
 
 	}
+	
+	@RequestMapping(value = { "/getEmplistForAssignAuthorityAll" }, method = RequestMethod.GET)
+	public @ResponseBody List<EmployeeMaster> getEmplistForAssignAuthorityAll() {
+
+		List<EmployeeMaster> list = new ArrayList<>();
+		try {
+
+			list = employeeMasterRepository.getEmplistForAssignAuthorityAll();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
 
 	@RequestMapping(value = { "/getEmpInfoListForLeaveAuth" }, method = RequestMethod.GET)
 	public @ResponseBody List<EmployeeMaster> getEmpInfoListForLeaveAuth() {

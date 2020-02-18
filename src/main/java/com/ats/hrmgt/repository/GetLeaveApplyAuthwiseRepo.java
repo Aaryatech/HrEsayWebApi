@@ -132,7 +132,7 @@ public interface GetLeaveApplyAuthwiseRepo extends JpaRepository<GetLeaveApplyAu
 			"        la.circulated_to,\n" + 
 			"        la.leave_emp_reason,\n" + 
 			"        e.emp_code,\n" + 
-			"        \"\" as emp_photo,\n" + 
+			"        la.ex_var3 as emp_photo,\n" + 
 			"        lt.lv_title AS leave_title,\n" + 
 			"        CONCAT(e.surname,\n" + 
 			"        \" \",\n" + 

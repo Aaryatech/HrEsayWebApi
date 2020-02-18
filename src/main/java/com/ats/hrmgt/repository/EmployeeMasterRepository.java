@@ -17,6 +17,9 @@ import java.lang.String;
 
 public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, Integer> {
 
+	@Query(value = " SELECT * FROM m_employees ", nativeQuery = true)
+	List<EmployeeMaster> getEmplistForAssignAuthorityAll();
+	
 	@Query(value = " SELECT * FROM m_employees where ex_int1=1", nativeQuery = true)
 	List<EmployeeMaster> getEmplistForAssignAuthority();
 
