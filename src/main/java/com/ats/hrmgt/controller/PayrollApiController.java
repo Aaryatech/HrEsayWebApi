@@ -785,7 +785,7 @@ public class PayrollApiController {
 									getSalaryTempList.get(i).getWorkingDays(), ammt, mstEmpType, amount_round);
 							getSalaryTempList.get(i).setProductionInsentive(tempVal);
 							salaryTermList.get(j).setValue(tempVal);
-							  System.out.println(ammt + "oTTTTT" + tempVal);
+							System.out.println(ammt + "oTTTTT" + tempVal);
 
 							/*
 							 * System.out.println(getSalaryTempList.get(i).getEmpId() + " " + ammt +
@@ -980,7 +980,7 @@ public class PayrollApiController {
 				getSalaryTempList.get(i).setPfAdminChPercentage(tot_pf_admin_ch_percentage);
 				getSalaryTempList.get(i).setEdliPercentage(tot_edli_ch_percentage);
 				getSalaryTempList.get(i).setEdliAdminPercentage(tot_edli_admin_ch_percentage);
-				
+
 				getSalaryTempList.get(i).setStatusDytemp(1);
 				getSalaryTempList.get(i).setNetSalary(castNumber((getSalaryTempList.get(i).getGrossSalaryDytemp()
 						+ getSalaryTempList.get(i).getPerformanceBonus() + getSalaryTempList.get(i).getMiscExpAdd()
@@ -1334,6 +1334,8 @@ public class PayrollApiController {
 				SalaryCalc.setPfAdminChPercentage(salList.get(i).getPfAdminChPercentage());
 				SalaryCalc.setEdliPercentage(salList.get(i).getEdliPercentage());
 				SalaryCalc.setEdliAdminPercentage(salList.get(i).getEdliAdminPercentage());
+				SalaryCalc.setEmployeeEsicPercentageSal(salList.get(i).getEmployeeEsicPercentage());
+				SalaryCalc.setEmployerEsicPercentageSal(salList.get(i).getEmployerEsicPercentage());
 				
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 

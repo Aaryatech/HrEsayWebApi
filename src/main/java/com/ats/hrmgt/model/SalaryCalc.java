@@ -4,8 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.Table; 
 
 @Entity
 @Table(name = "tbl_salary_calc")
@@ -86,7 +85,9 @@ public class SalaryCalc {
 	private double epmloyerEpfExtra; 
 	private double pfAdminChPercentage; 
 	private double edliPercentage; 
-	private double edliAdminPercentage; 
+	private double edliAdminPercentage;  
+	private double employerEsicPercentageSal; 
+	private double employeeEsicPercentageSal;
 	
 	public int getId() {
 		return id;
@@ -526,6 +527,18 @@ public class SalaryCalc {
 	public void setEdliAdminPercentage(double edliAdminPercentage) {
 		this.edliAdminPercentage = edliAdminPercentage;
 	}
+	public double getEmployerEsicPercentageSal() {
+		return employerEsicPercentageSal;
+	}
+	public void setEmployerEsicPercentageSal(double employerEsicPercentageSal) {
+		this.employerEsicPercentageSal = employerEsicPercentageSal;
+	}
+	public double getEmployeeEsicPercentageSal() {
+		return employeeEsicPercentageSal;
+	}
+	public void setEmployeeEsicPercentageSal(double employeeEsicPercentageSal) {
+		this.employeeEsicPercentageSal = employeeEsicPercentageSal;
+	}
 	@Override
 	public String toString() {
 		return "SalaryCalc [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode + ", empType="
@@ -552,7 +565,8 @@ public class SalaryCalc {
 				+ epsEmployerPercentage + ", presentInsentive=" + presentInsentive + ", nightAllow=" + nightAllow
 				+ ", epsDefault=" + epsDefault + ", epmloyerEpfDefault=" + epmloyerEpfDefault + ", epmloyerEpfExtra="
 				+ epmloyerEpfExtra + ", pfAdminChPercentage=" + pfAdminChPercentage + ", edliPercentage="
-				+ edliPercentage + ", edliAdminPercentage=" + edliAdminPercentage + "]";
+				+ edliPercentage + ", edliAdminPercentage=" + edliAdminPercentage + ", employerEsicPercentageSal="
+				+ employerEsicPercentageSal + ", employeeEsicPercentageSal=" + employeeEsicPercentageSal + "]";
 	}
 	 
 	 
