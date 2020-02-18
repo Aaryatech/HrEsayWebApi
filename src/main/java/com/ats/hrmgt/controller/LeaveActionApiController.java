@@ -28,6 +28,7 @@ import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveApply;
 import com.ats.hrmgt.model.LeaveHistory;
 import com.ats.hrmgt.model.LeaveTrail;
+import com.ats.hrmgt.model.LeaveTypeWithLimit;
 import com.ats.hrmgt.model.PayableDayAndPresentDays;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.repository.AuthorityInformationRepository;
@@ -39,6 +40,7 @@ import com.ats.hrmgt.repository.GetLeaveApplyAuthwiseRepo;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
 import com.ats.hrmgt.repository.LeaveHistoryRepo;
 import com.ats.hrmgt.repository.LeaveTrailRepository;
+import com.ats.hrmgt.repository.LeaveTypeWithLimitRepository;
 import com.ats.hrmgt.repository.PayableDayAndPresentDaysRepo;
 import com.ats.hrmgt.repository.SettingRepo;
 
@@ -74,6 +76,9 @@ public class LeaveActionApiController {
 
 	@Autowired
 	PayableDayAndPresentDaysRepo payableDayAndPresentDaysRepo;
+
+	@Autowired
+	LeaveTypeWithLimitRepository leaveTypeWithLimitRepository;
 
 	@RequestMapping(value = { "/updateLeaveStatus" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateLeaveStatus(@RequestParam("leaveId") int leaveId,
@@ -394,7 +399,6 @@ public class LeaveActionApiController {
 		try {
 
 			Setting setting = settingRepo.findByKey("CONTILEAVE");
-			Setting TYPEVALIDATION = settingRepo.findByKey("TYPEVALIDATION");
 
 			List<LeaveApply> list = leaveApplyRepository.checkDateForRepetedLeaveValidation(fromDate, toDate, empId);
 
@@ -412,13 +416,17 @@ public class LeaveActionApiController {
 						info.setError(true);
 						info.setMsg("You Cannot Apply Continue Leave As Diffrent Type. ");
 					} else {
-						info.setError(false);
-						info.setMsg("you can apply");
+						/*
+						 * info.setError(false); info.setMsg("you can apply");
+						 */
+
+						info = LeaveTypeValidation(empId, leaveTypeId, shortName, noOfDays);
 					}
 
 				} else {
-					info.setError(false);
-					info.setMsg("you can apply");
+					/*info.setError(false);
+					info.setMsg("you can apply");*/
+					info = LeaveTypeValidation(empId, leaveTypeId, shortName, noOfDays);
 				}
 
 			}
@@ -429,5 +437,38 @@ public class LeaveActionApiController {
 
 		return info;
 
+	}
+
+	public Info LeaveTypeValidation(int empId, int leaveTypeId, String shortName, int noOfDays) {
+		Info info = new Info();
+
+		try {
+			Setting TYPEVALIDATION = settingRepo.findByKey("TYPEVALIDATION");
+
+			if (Integer.parseInt(TYPEVALIDATION.getValue()) == 1) {
+				CalenderYear calendearYear = calculateYearRepository.findByIsCurrent(1);
+				LeaveTypeWithLimit leaveTypeWithLimit = leaveTypeWithLimitRepository.LeaveTypeWithLimit(empId,
+						leaveTypeId, calendearYear.getCalYrId());
+
+				//System.out.println(leaveTypeWithLimit.getMaxNoDays() + " " + noOfDays);
+				if (leaveTypeWithLimit.getMaxNoDays() != 0 && leaveTypeWithLimit.getMaxNoDays() < noOfDays) {
+
+					info.setError(true);
+					info.setMsg("Your Leave Limit is " + leaveTypeWithLimit.getMaxNoDays());
+
+				} else {
+					info.setError(false);
+					info.setMsg("you can apply");
+				}
+
+			} else {
+				info.setError(false);
+				info.setMsg("you can apply");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return info;
 	}
 }

@@ -210,8 +210,8 @@ public class WeeklyOffApiController {
 			int weekendCatId = weeklyOffRepo.getweekendCatId(empId);
 			int holidayCatId = weeklyOffRepo.getholidayCatId(empId);
 
-			System.out.println(weekendCatId);
-			System.out.println(holidayCatId);
+			/*System.out.println(weekendCatId);
+			System.out.println(holidayCatId);*/
 			weeklyList = weeklyOffRepo.getWeeklyOffListByEmpId(empId);
 			holidayList = holidayRepo.getHolidayByEmpIdAndFromDateTodate(empId, fromDate, toDate);
 			arryadate = new ArrayList<>();
