@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.model.GetHoliday;
 import com.ats.hrmgt.model.Holiday;
+import com.ats.hrmgt.model.HolidayMaster;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveAuthority;
 import com.ats.hrmgt.model.Location;
+import com.ats.hrmgt.repo.HolidayMasterRepo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.GetHolidayRepo;
 import com.ats.hrmgt.repository.HolidayRepo;
@@ -40,9 +42,12 @@ public class LeaveHolidayApiCon {
 
 	@Autowired
 	CalculateYearRepository calculateYearRepository;
-	
+
 	@Autowired
 	LocationRepository locationRepository;
+
+	@Autowired
+	HolidayMasterRepo holidayMasterRepo;
 
 	// -----------Holiday-----------------------
 	@RequestMapping(value = { "/saveHoliday" }, method = RequestMethod.POST)
@@ -116,8 +121,11 @@ public class LeaveHolidayApiCon {
 		try {
 
 			holiday = holidayRepo.findByHolidayIdAndDelStatus(holidayId, 1);
-			/*holiday.setHolidayFromdt(DateConvertor.convertToDMY(holiday.getHolidayFromdt()));
-			holiday.setHolidayTodt(DateConvertor.convertToDMY(holiday.getHolidayTodt()));*/
+			/*
+			 * holiday.setHolidayFromdt(DateConvertor.convertToDMY(holiday.getHolidayFromdt(
+			 * )));
+			 * holiday.setHolidayTodt(DateConvertor.convertToDMY(holiday.getHolidayTodt()));
+			 */
 
 		} catch (Exception e) {
 
@@ -261,6 +269,90 @@ public class LeaveHolidayApiCon {
 		}
 
 		return leaveAuthority;
+
+	}
+
+	@RequestMapping(value = { "/saveHolidayMaster" }, method = RequestMethod.POST)
+	public @ResponseBody HolidayMaster saveHolidayMaster(@RequestBody HolidayMaster holiday) {
+
+		HolidayMaster save = new HolidayMaster();
+		try {
+
+			save = holidayMasterRepo.saveAndFlush(holiday);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
+	
+	@RequestMapping(value = { "/getHolidayMaster" }, method = RequestMethod.GET)
+	public @ResponseBody List<HolidayMaster> getHolidayMaster() {
+
+		List<HolidayMaster> list = new ArrayList<>();
+		try {
+
+			list = holidayMasterRepo.findByDelStatus(1);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@RequestMapping(value = { "/getHolidayMasterById" }, method = RequestMethod.POST)
+	public @ResponseBody HolidayMaster getHolidayMasterById(@RequestParam("holidayId") int holidayId) {
+
+		HolidayMaster holiday = new HolidayMaster();
+		try {
+
+			holiday = holidayMasterRepo.findByHolidayIdAndDelStatus(holidayId, 1);
+			/*
+			 * holiday.setHolidayFromdt(DateConvertor.convertToDMY(holiday.getHolidayFromdt(
+			 * )));
+			 * holiday.setHolidayTodt(DateConvertor.convertToDMY(holiday.getHolidayTodt()));
+			 */
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return holiday;
+
+	}
+
+	@RequestMapping(value = { "/deleteHolidayMaster" }, method = RequestMethod.POST)
+	public @ResponseBody Info deleteHolidayMaster(@RequestParam("holidayId") int holidayId) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = holidayMasterRepo.deleteHoliday(holidayId);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
+		}
+
+		return info;
 
 	}
 
