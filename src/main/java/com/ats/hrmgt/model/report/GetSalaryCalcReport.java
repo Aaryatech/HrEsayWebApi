@@ -81,6 +81,7 @@ public class GetSalaryCalcReport {
 	private double edliPercentage; 
 	private double edliAdminPercentage; 
 	
+	private double employerMlwf;
 
 	private String empName;
 	
@@ -88,6 +89,17 @@ public class GetSalaryCalcReport {
 	private String companyName;
 	
 	private String nameSd;
+	
+	
+	
+
+	public double getEmployerMlwf() {
+		return employerMlwf;
+	}
+
+	public void setEmployerMlwf(double employerMlwf) {
+		this.employerMlwf = employerMlwf;
+	}
 
 	public int getId() {
 		return id;
@@ -724,9 +736,11 @@ public class GetSalaryCalcReport {
 				+ ", nightAllow=" + nightAllow + ", epsDefault=" + epsDefault + ", epmloyerEpfDefault="
 				+ epmloyerEpfDefault + ", epmloyerEpfExtra=" + epmloyerEpfExtra + ", pfAdminChPercentage="
 				+ pfAdminChPercentage + ", edliPercentage=" + edliPercentage + ", edliAdminPercentage="
-				+ edliAdminPercentage + ", empName=" + empName + ", companyName=" + companyName + ", nameSd=" + nameSd
-				+ "]";
+				+ edliAdminPercentage + ", employerMlwf=" + employerMlwf + ", empName=" + empName + ", companyName="
+				+ companyName + ", nameSd=" + nameSd + "]";
 	}
+
+	 
 	
 	
 

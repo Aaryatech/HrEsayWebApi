@@ -312,7 +312,7 @@ public class LeaveReportApiController {
 
 		try {
 
-			if (companyId != 0) {
+			if (companyId == 0) {
 				advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReport(from[2], from[1], to[2], to[1]);
 
 			} else {
@@ -364,42 +364,69 @@ public class LeaveReportApiController {
 		List<GetPtChallan> advYearList = new ArrayList<GetPtChallan>();
 		List<SlabMaster> slabList = new ArrayList<SlabMaster>();
 		List<GetPtChallan> advYearListNew = new ArrayList<GetPtChallan>();
+		
 
 		String from[] = fromDate.split("-");
 		String to[] = toDate.split("-");
-		  
-		try {
-			
-			if(companyId!=0) {
-				advYearList = getPtChallanRepo.getPtChallan(from[2].trim(), from[1].trim(), to[2].trim(), to[1].trim(), companyId);
 
-			}else {
-				advYearList = getPtChallanRepo.getPtChallanAllCmp(from[2].trim(), from[1].trim(), to[2].trim(), to[1].trim());
+		try {
+
+			if (companyId != 0) {
+				advYearList = getPtChallanRepo.getPtChallan(from[2].trim(), from[1].trim(), to[2].trim(), to[1].trim(),
+						companyId);
+
+			} else {
+				advYearList = getPtChallanRepo.getPtChallanAllCmp(from[2].trim(), from[1].trim(), to[2].trim(),
+						to[1].trim());
 
 			}
 
 			slabList = slabMasterRepository.findAll();
 
-			//System.err.println("advYearList" + advYearList.toString());
-			for (int i = 0; i < slabList.size(); i++) {
+			System.err.println("advYearList" + advYearList.toString());
+			System.out.println(advYearList.size());
+			if (advYearList.size() != 0) {
+				 
+				
+				for (int i = 0; i < slabList.size(); i++) {
 
-				GetPtChallan temp = new GetPtChallan();
+					GetPtChallan temp = new GetPtChallan();
 
-				int flag = 0;
+					int flag = 0;
 
-				for (int j = 0; j < advYearList.size(); j++) {
+					for (int j = 0; j < advYearList.size(); j++) {
 
-					if (slabList.get(i).getSlabId() == advYearList.get(j).getSlabId()) {
+						if (slabList.get(i).getSlabId() == advYearList.get(j).getSlabId()) {
 
-						flag = 1;
-						temp = advYearList.get(j);
-						break;
+							flag = 1;
+							temp = advYearList.get(j);
+							break;
+
+						}
 
 					}
 
-				}
+					if (flag != 1) {
 
-				if (flag != 1) {
+						temp.setEmpCount(0);
+						temp.setMaxVal(slabList.get(i).getMaxVal());
+						temp.setMinVal(slabList.get(i).getMinVal());
+						temp.setSlabId(slabList.get(i).getSlabId());
+						temp.setTotal(0);
+
+					}
+
+					advYearListNew.add(temp);
+
+				}
+				
+
+			} else {
+				
+				System.err.println("in else");
+				for (int i = 0; i < slabList.size(); i++) {
+
+					GetPtChallan temp = new GetPtChallan();
 
 					temp.setEmpCount(0);
 					temp.setMaxVal(slabList.get(i).getMaxVal());
@@ -407,10 +434,9 @@ public class LeaveReportApiController {
 					temp.setSlabId(slabList.get(i).getSlabId());
 					temp.setTotal(0);
 
+					advYearListNew.add(temp);
+
 				}
-
-				advYearListNew.add(temp);
-
 			}
 
 		} catch (Exception e) {
@@ -419,6 +445,36 @@ public class LeaveReportApiController {
 		}
 
 		return advYearListNew;
+
+	}
+	
+	
+	@RequestMapping(value = { "/getMLWFStatement" }, method = RequestMethod.POST)
+	public @ResponseBody List<GetSalaryCalcReport> getMLWFStatement(@RequestParam("companyId") int companyId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<GetSalaryCalcReport> advYearList = new ArrayList<GetSalaryCalcReport>();
+
+		String from[] = fromDate.split("-");
+		String to[] = toDate.split("-");
+
+		try {
+
+			if (companyId == 0) {
+				advYearList = getSalaryCalcReportRepo.getMlwfRepAllCmp(from[2], from[1], to[2], to[1]);
+
+			} else {
+				advYearList = getSalaryCalcReportRepo.getMlwfRep(from[2].trim(), from[1].trim(),to[2].trim(),
+						to[1].trim(), companyId);
+
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
 
 	}
 
