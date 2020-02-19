@@ -10,10 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ats.hrmgt.model.Designation;
+import com.ats.hrmgt.model.EmpInfo;
 
 public interface DesignationRepo extends JpaRepository<Designation, Integer> {
 	
 	public List<Designation> findByCompanyIdAndDelStatusOrderByDesigIdDesc(int companyId, int del);
+	
+	
+	 
 	
 	public Designation findByDesigIdAndDelStatus(int desigId, int del);
 	@Transactional
@@ -24,4 +28,9 @@ public interface DesignationRepo extends JpaRepository<Designation, Integer> {
 	public List<Designation> findByNameAndCompanyId(String desgn, int compId);
 
 	public List<Designation> findByNameAndCompanyIdAndDesigIdNot(String trim, int compId, int primaryKey);
+
+
+
+
+	public List<Designation> findByCompanyIdAndDelStatusOrderByExInt1Asc(int companyId, int i);
 }

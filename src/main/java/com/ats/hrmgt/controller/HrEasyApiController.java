@@ -56,6 +56,20 @@ public class HrEasyApiController {
 
 		return list;
 	}
+	
+	
+	@RequestMapping(value = { "/getAllDesignationsListBySortNo" }, method = RequestMethod.POST)
+	public List<Designation> getAllDesignationsListByShName(@RequestParam int companyId) {
+		List<Designation> list = new ArrayList<Designation>();
+		try {
+			list = desigRepo.findByCompanyIdAndDelStatusOrderByExInt1Asc(companyId,1);
+		} catch (Exception e) {
+			System.err.println("Excep in getAllDesignations : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+	}
 
 	@RequestMapping(value = { "/getDesignationById" }, method = RequestMethod.POST)
 	public Designation getDesignationById(@RequestParam int desigId) {
