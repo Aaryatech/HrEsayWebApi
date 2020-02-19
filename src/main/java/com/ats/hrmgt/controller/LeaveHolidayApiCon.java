@@ -76,6 +76,30 @@ public class LeaveHolidayApiCon {
 
 	}
 
+	@RequestMapping(value = { "/saveHolidayList" }, method = RequestMethod.POST)
+	public @ResponseBody Info saveHolidayList(@RequestBody List<Holiday> holiday) {
+
+		Info info = new Info();
+		try {
+
+			List<Holiday> save = holidayRepo.saveAll(holiday);
+
+			if (save != null) {
+				info.setError(false);
+			} else {
+
+				info.setError(true);
+			}
+
+		} catch (Exception e) {
+			info.setError(true);
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+
 	@RequestMapping(value = { "/getHolidayList" }, method = RequestMethod.POST)
 	public @ResponseBody List<GetHoliday> getHolidayList(@RequestParam("companyId") int companyId) {
 
@@ -104,6 +128,24 @@ public class LeaveHolidayApiCon {
 				if (x == 1)
 					list.get(i).setLocName(locName.substring(0, locName.length() - 1));
 			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
+	@RequestMapping(value = { "/getHolidayListByDates" }, method = RequestMethod.POST)
+	public @ResponseBody List<Holiday> getHolidayListByDates(@RequestParam("dates") List<String> dates,
+			@RequestParam("holcatId") int holcatId) {
+
+		List<Holiday> list = new ArrayList<Holiday>();
+		try {
+
+			list = holidayRepo.getHolidayListByDates(dates, holcatId);
 
 		} catch (Exception e) {
 
@@ -288,7 +330,7 @@ public class LeaveHolidayApiCon {
 		return save;
 
 	}
-	
+
 	@RequestMapping(value = { "/getHolidayMaster" }, method = RequestMethod.GET)
 	public @ResponseBody List<HolidayMaster> getHolidayMaster() {
 
@@ -305,7 +347,7 @@ public class LeaveHolidayApiCon {
 		return list;
 
 	}
-	
+
 	@RequestMapping(value = { "/getHolidayMasterById" }, method = RequestMethod.POST)
 	public @ResponseBody HolidayMaster getHolidayMasterById(@RequestParam("holidayId") int holidayId) {
 
