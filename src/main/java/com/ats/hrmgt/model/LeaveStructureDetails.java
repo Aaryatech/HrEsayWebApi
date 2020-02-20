@@ -29,6 +29,15 @@ public class LeaveStructureDetails {
 	
 	@Column(name = "max_no_days")
 	private int maxNoDays;
+	
+	@Column(name = "is_carryforward")
+	private int isCarryforward;
+	
+	@Column(name = "max_carryforward")
+	private int maxCarryforward;
+	
+	@Column(name = "max_accumulate_carryforward")
+	private int maxAccumulateCarryforward;
 
 	@Column(name = "del_status")
 	private int delStatus;
@@ -149,10 +158,7 @@ public class LeaveStructureDetails {
 	public void setMakerDatetime(String makerDatetime) {
 		this.makerDatetime = makerDatetime;
 	}
-	
-	
-	
-
+	 
 	public int getMinNoDays() {
 		return minNoDays;
 	}
@@ -169,13 +175,38 @@ public class LeaveStructureDetails {
 		this.maxNoDays = maxNoDays;
 	}
 
+	public int getIsCarryforward() {
+		return isCarryforward;
+	}
+
+	public void setIsCarryforward(int isCarryforward) {
+		this.isCarryforward = isCarryforward;
+	}
+
+	public int getMaxCarryforward() {
+		return maxCarryforward;
+	}
+
+	public void setMaxCarryforward(int maxCarryforward) {
+		this.maxCarryforward = maxCarryforward;
+	}
+
+	public int getMaxAccumulateCarryforward() {
+		return maxAccumulateCarryforward;
+	}
+
+	public void setMaxAccumulateCarryforward(int maxAccumulateCarryforward) {
+		this.maxAccumulateCarryforward = maxAccumulateCarryforward;
+	}
+
 	@Override
 	public String toString() {
 		return "LeaveStructureDetails [lvsDetailsId=" + lvsDetailsId + ", lvsId=" + lvsId + ", lvTypeId=" + lvTypeId
 				+ ", lvsAllotedLeaves=" + lvsAllotedLeaves + ", minNoDays=" + minNoDays + ", maxNoDays=" + maxNoDays
-				+ ", delStatus=" + delStatus + ", isActive=" + isActive + ", makerUserId=" + makerUserId
-				+ ", makerDatetime=" + makerDatetime + ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1="
-				+ exVar1 + ", exVar2=" + exVar2 + "]";
+				+ ", isCarryforward=" + isCarryforward + ", maxCarryforward=" + maxCarryforward
+				+ ", maxAccumulateCarryforward=" + maxAccumulateCarryforward + ", delStatus=" + delStatus
+				+ ", isActive=" + isActive + ", makerUserId=" + makerUserId + ", makerDatetime=" + makerDatetime
+				+ ", exInt1=" + exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + "]";
 	}
 
 	 

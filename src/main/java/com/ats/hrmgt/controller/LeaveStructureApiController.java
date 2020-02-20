@@ -98,7 +98,25 @@ public class LeaveStructureApiController {
 		return save;
 
 	}
+	
+	@RequestMapping(value = { "/saveNewBalRecord" }, method = RequestMethod.POST)
+	public @ResponseBody List<LeaveBalanceCal> saveNewLeaveAllotmentWith(@RequestBody List<LeaveBalanceCal> leavesAllotment) {
 
+		List<LeaveBalanceCal> leaveBalanccRes = new ArrayList<>();
+
+		try {
+
+			 
+			 leaveBalanccRes = leaveBalanceCalRepo.saveAll(leavesAllotment);
+			 
+
+		} catch (Exception e) {
+			 
+			e.printStackTrace();
+		}
+		return leaveBalanccRes;
+
+	}
 	/*
 	 * @RequestMapping(value = { "/getLeavebalByEmpIdList" }, method =
 	 * RequestMethod.POST) public @ResponseBody List<LeaveBalanceCal>

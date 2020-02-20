@@ -18,7 +18,9 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 			"        leave_type.lv_title_short,\n" + 
 			"        leave_type.lv_title,\n" + 
 			"        leave_structure_details.lvs_alloted_leaves,\n" + 
-			"        leave_structure_header.lvs_id,leave_type.is_file,\n" + 
+			"        leave_structure_header.lvs_id,leave_type.is_file,leave_structure_details.max_accumulate_carryforward,\n" + 
+			"        leave_structure_details.is_carryforward,\n" + 
+			"        leave_structure_details.max_carryforward,\n" + 
 			"        coalesce((select\n" + 
 			"            b.op_bal \n" + 
 			"        from\n" + 
@@ -73,7 +75,9 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 	
 	@Query(value = " SELECT\n" + 
 			"    leave_structure_details.lvs_alloted_leaves as bal_leave,0 as lv_type_id,0 as lv_title_short, 0 as lv_title,0 as lvs_alloted_leaves,"
-			+ " 0 as saction_leave, 0 as apllied_leaeve,0 as lvs_id  ,0 as is_file\n" + 
+			+ " 0 as saction_leave, 0 as apllied_leaeve,0 as lvs_id  ,0 as is_file,0 as max_accumulate_carryforward,\n" + 
+			"        0 as is_carryforward,\n" + 
+			"        0 as max_carryforward\n" + 
 			"FROM\n" + 
 			"    leave_structure_details\n" + 
 			"WHERE\n" + 
@@ -88,7 +92,9 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 			"        leave_type.lv_title_short,\n" + 
 			"        leave_type.lv_title,\n" + 
 			"        leave_structure_details.lvs_alloted_leaves,\n" + 
-			"        leave_structure_header.lvs_id,leave_type.is_file,\n" + 
+			"        leave_structure_header.lvs_id,leave_type.is_file,leave_structure_details.max_accumulate_carryforward,\n" + 
+			"        leave_structure_details.is_carryforward,\n" + 
+			"        leave_structure_details.max_carryforward,\n" + 
 			"        coalesce((select\n" + 
 			"            b.op_bal          \n" + 
 			"        from\n" + 
@@ -132,11 +138,11 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 			"        AND m_employees.emp_id =:empId         \n" + 
 			"        and leave_structure_allotment.cal_yr_id=(\n" + 
 			"            select\n" + 
-			"                max(cal_yr_id) as cal_yr_id \n" + 
+			"                max(cal_yr_id-1) as cal_yr_id \n" + 
 			"            from\n" + 
 			"                dm_cal_year  \n" + 
 			"            where\n" + 
-			"                is_current=0\n" + 
+			"                is_current=1\n" + 
 			"        )", nativeQuery = true)
 	List<LeaveHistory> getPreviousleaveHistory(@Param("empId") int empId);
 		
