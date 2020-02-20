@@ -1,6 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import com.ats.hrmgt.model.GetDailyDailyRecordRepository;
 import com.ats.hrmgt.model.LeaveApply;
 import com.ats.hrmgt.model.SlabMaster;
 import com.ats.hrmgt.model.advance.GetAdvance;
+import com.ats.hrmgt.model.bonus.BonusCalc;
 import com.ats.hrmgt.model.report.EmpAttendeanceRep;
 import com.ats.hrmgt.model.report.GetLoanReport;
 import com.ats.hrmgt.model.report.GetPtChallan;
@@ -28,13 +30,16 @@ import com.ats.hrmgt.model.report.GetSalaryCalcReport;
 import com.ats.hrmgt.model.report.GetYearlyAdvance;
 import com.ats.hrmgt.model.report.GetYearlyAdvanceNew;
 import com.ats.hrmgt.model.report.GetYearlyLoan;
-import com.ats.hrmgt.model.report.StatutoryEsicRep;
+import com.ats.hrmgt.model.report.LoanDedReport;
+ import com.ats.hrmgt.model.report.StatutoryEsicRep;
+import com.ats.hrmgt.repo.bonus.BonusCalcRepo;
 import com.ats.hrmgt.repo.report.EmpAttendeanceRepRepo;
 import com.ats.hrmgt.repo.report.GetLoanReportRepo;
 import com.ats.hrmgt.repo.report.GetPtChallanRepo;
 import com.ats.hrmgt.repo.report.GetSalaryCalcReportRepo;
 import com.ats.hrmgt.repo.report.GetYearlyAdvanceRepo;
 import com.ats.hrmgt.repo.report.GetYearlyLoanRepo;
+import com.ats.hrmgt.repo.report.LoanDedReportRepo;
 import com.ats.hrmgt.repo.report.StatutoryEsicRepRepo;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
@@ -521,6 +526,50 @@ public class LeaveReportApiController {
 	
 	//loan Reports
 	
+	
+	@Autowired
+	LoanDedReportRepo loanDedReportRepo;
+	@RequestMapping(value = { "/getLoanDedReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<LoanDedReport> getLoanReport(@RequestParam("companyId") int companyId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<LoanDedReport> advYearList = new ArrayList<LoanDedReport>();
+ 
+		try {
+
+			advYearList=loanDedReportRepo.getSpecEmpDedLoanReport(fromDate.trim(),toDate.trim());
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
+
+	}
+	
+	///bonus list
+	
+	
+	@Autowired
+	BonusCalcRepo bonusCalcRepo;
+	@RequestMapping(value = { "/getBonusReportByBonusId" }, method = RequestMethod.POST)
+	public @ResponseBody List<BonusCalc> getBonusReportByRep(@RequestParam("bonusId") int bonusId) {
+
+		List<BonusCalc> advYearList = new ArrayList<BonusCalc>();
+ 
+		try {
+
+			advYearList=bonusCalcRepo.findByDelStatusAndBonusId(1, bonusId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
+
+	}
 	
 	
 

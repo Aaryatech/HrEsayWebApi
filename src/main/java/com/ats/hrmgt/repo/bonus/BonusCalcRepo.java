@@ -59,14 +59,14 @@ public interface BonusCalcRepo extends JpaRepository<BonusCalc, Integer> {
 	@Modifying
 	@Query("update BonusCalc set  total_exgretia_days =0,total_exgretia_wages=0 ,exgretia_applicable =0,gross_exgretia_amt=0,ded_exgretia_amt=0,net_exgretia_amt=0,ex_int1=0  WHERE bonus_calc_id=:bonusCalcId")
 	int updateExgratiaAmtsDelete(@Param("bonusCalcId") int bonusCalcId);
-
-
-
-
  
 
-
-
 	BonusCalc findByBonusCalcIdAndDelStatus(int bonusCalcId, int i);
+	
+	
+	
+	List<BonusCalc> findByDelStatusAndBonusId(int i,int bonusId);
+	
+	 
 
 }
