@@ -28,12 +28,14 @@ import com.ats.hrmgt.model.report.GetSalaryCalcReport;
 import com.ats.hrmgt.model.report.GetYearlyAdvance;
 import com.ats.hrmgt.model.report.GetYearlyAdvanceNew;
 import com.ats.hrmgt.model.report.GetYearlyLoan;
+import com.ats.hrmgt.model.report.StatutoryEsicRep;
 import com.ats.hrmgt.repo.report.EmpAttendeanceRepRepo;
 import com.ats.hrmgt.repo.report.GetLoanReportRepo;
 import com.ats.hrmgt.repo.report.GetPtChallanRepo;
 import com.ats.hrmgt.repo.report.GetSalaryCalcReportRepo;
 import com.ats.hrmgt.repo.report.GetYearlyAdvanceRepo;
 import com.ats.hrmgt.repo.report.GetYearlyLoanRepo;
+import com.ats.hrmgt.repo.report.StatutoryEsicRepRepo;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
@@ -477,5 +479,49 @@ public class LeaveReportApiController {
 		return advYearList;
 
 	}
+
+	
+	@Autowired
+	StatutoryEsicRepRepo statutoryEsicRepRepo;
+	@RequestMapping(value = { "/getStatutoryEsic" }, method = RequestMethod.POST)
+	public @ResponseBody List<StatutoryEsicRep> getStatutoryEsic(@RequestParam("companyId") int companyId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<StatutoryEsicRep> advYearList = new ArrayList<StatutoryEsicRep>();
+
+		String from[] = fromDate.split("-");
+		String to[] = toDate.split("-");
+
+		
+		System.err.println("fromDate"+fromDate);
+		System.err.println("toDate"+toDate);
+		
+		
+		fromDate=from[2].concat("-").concat(from[1]).concat("-").concat("01");
+		toDate=to[2].concat("-").concat(to[1]).concat("-").concat("01");
+
+		try {
+
+			if (companyId == 0) {
+				advYearList = statutoryEsicRepRepo.getStatutoryEsicAll(fromDate, toDate);
+
+			} else {
+				advYearList = statutoryEsicRepRepo.getStatutoryEsic(fromDate, toDate, companyId);
+
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
+
+	}
+	
+	//loan Reports
+	
+	
+	
 
 }
