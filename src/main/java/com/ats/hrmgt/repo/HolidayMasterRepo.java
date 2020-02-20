@@ -12,6 +12,12 @@ import com.ats.hrmgt.model.HolidayMaster;
 
 public interface HolidayMasterRepo extends JpaRepository<HolidayMaster, Integer> {
 
+	@Query(value = "select\n" + 
+			"        *\n" + 
+			"    from\n" + 
+			"        holiday_master\n" + 
+			"    where\n" + 
+			"        holiday_master.del_status=:i order by holiday_date asc", nativeQuery = true)
 	List<HolidayMaster> findByDelStatus(int i);
 
 	HolidayMaster findByHolidayIdAndDelStatus(int holidayId, int i);
