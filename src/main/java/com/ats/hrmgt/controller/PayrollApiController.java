@@ -1347,7 +1347,7 @@ public class PayrollApiController {
 				SalaryCalc.setEmployeeEsicPercentage(salList.get(i).getEmployeeEsicPercentage());
 				SalaryCalc.setEmployerEsicPercentage(salList.get(i).getEmployerEsicPercentage());
 				SalaryCalc.setEmployerMlwf(salList.get(i).getEmployerMlwf());
-				
+				SalaryCalc.setGrossSalDefault(salList.get(i).getGrossSalary());
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 
 				List<SalAllownceCal> allowlist = new ArrayList<>();

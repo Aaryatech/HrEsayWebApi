@@ -88,7 +88,8 @@ public class SalaryCalc {
 	private double edliAdminPercentage;  
 	private double employerEsicPercentage; 
 	private double employeeEsicPercentage;
-	private double employerMlwf;
+	private double employerMlwf; 
+	private double grossSalDefault;
 	
 	public int getId() {
 		return id;
@@ -547,6 +548,12 @@ public class SalaryCalc {
 	public void setEmployerMlwf(double employerMlwf) {
 		this.employerMlwf = employerMlwf;
 	}
+	public double getGrossSalDefault() {
+		return grossSalDefault;
+	}
+	public void setGrossSalDefault(double grossSalDefault) {
+		this.grossSalDefault = grossSalDefault;
+	}
 	@Override
 	public String toString() {
 		return "SalaryCalc [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode + ", empType="
@@ -575,7 +582,7 @@ public class SalaryCalc {
 				+ epmloyerEpfExtra + ", pfAdminChPercentage=" + pfAdminChPercentage + ", edliPercentage="
 				+ edliPercentage + ", edliAdminPercentage=" + edliAdminPercentage + ", employerEsicPercentage="
 				+ employerEsicPercentage + ", employeeEsicPercentage=" + employeeEsicPercentage + ", employerMlwf="
-				+ employerMlwf + "]";
+				+ employerMlwf + ", grossSalDefault=" + grossSalDefault + "]";
 	}
 	 
 	 
