@@ -138,4 +138,75 @@ public class ReportsApiController {
 
 	}	
 	
+	@RequestMapping(value = { "/getEmpLateMarkDetailsByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody List<EmpLateMarkDetails> getEmpLateMarkDetailsByEmpId(@RequestParam("empId") int empId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<EmpLateMarkDetails> list = new ArrayList<EmpLateMarkDetails>();
+
+		try {
+			String frmDate = fromDate;
+			System.out.println("From Date Before-----------"+frmDate);
+			String[] parts = frmDate.split("-");			
+			String month = parts[0];
+			String year = parts[1];
+			System.out.println("From Date After-----------"+month+"/"+year);
+			
+			
+			String tDate = toDate;
+			System.out.println("To Date Before-----------"+toDate);
+			String[] toparts = tDate.split("-");
+			String tomonth = toparts[0];
+			String toyear = toparts[1];
+			System.out.println("To Date After-----------"+tomonth+"/"+toyear);
+
+			list = empLateRepo.getEmpLateMarkDetailReportByEmpId(month, year, tomonth ,toyear, empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}	
+	
+	@RequestMapping(value = { "/getLoanStatemnetReportByEmpId" }, method = RequestMethod.POST)
+	public @ResponseBody List<LoanStatementDetailsReport> getLoanStatemnetReportByEmpId(@RequestParam("empId") int empId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+
+		List<LoanStatementDetailsReport> list = new ArrayList<LoanStatementDetailsReport>();
+
+		try {
+			String frmDate = fromDate;
+			//System.out.println("From Date Before-----------"+frmDate);
+			String[] parts = frmDate.split("-");			
+			String month = parts[0];
+			String year = parts[1];
+			String newfromDate = year+"-"+month+"-"+"01";
+			//System.out.println("From Date After-----------"+newfromDate);
+			
+			
+			String tDate = toDate;
+			//System.out.println("To Date Before-----------"+toDate);
+			String[] toparts = tDate.split("-");
+			String tomonth = toparts[0];
+			String toyear = toparts[1];
+			String newToDate = toyear+"-"+tomonth+"-"+"01";
+			//System.out.println("From Date After-----------"+newToDate);
+		
+
+
+			list = loanStatRepo.getEmpLoanStateDetailsByEmpId(newfromDate, newToDate,empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}	
+	
+	
 }
