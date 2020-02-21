@@ -613,5 +613,27 @@ public class LeaveReportApiController {
 		return advYearList;
 
 	}
+	
+	
+ 
+	@RequestMapping(value = { "/getLeaveApplicationEmpReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<LeaveApply> getLeaveApplicationEmpReport(@RequestParam("calYrId") int calYrId,
+			@RequestParam("empId") int empId) {
+
+		List<LeaveApply> list = new ArrayList<LeaveApply>();
+
+		try {
+
+			list = leaveApplyRepository.findByCalYrIdAndDelStatusAndEmpId(calYrId, 1, empId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
 	 
 }

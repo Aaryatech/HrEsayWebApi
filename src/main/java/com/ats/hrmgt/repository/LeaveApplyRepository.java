@@ -16,6 +16,9 @@ import com.ats.hrmgt.model.LeaveApply;
 public interface LeaveApplyRepository extends JpaRepository<LeaveApply, Integer> {
 
 	List<LeaveApply> findByDelStatus(int i);
+	
+	
+	List<LeaveApply> findByCalYrIdAndDelStatusAndEmpId(int calYr,int i,int empId);
 
 	@Transactional
 	@Modifying
