@@ -55,7 +55,7 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 			"            and y.cal_yr_id=b.cal_yr_id \n" + 
 			"            and y.is_current=1 \n" + 
 			"            and b.ex_int1 in (1,2)),\n" + 
-			"        0) as apllied_leaeve \n" + 
+			"        0) as apllied_leaeve,leave_structure_header.lvs_name \n" + 
 			"    FROM\n" + 
 			"        leave_type,\n" + 
 			"        m_employees,\n" + 
@@ -77,7 +77,7 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 			"    leave_structure_details.lvs_alloted_leaves as bal_leave,0 as lv_type_id,0 as lv_title_short, 0 as lv_title,0 as lvs_alloted_leaves,"
 			+ " 0 as saction_leave, 0 as apllied_leaeve,0 as lvs_id  ,0 as is_file,0 as max_accumulate_carryforward,\n" + 
 			"        0 as is_carryforward,\n" + 
-			"        0 as max_carryforward\n" + 
+			"        0 as max_carryforward , 0 as lvs_name \n" + 
 			"FROM\n" + 
 			"    leave_structure_details\n" + 
 			"WHERE\n" + 
@@ -123,7 +123,7 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 			"            and leave_type.lv_type_id=b.lv_type_id              \n" + 
 			"            and b.cal_yr_id=leave_structure_allotment.cal_yr_id              \n" + 
 			"            and b.ex_int1 in (1,2)),\n" + 
-			"        0) as apllied_leaeve      \n" + 
+			"        0) as apllied_leaeve,leave_structure_header.lvs_name     \n" + 
 			"    FROM\n" + 
 			"        leave_type,\n" + 
 			"        m_employees,\n" + 
