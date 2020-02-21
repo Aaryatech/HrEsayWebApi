@@ -392,7 +392,7 @@ public class LeaveActionApiController {
 	public @ResponseBody Info checkDateForRepetedLeaveValidation(@RequestParam("fromDate") String fromDate,
 			@RequestParam("toDate") String toDate, @RequestParam("empId") int empId,
 			@RequestParam("leaveTypeId") int leaveTypeId, @RequestParam("shortName") String shortName,
-			@RequestParam("noOfDays") int noOfDays) {
+			@RequestParam("noOfDays") float noOfDays) {
 
 		Info info = new Info();
 
@@ -448,7 +448,7 @@ public class LeaveActionApiController {
 
 	}
 
-	public Info LeaveTypeValidation(int empId, int leaveTypeId, String shortName, int noOfDays) {
+	public Info LeaveTypeValidation(int empId, int leaveTypeId, String shortName, float noOfDays) {
 		Info info = new Info();
 
 		try {
