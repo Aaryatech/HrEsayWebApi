@@ -24,6 +24,7 @@ import com.ats.hrmgt.model.SlabMaster;
 import com.ats.hrmgt.model.advance.GetAdvance;
 import com.ats.hrmgt.model.bonus.BonusCalc;
 import com.ats.hrmgt.model.report.EmpAttendeanceRep;
+import com.ats.hrmgt.model.report.EsiSumaryRep;
 import com.ats.hrmgt.model.report.GetLoanReport;
 import com.ats.hrmgt.model.report.GetPtChallan;
 import com.ats.hrmgt.model.report.GetSalaryCalcReport;
@@ -34,6 +35,7 @@ import com.ats.hrmgt.model.report.LoanDedReport;
  import com.ats.hrmgt.model.report.StatutoryEsicRep;
 import com.ats.hrmgt.repo.bonus.BonusCalcRepo;
 import com.ats.hrmgt.repo.report.EmpAttendeanceRepRepo;
+import com.ats.hrmgt.repo.report.EsiSumaryRepRepo;
 import com.ats.hrmgt.repo.report.GetLoanReportRepo;
 import com.ats.hrmgt.repo.report.GetPtChallanRepo;
 import com.ats.hrmgt.repo.report.GetSalaryCalcReportRepo;
@@ -572,5 +574,44 @@ public class LeaveReportApiController {
 	}
 	
 	
+	@Autowired
+	EsiSumaryRepRepo esiSumaryRepRepo;
+	
+	 
+	@RequestMapping(value = { "/getEsiSummaryReport" }, method = RequestMethod.POST)
+	public @ResponseBody List<EsiSumaryRep> getEsiSummaryReport(@RequestParam("companyId") int companyId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
 
+		List<EsiSumaryRep> advYearList = new ArrayList<EsiSumaryRep>();
+
+		String from[] = fromDate.split("-");
+		String to[] = toDate.split("-");
+
+		
+		System.err.println("fromDate"+fromDate);
+		System.err.println("toDate"+toDate);
+		
+		
+		fromDate=from[2].concat("-").concat(from[1]).concat("-").concat("01");
+		toDate=to[2].concat("-").concat(to[1]).concat("-").concat("01");
+
+		try {
+			if (companyId == 0) {
+				advYearList = esiSumaryRepRepo.getEsiSummAll(from[2], from[1], to[2], to[1]);
+
+			} else {
+				advYearList = esiSumaryRepRepo.getEsiSumm(from[2].trim(), from[1].trim(),to[2].trim(),
+						to[1].trim(), companyId);
+
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
+
+	}
+	 
 }
