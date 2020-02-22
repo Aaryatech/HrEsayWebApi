@@ -126,7 +126,7 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	@Modifying
 	@Query(value = "UPDATE m_employees SET  weekend_category =:holiCatId WHERE emp_id IN(:empIdList)", nativeQuery = true)
 	int weekHoliCat(@Param("empIdList") List<Integer> empIdList, @Param("holiCatId") String holiCatId);
-
-
-	
+ 
+	@Query(value = "SELECT e.* from m_employees e  where e.del_status=1 AND e.current_shiftid=0", nativeQuery = true)
+	List<EmployeeMaster> getEmpSalAssign();
 }

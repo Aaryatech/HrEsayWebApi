@@ -327,6 +327,26 @@ public class EmpShiftAssignApiController {
 		return list;
 
 	}
+ 
+	@RequestMapping(value = { "/getSalStructCountEmp" }, method = RequestMethod.POST)
+	public @ResponseBody Integer getSalStructCountEmp() {
+
+		List<EmployeeMaster> list = new ArrayList<>();
+		int a=0;
+		try {
+
+			list = employeeMasterRepository.getEmpSalAssign();
+			
+			a=list.size();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return a;
+
+	}
 
 	@Autowired
 	EmployeeMasterRepository empRepo;
