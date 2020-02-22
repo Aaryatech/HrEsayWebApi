@@ -13,6 +13,9 @@ public interface SalaryCalcRepo extends JpaRepository<SalaryCalc, Integer> {
 	
 	List<SalaryCalc> findAllByEmpId(int empId);
 
+
+	
+
  	
 	
 	

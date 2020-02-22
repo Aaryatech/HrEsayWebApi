@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.model.DailyAttendance;
+import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.SalaryCalc;
+import com.ats.hrmgt.model.graph.EmpDefaultSalaryGraph;
 import com.ats.hrmgt.model.report.EmpLateMarkDetails;
 import com.ats.hrmgt.model.report.EmpOtReg;
 import com.ats.hrmgt.model.report.LoanStatementDetailsReport;
@@ -19,6 +22,8 @@ import com.ats.hrmgt.repo.report.EmpLateMarkDetailsRepo;
 import com.ats.hrmgt.repo.report.EmpOtRegRepo;
 import com.ats.hrmgt.repo.report.LoanStatementRepo;
 import com.ats.hrmgt.repo.report.PendingLoanRepo;
+import com.ats.hrmgt.repository.EmpDefaultSalaryGraphRepo;
+import com.ats.hrmgt.repository.SalaryCalcRepo;
 
 @RestController
 public class ReportsApiController {
@@ -30,6 +35,8 @@ public class ReportsApiController {
 	@Autowired EmpOtRegRepo otRepo;
 	
 	@Autowired EmpLateMarkDetailsRepo empLateRepo;
+	
+	@Autowired SalaryCalcRepo salCalRepo;
 	
 	@RequestMapping(value = { "/getEmpPendingLoanReport" }, method = RequestMethod.POST)
 	public @ResponseBody List<PendingLoanReport> getEmpPendingLoanReport(@RequestParam("companyId") int companyId,
@@ -207,6 +214,45 @@ public class ReportsApiController {
 		return list;
 
 	}	
+	/***************************************************************************/
 	
+	@Autowired EmpDefaultSalaryGraphRepo defSalRepo;
+	
+	@RequestMapping(value = { "/getDefaultSalByEmpId" }, method = RequestMethod.POST)
+	public List<EmpDefaultSalaryGraph> getEmployeeById(@RequestParam("empId") int empId,
+			@RequestParam("companyId") int companyId, @RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate) {
+		
+		List<EmpDefaultSalaryGraph> salCal = new ArrayList<EmpDefaultSalaryGraph>();		
+		try {
+			String frmDate = fromDate;
+			//System.out.println("From Date Before-----------"+frmDate);
+			String[] parts = frmDate.split("-");			
+			String month = parts[0];
+			String year = parts[1];
+			String newfromDate = year+"-"+month+"-"+"01";
+			//System.out.println("From Date After-----------"+newfromDate);
+			
+			
+			String tDate = toDate;
+			//System.out.println("To Date Before-----------"+toDate);
+			String[] toparts = tDate.split("-");
+			String tomonth = toparts[0];
+			String toyear = toparts[1];
+			String newToDate = toyear+"-"+tomonth+"-"+"01";
+			//System.out.println("From Date After-----------"+newToDate);
+		
+			
+			salCal = defSalRepo.getDefGrossSalByEmpId(newfromDate, newToDate,empId);	
+			
+			
+		} catch (Exception e) {
+			System.err.println("Excep in getDefaultSalByEmpId : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return salCal;
+
+	}
 	
 }
