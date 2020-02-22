@@ -255,4 +255,43 @@ public class ReportsApiController {
 
 	}
 	
+	
+
+	@RequestMapping(value = { "/getGrossSalByEmpId" }, method = RequestMethod.POST)
+	public List<EmpDefaultSalaryGraph> getGrossSalByEmpId(@RequestParam("empId") int empId,
+			@RequestParam("companyId") int companyId, @RequestParam("fromDate") String fromDate,
+			@RequestParam("toDate") String toDate) {
+		
+		List<EmpDefaultSalaryGraph> salCal = new ArrayList<EmpDefaultSalaryGraph>();		
+		try {
+			String frmDate = fromDate;
+			//System.out.println("From Date Before-----------"+frmDate);
+			String[] parts = frmDate.split("-");			
+			String month = parts[0];
+			String year = parts[1];
+			String newfromDate = year+"-"+month+"-"+"01";
+			//System.out.println("From Date After-----------"+newfromDate);
+			
+			
+			String tDate = toDate;
+			//System.out.println("To Date Before-----------"+toDate);
+			String[] toparts = tDate.split("-");
+			String tomonth = toparts[0];
+			String toyear = toparts[1];
+			String newToDate = toyear+"-"+tomonth+"-"+"01";
+			//System.out.println("From Date After-----------"+newToDate);
+		
+			
+			salCal = defSalRepo.getGrossSalByEmpId(newfromDate, newToDate,empId);	
+			
+			
+		} catch (Exception e) {
+			System.err.println("Excep in getDefaultSalByEmpId : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return salCal;
+
+	}
+	
 }

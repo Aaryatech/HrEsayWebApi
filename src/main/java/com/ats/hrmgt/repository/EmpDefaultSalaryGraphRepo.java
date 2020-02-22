@@ -24,4 +24,24 @@ public interface EmpDefaultSalaryGraphRepo extends JpaRepository<EmpDefaultSalar
 
 	public List<EmpDefaultSalaryGraph> getDefGrossSalByEmpId(@Param("newfromDate") String newfromDate, 
 			@Param("newToDate") String newToDate, @Param("empId") int empId);
+	
+	
+	
+	
+	
+	
+	@Query(value="SELECT UUID() AS id,\n" + 
+			"    calc_month AS month,\n" + 
+			"    calc_year AS year,\n" + 
+			"    COALESCE((gross_salary),0) AS default_saL_amt\n" + 
+			"FROM\n" + 
+			"    `tbl_salary_calc`\n" + 
+			"WHERE\n" + 
+			"    emp_id = :empId AND cmp_id = 1 AND DATE_FORMAT(\n" + 
+			"        CONCAT(calc_year, '-', calc_month, '-01'),\n" + 
+			"        '%Y-%m-%d'\n" + 
+			"    ) BETWEEN :newfromDate AND LAST_DAY(:newToDate)", nativeQuery=true)	
+
+	public List<EmpDefaultSalaryGraph> getGrossSalByEmpId(@Param("newfromDate") String newfromDate, 
+			@Param("newToDate") String newToDate, @Param("empId") int empId);
 }
