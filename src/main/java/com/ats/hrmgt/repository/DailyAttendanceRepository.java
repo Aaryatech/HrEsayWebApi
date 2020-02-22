@@ -68,6 +68,11 @@ public interface DailyAttendanceRepository extends JpaRepository<DailyAttendance
 
 	@Query(value = "select d.* from tbl_attt_daily_daily d,m_employees e where d.att_date = :date and d.emp_id=e.emp_id and e.depart_id in (:departIds)", nativeQuery = true)
 	List<DailyAttendance> dailyAttendanceByDeptId(@Param("date") String date,@Param("departIds") List<Integer> departIds);
+
+	 	@Modifying
+	    @Query(value = "INSERT INTO tbl_attt_daily_daily (id, company_id, emp_code, emp_name, att_date, att_status,  lv_sumup_id, working_hrs, in_time, rec_status, login_name, login_time, import_date, cmp_code, emp_id, ot_hr,  current_shiftid, late_mark, late_min, reason, current_shiftname, freeze_by_supervisor, comments_supervisor, get_pass_used_count, get_pass_used_hour, get_pass_used_hour_reason, raw_data_inout, manual_ot_hr, full_night, half_night, out_time, early_going_mark, early_going_min, multiple_entries, casetype, is_fixed, by_file_updated, location_id, emp_type, emp_json, atsumm_uid, file_name, row_id) VALUES :string ", nativeQuery = true)
+	    @Transactional
+	void insert(String string);
 	
  
 }

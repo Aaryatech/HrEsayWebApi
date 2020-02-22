@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,7 +66,7 @@ import com.ats.hrmgt.repository.SummaryAttendanceRepository;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
 import com.ats.hrmgt.repository.WeeklyOffRepo;
 import com.ats.hrmgt.repository.WeeklyOffShitRepository;
-import com.ats.hrmgt.service.CommonFunctionService;
+import com.ats.hrmgt.service.CommonFunctionService; 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -129,6 +131,9 @@ public class AttendanceApiController {
 	GetDailyDailyRecordRepository getDailyDailyRecordRepository;
 
 	int PL_CL_HD_leave_insert_automatic = 0;
+	
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	@RequestMapping(value = { "/initiallyInsertDailyRecord" }, method = RequestMethod.POST)
 	public @ResponseBody Info initiallyInsertDailyRecord(@RequestParam("fromDate") String fromDate,
@@ -154,6 +159,10 @@ public class AttendanceApiController {
 
 			SummaryDailyAttendance summaryDailyAttendance = new SummaryDailyAttendance();
 			List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
+			
+			String query = "INSERT INTO tbl_attt_daily_daily (id, company_id, emp_code, emp_name, att_date, att_status,  lv_sumup_id, working_hrs, in_time, rec_status, login_name, login_time, import_date, cmp_code, emp_id, ot_hr,  current_shiftid, late_mark, late_min, reason, current_shiftname, freeze_by_supervisor, comments_supervisor, get_pass_used_count, get_pass_used_hour, get_pass_used_hour_reason, raw_data_inout, manual_ot_hr, full_night, half_night, out_time, early_going_mark, early_going_min, multiple_entries, casetype, is_fixed, by_file_updated, location_id, emp_type, emp_json, atsumm_uid, file_name, row_id) VALUES  ";
+			
+			
 			for (int i = 0; i < empList.size(); i++) {
 
 				summaryDailyAttendance = new SummaryDailyAttendance();
@@ -213,14 +222,36 @@ public class AttendanceApiController {
 					dailyAttendance.setAttStatus("NA");
 					dailyAttendance.setLateMark("0");
 					dailyAttendanceList.add(dailyAttendance);
+					 
+					
+					query=query+"('0', '1','"+summaryDailyAttendance.getEmpCode()+"','"+ dailyAttendance.getEmpName()+"','"+ attdate+"', 'NA', '0', '0', NULL, 'O', \n '"
+					+userId+"', NULL, NULL, NULL, '"+summaryDailyAttendance.getEmpId()+"', NULL, '0', '0', '0', NULL, NULL, '0', NULL, '0', '0' \n "+
+							", NULL, NULL, '0', '0', '0', NULL, '0', '0.00', NULL, NULL, '0', '0', '"+empList.get(i).getLocationId()+"', '0', \n '"
+					+json+"', NULL, NULL, '0'),";
+					 
 					j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
 				}
 
 			}
-			List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
-			List<SummaryDailyAttendance> summaryDailyAttendanceSaveRes = summaryDailyAttendanceRepository
-					.saveAll(summaryDailyAttendanceList);
+			query=query.substring(0, query.length()-1); 
+			 
+
+			Calendar cal1 = Calendar.getInstance();
+			SimpleDateFormat date_format = new SimpleDateFormat("HH:mm:ss");
+			System.out.println(date_format.format(cal1.getTime())); 
+			// jdbcTemplate.batchUpdate(query);
+			
+			 
+			//query=query.substring(0, query.length()-1); 
+			//dailyAttendanceRepository.insert(query);
+			//System.out.println(query);
+			
+			
+			 List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
+			 cal1 = Calendar.getInstance();
+			 System.out.println(date_format.format(cal1.getTime()));
+			 List<SummaryDailyAttendance> summaryDailyAttendanceSaveRes = summaryDailyAttendanceRepository.saveAll(summaryDailyAttendanceList);
 			info.setError(false);
 			info.setMsg("success");
 		} catch (Exception e) {
