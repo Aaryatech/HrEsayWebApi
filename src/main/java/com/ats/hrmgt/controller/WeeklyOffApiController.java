@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.common.DateConvertor;
+import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.GetWeeklyOff;
 import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveCount;
 import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeeklyOffShit;
+import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetWeeklyOffRepo;
 import com.ats.hrmgt.repository.HolidayRepo;
 import com.ats.hrmgt.repository.WeeklyOffRepo;
@@ -568,8 +570,8 @@ public class WeeklyOffApiController {
 												datearry = datearry + "," + dddate.format(m);
 												totalcount++;
 											}
-										} 
-										 
+										}
+
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 									}
 
@@ -855,14 +857,22 @@ public class WeeklyOffApiController {
 	@Autowired
 	CommonFunctionService commonFunctionService;
 
+	@Autowired
+	EmployeeMasterRepository empRepo;
+
 	@RequestMapping(value = { "/getWeeklyOffDatesToChange" }, method = RequestMethod.POST)
-	public @ResponseBody List<String> getWeeklyOffDatesToChange(@RequestParam("companyId") int companyId,
-			@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("locId") int locId,
-			@RequestParam("weekoffCatId") int weekoffCatId) {
+	public @ResponseBody List<String> getWeeklyOffDatesToChange(
+			@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("empId") int empId) {
 		List<WeeklyOffShit> sht = new ArrayList<WeeklyOffShit>();
 
 		List<String> datesList = new ArrayList<>();
 		try {
+
+			EmployeeMaster emp = new EmployeeMaster();
+
+			emp = empRepo.findByEmpIdAndDelStatus(empId, 1);
+			int locId = emp.getLocationId();
+			int weekoffCatId = emp.getWeekendCategory();
 
 			String monthNew = null;
 			if (String.valueOf(month).length() == 1) {
