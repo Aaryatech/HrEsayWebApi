@@ -1372,7 +1372,7 @@ public class AttendanceApiController {
 			 * temp.get(Calendar.YEAR); int month = temp.get(Calendar.MONTH) + 1;
 			 */
 
-			List<EmpInfo> empList = empInfoRepository.getEmpListAll();
+			List<EmpInfo> empList = empInfoRepository.getEmpListAll(fromDate);
 
 			List<DailyAttendance> dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceListAll(fromDate,
 					toDate);
