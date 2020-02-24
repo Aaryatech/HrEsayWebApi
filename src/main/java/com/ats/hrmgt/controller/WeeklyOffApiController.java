@@ -568,8 +568,8 @@ public class WeeklyOffApiController {
 												datearry = datearry + "," + dddate.format(m);
 												totalcount++;
 											}
-										}
-
+										} 
+										 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 									}
 
