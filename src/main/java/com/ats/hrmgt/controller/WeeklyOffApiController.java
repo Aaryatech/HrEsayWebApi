@@ -306,12 +306,30 @@ public class WeeklyOffApiController {
 												&& m.compareTo(yydate.parse(fromDate)) >= 0
 												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
-											arryadate.add(m);
-											datearry = datearry + "," + dddate.format(m);
-											// System.out.println("dayOfWeek"+dayOfWeek+"Integer.parseInt(weeklyList.get(i).getWoDay())"
-											// + Integer.parseInt(weeklyList.get(i).getWoDay())+"add in 1st" +
-											// dddate.format(m) + " " +m);
-											totalcount++;
+											/*
+											 * arryadate.add(m); datearry = datearry + "," + dddate.format(m);
+											 * totalcount++;
+											 */
+
+											int find = 0;
+
+											for (int a = 0; a < weeklyOffShitFromList.size(); a++) {
+
+												Date shiftWkDate = yydate
+														.parse(weeklyOffShitFromList.get(a).getWeekofffromdate());
+
+												if (shiftWkDate.compareTo(j) == 0) {
+													find = 1;
+													break;
+												}
+
+											}
+
+											if (find == 0) {
+												arryadate.add(m);
+												datearry = datearry + "," + dddate.format(m);
+												totalcount++;
+											}
 										}
 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
@@ -370,10 +388,27 @@ public class WeeklyOffApiController {
 												&& m.compareTo(yydate.parse(fromDate)) >= 0
 												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
-											arryadate.add(m);
-											datearry = datearry + "," + dddate.format(m);
-											// System.out.println("add in 2nd" + dddate.format(m));
-											totalcount++;
+											/*
+											 * arryadate.add(m); datearry = datearry + "," + dddate.format(m);
+											 * totalcount++;
+											 */
+											int find = 0;
+											for (int a = 0; a < weeklyOffShitFromList.size(); a++) {
+
+												Date shiftWkDate = yydate
+														.parse(weeklyOffShitFromList.get(a).getWeekofffromdate());
+
+												if (shiftWkDate.compareTo(j) == 0) {
+													find = 1;
+													break;
+												}
+
+											}
+											if (find == 0) {
+												arryadate.add(m);
+												datearry = datearry + "," + dddate.format(m);
+												totalcount++;
+											}
 										}
 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
@@ -431,10 +466,29 @@ public class WeeklyOffApiController {
 												&& m.compareTo(yydate.parse(fromDate)) >= 0
 												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
-											arryadate.add(m);
-											datearry = datearry + "," + dddate.format(m);
-											// System.out.println("add in 3rd" + dddate.format(m));
-											totalcount++;
+											/*
+											 * arryadate.add(m); datearry = datearry + "," + dddate.format(m);
+											 * totalcount++;
+											 */
+
+											int find = 0;
+											for (int a = 0; a < weeklyOffShitFromList.size(); a++) {
+
+												Date shiftWkDate = yydate
+														.parse(weeklyOffShitFromList.get(a).getWeekofffromdate());
+
+												if (shiftWkDate.compareTo(j) == 0) {
+													find = 1;
+													break;
+												}
+
+											}
+											if (find == 0) {
+												arryadate.add(m);
+												datearry = datearry + "," + dddate.format(m);
+												totalcount++;
+											}
+
 										}
 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
@@ -492,10 +546,28 @@ public class WeeklyOffApiController {
 												&& m.compareTo(yydate.parse(fromDate)) >= 0
 												&& m.compareTo(yydate.parse(toDate)) <= 0) {
 
-											arryadate.add(m);
-											datearry = datearry + "," + dddate.format(m);
-											// System.out.println("add in 4th" + dddate.format(m));
-											totalcount++;
+											/*
+											 * arryadate.add(m); datearry = datearry + "," + dddate.format(m);
+											 * totalcount++;
+											 */
+
+											int find = 0;
+											for (int a = 0; a < weeklyOffShitFromList.size(); a++) {
+
+												Date shiftWkDate = yydate
+														.parse(weeklyOffShitFromList.get(a).getWeekofffromdate());
+
+												if (shiftWkDate.compareTo(j) == 0) {
+													find = 1;
+													break;
+												}
+
+											}
+											if (find == 0) {
+												arryadate.add(m);
+												datearry = datearry + "," + dddate.format(m);
+												totalcount++;
+											}
 										}
 
 										j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
@@ -541,7 +613,7 @@ public class WeeklyOffApiController {
 							todt = yydate.parse(toDate);
 
 							int cnt1 = diffrence(wkfstdt, wklstdt, frmdt, todt,
-									Integer.parseInt(weeklyList.get(i).getWoDay()));
+									Integer.parseInt(weeklyList.get(i).getWoDay()), weeklyOffShitFromList);
 
 							String fd1 = year + "-" + k + "-22";
 							String ld1 = year + "-" + k + "-28";
@@ -552,7 +624,7 @@ public class WeeklyOffApiController {
 							todt = yydate.parse(toDate);
 
 							int cnt2 = diffrence(wkfstdt1, wklstdt1, frmdt, todt,
-									Integer.parseInt(weeklyList.get(i).getWoDay()));
+									Integer.parseInt(weeklyList.get(i).getWoDay()), weeklyOffShitFromList);
 
 							totalcount = totalcount + cnt1 + cnt2;
 
@@ -594,7 +666,7 @@ public class WeeklyOffApiController {
 							todt = yydate.parse(toDate);
 
 							int cnt1 = diffrence(wkfstdt, wklstdt, frmdt, todt,
-									Integer.parseInt(weeklyList.get(i).getWoDay()));
+									Integer.parseInt(weeklyList.get(i).getWoDay()), weeklyOffShitFromList);
 
 							String fd1 = year + "-" + k + "-15";
 							String ld1 = year + "-" + k + "-21";
@@ -605,7 +677,7 @@ public class WeeklyOffApiController {
 							todt = yydate.parse(toDate);
 
 							int cnt2 = diffrence(wkfstdt1, wklstdt1, frmdt, todt,
-									Integer.parseInt(weeklyList.get(i).getWoDay()));
+									Integer.parseInt(weeklyList.get(i).getWoDay()), weeklyOffShitFromList);
 
 							String fd3 = year + "-" + k + "-29";
 							String ld3 = year + "-" + (k + 1) + "-0";
@@ -617,7 +689,7 @@ public class WeeklyOffApiController {
 							todt = yydate.parse(toDate);
 
 							int cnt3 = diffrence(wkfstdt3, wklstdt3, frmdt, todt,
-									Integer.parseInt(weeklyList.get(i).getWoDay()));
+									Integer.parseInt(weeklyList.get(i).getWoDay()), weeklyOffShitFromList);
 
 							totalcount = totalcount + cnt1 + cnt2 + cnt3;
 
@@ -635,9 +707,9 @@ public class WeeklyOffApiController {
 
 			for (int i = 0; i < weeklyOffShitonList.size(); i++) {
 
-				Date shiftWkDate = yydate.parse(weeklyOffShitonList.get(i).getWeekofffromdate()); 
+				Date shiftWkDate = yydate.parse(weeklyOffShitonList.get(i).getWeekofffromdate());
 				arryadate.add(shiftWkDate);
-				datearry = datearry + "," + dddate.format(shiftWkDate); 
+				datearry = datearry + "," + dddate.format(shiftWkDate);
 				totalcount++;
 
 			}
@@ -696,10 +768,12 @@ public class WeeklyOffApiController {
 
 	}
 
-	public int diffrence(Date date1, Date date2, Date holfrstdt, Date holseconddt, int day) {
+	public int diffrence(Date date1, Date date2, Date holfrstdt, Date holseconddt, int day,
+			List<WeeklyOffShit> weeklyOffShitFromList) {
 
 		int totalcount = 0;
 		SimpleDateFormat dddate = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat yydate = new SimpleDateFormat("yyyy-MM-dd");
 		// System.out.println("date1 " + date1 + "date2 " + date2 + " holfrstdt " +
 		// holfrstdt + " holseconddt " + holseconddt + " day " + day);
 
@@ -715,10 +789,33 @@ public class WeeklyOffApiController {
 
 					if (dayOfWeek == day && m.compareTo(holfrstdt) >= 0 && m.compareTo(holseconddt) <= 0) {
 
-						arryadate.add(m);
-						datearry = datearry + "," + dddate.format(m);
-						System.out.println("add in odd even" + dddate.format(m));
-						totalcount++;
+						/*
+						 * arryadate.add(m); datearry = datearry + "," + dddate.format(m);
+						 * System.out.println("add in odd even" + dddate.format(m)); totalcount++;
+						 */
+
+						int find = 0;
+
+						try {
+							for (int a = 0; a < weeklyOffShitFromList.size(); a++) {
+
+								Date shiftWkDate = yydate.parse(weeklyOffShitFromList.get(a).getWeekofffromdate());
+
+								if (shiftWkDate.compareTo(j) == 0) {
+									find = 1;
+									break;
+								}
+
+							}
+
+						} catch (Exception e) {
+
+						}
+						if (find == 0) {
+							arryadate.add(m);
+							datearry = datearry + "," + dddate.format(m);
+							totalcount++;
+						}
 					}
 					j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
