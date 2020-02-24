@@ -36,7 +36,7 @@ public interface GetSalaryCalcReportRepo extends JpaRepository<GetSalaryCalcRepo
 			"    ) OR(\n" + 
 			"        salc.calc_month <=:toMonth AND salc.calc_year =:toYear \n" + 
 			"    )   ",nativeQuery=true)
-	List<GetSalaryCalcReport> getSpecEmpAdvForReport(@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth);
+	List<GetSalaryCalcReport> getSpecEmpPfForReport(@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth);
 	
 	
 	@Query(value="\n" + 
@@ -64,7 +64,7 @@ public interface GetSalaryCalcReportRepo extends JpaRepository<GetSalaryCalcRepo
 			"    ) OR(\n" + 
 			"        salc.calc_month <=:toMonth AND salc.calc_year =:toYear \n" + 
 			"    )",nativeQuery=true)
-	List<GetSalaryCalcReport> getSpecEmpAdvForReportSunCmpwise(@Param("companyId") int companyId,@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth);
+	List<GetSalaryCalcReport> getSpecEmpPfForReportComp(@Param("companyId") int companyId,@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth);
 	
 	
 	@Query(value="SELECT\n" + 
@@ -90,7 +90,7 @@ public interface GetSalaryCalcReportRepo extends JpaRepository<GetSalaryCalcRepo
 			"    ) OR(\n" + 
 			"        salc.calc_month <= :toMonth AND salc.calc_year = :toYear\n" + 
 			"    )  ",nativeQuery=true)
-	List<GetSalaryCalcReport> getSpecEmpAdvForReportEmpWise(@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth,@Param("empId") int empId);
+	List<GetSalaryCalcReport> getSpecEmpPfStat(@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth,@Param("empId") int empId);
 	
 	
 	@Query(value="SELECT\n" + 
@@ -111,7 +111,7 @@ public interface GetSalaryCalcReportRepo extends JpaRepository<GetSalaryCalcRepo
 			"INNER JOIN m_employees emp ON\n" + 
 			"    salc.emp_id = emp.emp_id AND salc.cmp_id=:companyId \n" + 
 			"WHERE\n" + 
-			"    salc.pf_status = 1 AND(\n" + 
+			"    salc.mlwf > 0 AND(\n" + 
 			"        salc.calc_month >=:fromMonth AND salc.calc_year =:fromYear \n" + 
 			"    ) OR(\n" + 
 			"        salc.calc_month <=:toMonth AND salc.calc_year =:toYear \n" + 
@@ -137,11 +137,15 @@ public interface GetSalaryCalcReportRepo extends JpaRepository<GetSalaryCalcRepo
 			"INNER JOIN m_employees emp ON\n" + 
 			"    salc.emp_id = emp.emp_id  \n" + 
 			"WHERE\n" + 
-			"    salc.pf_status = 1 AND(\n" + 
+			"   salc.mlwf > 0 AND  (\n" + 
 			"        salc.calc_month >=:fromMonth AND salc.calc_year =:fromYear \n" + 
 			"    ) OR(\n" + 
 			"        salc.calc_month <=:toMonth AND salc.calc_year =:toYear \n" + 
 			"    ) ",nativeQuery=true)
 	List<GetSalaryCalcReport> getMlwfRepAllCmp(@Param("fromYear") String fromYear,@Param("fromMonth") String fromMonth,@Param("toYear") String toYear,@Param("toMonth") String toMonth);
+	
+	
+	
+	
 
 }

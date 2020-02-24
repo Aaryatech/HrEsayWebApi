@@ -20,6 +20,7 @@ import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.GetDailyDailyRecord;
 import com.ats.hrmgt.model.GetDailyDailyRecordRepository;
 import com.ats.hrmgt.model.LeaveApply;
+import com.ats.hrmgt.model.PayDeductionDetails;
 import com.ats.hrmgt.model.SlabMaster;
 import com.ats.hrmgt.model.advance.GetAdvance;
 import com.ats.hrmgt.model.bonus.BonusCalc;
@@ -46,6 +47,7 @@ import com.ats.hrmgt.repo.report.StatutoryEsicRepRepo;
 import com.ats.hrmgt.repository.DailyAttendanceRepository;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.LeaveApplyRepository;
+import com.ats.hrmgt.repository.PayDeductionDetailsRepo;
 import com.ats.hrmgt.repository.SlabMasterRepository;
 
 @RestController
@@ -322,10 +324,10 @@ public class LeaveReportApiController {
 		try {
 
 			if (companyId == 0) {
-				advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReport(from[2], from[1], to[2], to[1]);
+				advYearList = getSalaryCalcReportRepo.getSpecEmpPfForReport(from[2], from[1], to[2], to[1]);
 
 			} else {
-				advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReportSunCmpwise(companyId, from[2], from[1],
+				advYearList = getSalaryCalcReportRepo.getSpecEmpPfForReportComp(companyId, from[2], from[1],
 						to[2], to[1]);
 
 			}
@@ -349,7 +351,7 @@ public class LeaveReportApiController {
 		String to[] = toDate.split("-");
 
 		try {
-			advYearList = getSalaryCalcReportRepo.getSpecEmpAdvForReportEmpWise(from[1], from[0], to[1], to[0], empId);
+			advYearList = getSalaryCalcReportRepo.getSpecEmpPfStat(from[1], from[0], to[1], to[0], empId);
 
 		} catch (Exception e) {
 
@@ -486,7 +488,52 @@ public class LeaveReportApiController {
 		return advYearList;
 
 	}
+	
+	
+	
+	
+	@Autowired
+	PayDeductionDetailsRepo payDeductionDetailsRepo;
+	@RequestMapping(value = { "/getEmpPayDed" }, method = RequestMethod.POST)
+	public @ResponseBody List<PayDeductionDetails> getEmpPayDed(@RequestParam("empId") int empId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate,int flag) {
 
+		List<PayDeductionDetails> advYearList = new ArrayList<PayDeductionDetails>();
+
+		
+
+		try {
+			
+			if(flag==0) {
+				
+				String from[] = fromDate.split("-");
+				String to[] = toDate.split("-");
+				advYearList = payDeductionDetailsRepo.getEmpPayDed(from[1].trim(), from[0].trim(),to[1].trim(),
+						to[0].trim(), empId);
+
+			}else {
+				String from[] = fromDate.split("-");
+				String to[] = toDate.split("-");
+				advYearList = payDeductionDetailsRepo.getEmpPayDedAllEmp(from[2].trim(), from[1].trim(),to[2].trim(),
+						to[1].trim());
+			}
+
+		 
+			
+			 
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return advYearList;
+
+	}
+
+	
+	
+	
 	
 	@Autowired
 	StatutoryEsicRepRepo statutoryEsicRepRepo;
