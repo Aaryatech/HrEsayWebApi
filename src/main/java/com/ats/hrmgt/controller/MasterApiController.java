@@ -18,6 +18,7 @@ import com.ats.hrmgt.model.CalenderYear;
 import com.ats.hrmgt.model.Department;
 import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
+import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.HolidayCategory;
 import com.ats.hrmgt.model.Info;
@@ -35,6 +36,7 @@ import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
+import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
 import com.ats.hrmgt.repository.HolidayCategoryRepo;
 import com.ats.hrmgt.repository.HolidayRepo;
 import com.ats.hrmgt.repository.LeaveStructureDetailsRepo;
@@ -535,14 +537,18 @@ public class MasterApiController {
 		return calendearYear;
 
 	}
+	
+	
+	@Autowired
+	GetEmployeeDetailsRepo getEmployeeDetailsRepo;
 
 	@RequestMapping(value = { "/getEmplistForAssignAuthority" }, method = RequestMethod.GET)
-	public @ResponseBody List<EmployeeMaster> getEmplistForAssignAuthority() {
+	public @ResponseBody List<GetEmployeeDetails> getEmplistForAssignAuthority() {
 
-		List<EmployeeMaster> list = new ArrayList<>();
+		List<GetEmployeeDetails> list = new ArrayList<>();
 		try {
 
-			list = employeeMasterRepository.getEmplistForAssignAuthority();
+			list = getEmployeeDetailsRepo.getEmplistForAssignAuthority();
 
 		} catch (Exception e) {
 
@@ -571,12 +577,12 @@ public class MasterApiController {
 	}
 
 	@RequestMapping(value = { "/getEmpInfoListForLeaveAuth" }, method = RequestMethod.GET)
-	public @ResponseBody List<EmployeeMaster> getEmpInfoListForLeaveAuth() {
+	public @ResponseBody List<GetEmployeeDetails> getEmpInfoListForLeaveAuth() {
 
-		List<EmployeeMaster> list = new ArrayList<EmployeeMaster>();
+		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
 		try {
 
-			list = employeeMasterRepository.getEmpListByCompanyIdForAuth();
+			list = getEmployeeDetailsRepo.getEmpListByCompanyIdForAuth();
 
 		} catch (Exception e) {
 
@@ -588,15 +594,15 @@ public class MasterApiController {
 	}
 
 	@RequestMapping(value = { "/getEmpInfoListByEmpIdList" }, method = RequestMethod.POST)
-	public @ResponseBody List<EmployeeMaster> getEmpInfoListByEmpIdList(
+	public @ResponseBody List<GetEmployeeDetails> getEmpInfoListByEmpIdList(
 			@RequestParam("empIdList") List<Integer> empIdList) {
 
-		List<EmployeeMaster> list = new ArrayList<EmployeeMaster>();
+		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
 		try {
 
-			list = employeeMasterRepository.getEmpListByCompanyIdAndEmpIdList(empIdList);
+			list = getEmployeeDetailsRepo.getEmpListByCompanyIdAndEmpIdList(empIdList);
 
-			System.err.println("list**" + list.toString());
+		 
 
 		} catch (Exception e) {
 

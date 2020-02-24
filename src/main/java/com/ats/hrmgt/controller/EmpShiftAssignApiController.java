@@ -46,33 +46,7 @@ public class EmpShiftAssignApiController {
 		return list;
 	}
 
-	@RequestMapping(value = { "/getAllEmplistForHolidayCatAssign" }, method = RequestMethod.GET)
-	public List<GetEmployeeDetails> getAllEmplistForHolidayCatAssign() {
-		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
-		try {
-			list = getEmployeeDetailsRepo.getAllEmplistForHolidayCatAssign();
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
-		return list;
-	}
-	
-	
-	@RequestMapping(value = { "/getAllEmplistForWeekOffCatAssign" }, method = RequestMethod.GET)
-	public List<GetEmployeeDetails> getAllEmplistForWeekOffCatAssign() {
-		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
-		try {
-			list = getEmployeeDetailsRepo.getAllEmplistForWeekoffCatAssign();
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
-		return list;
-	}
-
+	 
 	@RequestMapping(value = { "/getEmpDetailListByLocId" }, method = RequestMethod.POST)
 	public List<GetEmployeeDetails> getEmpDetailListByLocId(@RequestParam("locationIds") List<Integer> locationIds) {
 		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();

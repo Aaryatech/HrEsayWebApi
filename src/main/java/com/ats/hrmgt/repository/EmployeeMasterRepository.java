@@ -20,27 +20,9 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	@Query(value = " SELECT * FROM m_employees ", nativeQuery = true)
 	List<EmployeeMaster> getEmplistForAssignAuthorityAll();
 	
-	@Query(value = " SELECT * FROM m_employees where ex_int1=1", nativeQuery = true)
-	List<EmployeeMaster> getEmplistForAssignAuthority();
-
-	@Query(value = "SELECT\n" + 
-			"        e.*      \n" + 
-			"    from\n" + 
-			"        m_employees e \n" + 
-			"    where\n" + 
-			"        e.emp_id NOT IN(\n" + 
-			"            SELECT\n" + 
-			"                auth.emp_id \n" + 
-			"            FROM\n" + 
-			"                leave_authority auth  \n" + 
-			"            WHERE\n" + 
-			"                auth.del_status=1 \n" + 
-			"        ) \n" + 
-			"     ", nativeQuery = true)
-	List<EmployeeMaster> getEmpListByCompanyIdForAuth();
-
-	@Query(value = "SELECT e.* from m_employees e  where e.emp_id IN(:empIdList)", nativeQuery = true)
-	List<EmployeeMaster> getEmpListByCompanyIdAndEmpIdList(@Param("empIdList") List<Integer> empIdList);
+	 
+	 
+ 
 
 	@Query(value = "SELECT e.* from m_employees e, leave_authority au where au.emp_id=e.emp_id and (au.ini_auth_emp_id=:empId or au.fin_auth_emp_id=:empId or e.emp_id=:empId)", nativeQuery = true)
 	List<EmployeeMaster> getAuthorityWiseEmpListByEmpId(@Param("empId")int empId);
