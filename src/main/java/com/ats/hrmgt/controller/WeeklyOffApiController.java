@@ -210,8 +210,17 @@ public class WeeklyOffApiController {
 			int weekendCatId = weeklyOffRepo.getweekendCatId(empId);
 			int holidayCatId = weeklyOffRepo.getholidayCatId(empId);
 
-			/*System.out.println(weekendCatId);
-			System.out.println(holidayCatId);*/
+			/*
+			 * System.out.println(weekendCatId); System.out.println(holidayCatId);
+			 */
+			List<WeeklyOffShit> weeklyOffShitFromList = weeklyOffShitRepository
+					.getWeeklyOffShitListbetweenweekofffromdatebyempId(fromDate, toDate, empId);
+			List<WeeklyOffShit> weeklyOffShitonList = weeklyOffShitRepository
+					.getWeeklyOffShitListbetweenweekoffondatebyempId(fromDate, toDate, empId);
+
+			System.out.println(weeklyOffShitFromList);
+			System.out.println(weeklyOffShitonList);
+
 			weeklyList = weeklyOffRepo.getWeeklyOffListByEmpId(empId);
 			holidayList = holidayRepo.getHolidayByEmpIdAndFromDateTodate(empId, fromDate, toDate);
 			arryadate = new ArrayList<>();
@@ -232,10 +241,26 @@ public class WeeklyOffApiController {
 
 							if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())) {
 
-								arryadate.add(j);
-								datearry = datearry + "," + dddate.format(j);
-								// System.out.println("add in all" + dddate.format(j));
-								totalcount++;
+								int find = 0;
+
+								for (int a = 0; a < weeklyOffShitFromList.size(); a++) {
+
+									Date shiftWkDate = yydate.parse(weeklyOffShitFromList.get(a).getWeekofffromdate());
+
+									if (shiftWkDate.compareTo(j) == 0) {
+										find = 1;
+										break;
+									}
+
+								}
+
+								if (find == 0) {
+									arryadate.add(j);
+									datearry = datearry + "," + dddate.format(j);
+									// System.out.println("add in all" + dddate.format(j));
+									totalcount++;
+								}
+
 							}
 							j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
@@ -608,6 +633,15 @@ public class WeeklyOffApiController {
 				}
 			}
 
+			for (int i = 0; i < weeklyOffShitonList.size(); i++) {
+
+				Date shiftWkDate = yydate.parse(weeklyOffShitonList.get(i).getWeekofffromdate()); 
+				arryadate.add(shiftWkDate);
+				datearry = datearry + "," + dddate.format(shiftWkDate); 
+				totalcount++;
+
+			}
+
 			for (int i = 0; i < holidayList.size(); i++) {
 
 				// alert("Data " +JSON.stringify(data.holidayList[i]));
@@ -741,7 +775,7 @@ public class WeeklyOffApiController {
 			}
 
 			int monthN = Integer.parseInt(monthNew);
-			sht = weeklyOffShitRepository.getRecord(companyId, month, year, locId);
+			sht = weeklyOffShitRepository.getRecord(month, year, locId);
 
 			Calendar calendar = Calendar.getInstance();
 			int date = 1;
