@@ -21,8 +21,6 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	List<EmployeeMaster> getEmplistForAssignAuthorityAll();
 	 
 
-	@Query(value = "SELECT e.* from m_employees e, leave_authority au where au.emp_id=e.emp_id and (au.ini_auth_emp_id=:empId or au.fin_auth_emp_id=:empId or e.emp_id=:empId)", nativeQuery = true)
-	List<EmployeeMaster> getAuthorityWiseEmpListByEmpId(@Param("empId")int empId);
 
 	@Query(value = "select\n" + 
 			"        * \n" + 

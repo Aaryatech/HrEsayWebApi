@@ -12,25 +12,24 @@ import com.ats.hrmgt.model.GetStructureAllotment;
 public interface GetStructureAllotmentRepo extends JpaRepository<GetStructureAllotment, Integer> {
 
 	@Query(value = "SELECT\n" + 
-			"        e.emp_id,\n" + 
-			"        e.emp_code,\n" + 
-			"        e.first_name as emp_fname,\n" + 
-			"        e.middle_name as emp_mname,\n" + 
-			"        e.surname as emp_sname    ,\n" + 
-			"        \"\" as emp_dept_name,\n" + 
-			"        \"\" as emp_cat_name ,\n" + 
-			"        l.lvs_name      \n" + 
-			"    FROM\n" + 
-			"        m_employees e          \n" + 
-			"    LEFT JOIN\n" + 
-			"        leave_structure_allotment lsa              \n" + 
-			"            ON e.emp_id=lsa.emp_id              \n" + 
-			"            AND lsa.cal_yr_id=2   \n" + 
-			"    LEFT JOIN\n" + 
-			"        leave_structure_header l              \n" + 
-			"            ON    lsa.lvs_id=l.lvs_id              \n" + 
-			"            AND l.del_status=1       \n" + 
-			"     ", nativeQuery = true)
+			"    e.emp_id,\n" + 
+			"    e.emp_code,\n" + 
+			"    e.first_name AS emp_fname,\n" + 
+			"    e.middle_name AS emp_mname,\n" + 
+			"    e.surname AS emp_sname,\n" + 
+			"    dep.name AS emp_dept_name,\n" + 
+			"    dg.name AS emp_cat_name,\n" + 
+			"    l.lvs_name\n" + 
+			"FROM\n" + 
+			"    m_employees e\n" + 
+			"LEFT JOIN leave_structure_allotment lsa ON\n" + 
+			"    e.emp_id = lsa.emp_id AND lsa.cal_yr_id = 2\n" + 
+			"LEFT JOIN leave_structure_header l ON\n" + 
+			"    lsa.lvs_id = l.lvs_id AND l.del_status = 1\n" + 
+			"LEFT JOIN m_designation dg ON\n" + 
+			"    e.designation_id = dg.desig_id\n" + 
+			"LEFT JOIN m_department dep ON\n" + 
+			"    e.depart_id = dep.depart_id ", nativeQuery = true)
 
 	List<GetStructureAllotment> getStructureAllotment(@Param("companyId") int companyId);
 	
