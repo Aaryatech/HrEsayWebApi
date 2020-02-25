@@ -1056,7 +1056,7 @@ public class AttendanceApiController {
 						e.printStackTrace();
 					}
 				}
-				
+
 			}
 
 			// System.out.println("dailyAttendanceList " + quiry);
@@ -1757,7 +1757,7 @@ public class AttendanceApiController {
 	}
 
 	@RequestMapping(value = { "/getEmployyeDailyDailyListByDeptIds" }, method = RequestMethod.POST)
-	public @ResponseBody List<DailyAttendance> getAttendanceSheet(@RequestParam("date") String date,
+	public @ResponseBody List<DailyAttendance> getEmployyeDailyDailyListByDeptIds(@RequestParam("date") String date,
 			@RequestParam("desgType") int desgType, @RequestParam("departIds") List<Integer> departIds) {
 
 		List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
@@ -1768,6 +1768,24 @@ public class AttendanceApiController {
 			} else if (desgType == 2) {
 				dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceListAll(date, date);
 			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return dailyAttendanceList;
+
+	}
+
+	@RequestMapping(value = { "/getEmployyeDailyDailyListforHr" }, method = RequestMethod.POST)
+	public @ResponseBody List<DailyAttendance> getEmployyeDailyDailyListforHr(@RequestParam("date") String date,
+			@RequestParam("desgType") int desgType, @RequestParam("departIds") List<Integer> departIds) {
+
+		List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
+		try {
+
+			dailyAttendanceList = dailyAttendanceRepository.dailyAttendanceListAll(date, date);
 
 		} catch (Exception e) {
 
