@@ -1460,6 +1460,7 @@ public class AttendanceApiController {
 				EmpInfoWithDateInfoList infomation = new EmpInfoWithDateInfoList();
 				infomation.setEmpCode(empList.get(i).getEmpCode());
 				infomation.setEmpId(empList.get(i).getEmpId());
+				infomation.setEmpName(empList.get(i).getFirstName() + " " + empList.get(i).getSurname());
 				List<DailyDailyInfomationForChart> dateInfo = new ArrayList<>();
 
 				for (int j = 0; j < dates.size(); j++) {
