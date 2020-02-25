@@ -1,3 +1,4 @@
+
 package com.ats.hrmgt.model.loan;
 
 import java.util.Date;
@@ -55,7 +56,7 @@ public class LoanMain {
 
 	private int skipId;
 	
-	private String loanAddDate;
+	private Date loanAddDate;
 	
 	private String skipLoginName;
 	
@@ -135,8 +136,7 @@ public class LoanMain {
 	}
 
 	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
-
-	public Date getLoanRepayStart() {
+ 	public Date getLoanRepayStart() {
 		return loanRepayStart;
 	}
 
@@ -240,12 +240,13 @@ public class LoanMain {
 	public void setSkipId(int skipId) {
 		this.skipId = skipId;
 	}
+	@JsonFormat(locale = "hi",timezone = "Asia/Kolkata", pattern = "dd-MM-yyyy")
 
-	public String getLoanAddDate() {
+	public Date getLoanAddDate() {
 		return loanAddDate;
 	}
 
-	public void setLoanAddDate(String loanAddDate) {
+	public void setLoanAddDate(Date loanAddDate) {
 		this.loanAddDate = loanAddDate;
 	}
 
