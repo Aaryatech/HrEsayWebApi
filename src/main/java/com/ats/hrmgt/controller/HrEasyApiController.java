@@ -396,10 +396,17 @@ public class HrEasyApiController {
 	GetWeekShiftChangeRepo getWeekShiftChangeRepo;
 
 	@RequestMapping(value = { "/getAllWeekOffShifted" }, method = RequestMethod.POST)
-	public List<GetWeekShiftChange> getAllWeekOffShifted(@RequestParam String year, @RequestParam int companyId) {
+	public List<GetWeekShiftChange> getAllWeekOffShifted(@RequestParam String year, @RequestParam int empId) {
 		List<GetWeekShiftChange> list = new ArrayList<GetWeekShiftChange>();
 		try {
-			list = getWeekShiftChangeRepo.getAllWeekShifted(year, companyId);
+			
+			if(empId!=-1) {
+				list = getWeekShiftChangeRepo.getAllWeekShifted(year, empId);
+
+			}else {
+				list = getWeekShiftChangeRepo.getAllWeekShiftedAllEmp(year);
+
+			}
 		} catch (Exception e) {
 			System.err.println("Excep in getAllBanks : " + e.getMessage());
 			e.printStackTrace();

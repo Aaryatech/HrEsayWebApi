@@ -92,36 +92,7 @@ public class EmpShiftAssignApiController {
 	@Autowired
 	EmployeeMasterRepository employeeMasterRepository;
 
-	@RequestMapping(value = { "/shiftAssignmentUpdate" }, method = RequestMethod.POST)
-	public @ResponseBody Info taskAssignmentUpdate(@RequestParam("empIdList") List<Integer> empIdList,
-			@RequestParam("shiftId") String shiftId) {
-
-		Info info = new Info();
-		try {
-
-			int res = 0;
-			res = employeeMasterRepository.assignShift(empIdList, shiftId);
-
-			if (res > 0) {
-				info.setError(false);
-				info.setMsg("success");
-
-			} else {
-				info.setError(true);
-				info.setMsg("failed");
-
-			}
-		} catch (Exception e) {
-
-			System.err.println("Exce in deleteService  " + e.getMessage());
-			e.printStackTrace();
-			info.setError(true);
-			info.setMsg("excep");
-		}
-
-		return info;
-
-	}
+	 
 
 	@Autowired
 	SalaryTypesMasterRepo salaryTypesMasterRepo;
@@ -177,15 +148,35 @@ public class EmpShiftAssignApiController {
 
 	}
      
-	@RequestMapping(value = { "/holiCatAssignmentUpdate" }, method = RequestMethod.POST)
-	public @ResponseBody Info holiCatAssignmentUpdate(@RequestParam("empIdList") List<Integer> empIdList,
-			@RequestParam("holiCatId") String holiCatId) {
+	@RequestMapping(value = { "/empParamAssignmentUpdate" }, method = RequestMethod.POST)
+	public @ResponseBody Info empParamAssignmentUpdate(@RequestParam("empIdList") List<Integer> empIdList,
+			@RequestParam("upDateId") String upDateId,@RequestParam("flag") int flag) {
 
 		Info info = new Info();
 		try {
 
 			int res = 0;
-			res = employeeMasterRepository.assignHoliCat(empIdList, holiCatId);
+			
+			if(flag==1) {
+				res = employeeMasterRepository.assignHoliCat(empIdList, upDateId);
+			}else if(flag==2) {
+				res = employeeMasterRepository.assignComapny(empIdList, upDateId);
+			}else if(flag==3) {
+				res = employeeMasterRepository.assignDept(empIdList, upDateId);
+			}else if(flag==4) {
+				res = employeeMasterRepository.assignDesignation(empIdList, upDateId);
+			}else if(flag==5) {
+				res = employeeMasterRepository.assignEmpType(empIdList, upDateId);
+			}else if(flag==6) {
+				res = employeeMasterRepository.assignLocation(empIdList, upDateId);
+			}else if(flag==7) {
+				res = employeeMasterRepository.assignShift(empIdList, upDateId);
+			}else if(flag==8) {
+				res = employeeMasterRepository.weekHoliCat(empIdList, upDateId);
+			}else {
+				res = 0;
+			}
+		
 
 			if (res > 0) {
 				info.setError(false);
@@ -357,5 +348,12 @@ public class EmpShiftAssignApiController {
 		return info;
 
 	}
+	
+	
+	///******************************Asiignment of emp Related  Master*****************
+	
+	 
+	 
+
 
 }

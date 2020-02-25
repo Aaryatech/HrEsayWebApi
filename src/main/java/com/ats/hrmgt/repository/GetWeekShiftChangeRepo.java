@@ -24,8 +24,27 @@ public interface GetWeekShiftChangeRepo extends JpaRepository<GetWeekShiftChange
 			"    tbl_weekoffshift,\n" + 
 			"    m_location\n" + 
 			"WHERE\n" + 
-			"    tbl_weekoffshift.del_status = 1 AND tbl_weekoffshift.location_id = m_location.loc_id  AND  tbl_weekoffshift.year=:yearId AND  tbl_weekoffshift.cmp_id=:cmpId", nativeQuery = true)
-	List<GetWeekShiftChange> getAllWeekShifted( @Param("yearId") String yearId,@Param("cmpId") int cmpId);
+			"    tbl_weekoffshift.del_status = 1 AND tbl_weekoffshift.location_id = m_location.loc_id  AND  tbl_weekoffshift.year=:yearId AND  tbl_weekoffshift.emp_id=:empId", nativeQuery = true)
+	List<GetWeekShiftChange> getAllWeekShifted( @Param("yearId") String yearId,@Param("empId") int empId);
+	
+	
+	
+	@Query(value = "SELECT\n" + 
+			"    tbl_weekoffshift.id,\n" + 
+			"    tbl_weekoffshift.month,\n" + 
+			"    tbl_weekoffshift.year,\n" + 
+			"    tbl_weekoffshift.weekofffromdate,\n" + 
+			"    tbl_weekoffshift.weekoffshiftdate,\n" + 
+			"    tbl_weekoffshift.cmp_id,\n" + 
+			"    tbl_weekoffshift.reason,\n" + 
+			"    tbl_weekoffshift.del_status,\n" + 
+			"    m_location.loc_name,tbl_weekoffshift.location_id,tbl_weekoffshift.login_time\n" + 
+			"FROM\n" + 
+			"    tbl_weekoffshift,\n" + 
+			"    m_location\n" + 
+			"WHERE\n" + 
+			"    tbl_weekoffshift.del_status = 1 AND tbl_weekoffshift.location_id = m_location.loc_id  AND  tbl_weekoffshift.year=:yearId ", nativeQuery = true)
+	List<GetWeekShiftChange> getAllWeekShiftedAllEmp( @Param("yearId") String yearId);
 	
 
 }

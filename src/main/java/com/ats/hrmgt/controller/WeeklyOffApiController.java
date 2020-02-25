@@ -861,9 +861,11 @@ public class WeeklyOffApiController {
 	EmployeeMasterRepository empRepo;
 
 	@RequestMapping(value = { "/getWeeklyOffDatesToChange" }, method = RequestMethod.POST)
-	public @ResponseBody List<String> getWeeklyOffDatesToChange(
-			@RequestParam("month") int month, @RequestParam("year") int year, @RequestParam("empId") int empId) {
-		List<WeeklyOffShit> sht = new ArrayList<WeeklyOffShit>();
+	public @ResponseBody List<String> getWeeklyOffDatesToChange(@RequestParam("month") int month,
+			@RequestParam("year") int year, @RequestParam("empId") int empId) {
+		List<WeeklyOffShit> shiftedList = new ArrayList<WeeklyOffShit>();
+
+		List<WeeklyOffShit> shiftedToList = new ArrayList<WeeklyOffShit>();
 
 		List<String> datesList = new ArrayList<>();
 		try {
@@ -882,7 +884,6 @@ public class WeeklyOffApiController {
 			}
 
 			int monthN = Integer.parseInt(monthNew);
-			sht = weeklyOffShitRepository.getRecord(month, year, locId);
 
 			Calendar calendar = Calendar.getInstance();
 			int date = 1;
@@ -894,21 +895,26 @@ public class WeeklyOffApiController {
 					.concat(String.valueOf(days));
 			// System.out.println("sht: " +
 			// DateConvertor.convertToDMY(sht.getWeekofffromdate()));
+			 System.out.println("fromDate: " + fromDate);
+			 System.out.println("toDate: " + toDate);
+			shiftedList = weeklyOffShitRepository.getWeeklyOffShitListbetweenweekofffromdatebyempId(fromDate, toDate,
+					empId);
 
-			// System.out.println("toDate: " + toDate);
-
+			shiftedToList = weeklyOffShitRepository.getWeeklyOffShitListbetweenweekoffondatebyempId(fromDate, toDate,
+					empId);
 			try {
 				List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 				datesList = commonFunctionService.getDatesOfWeeklyOfForShiftingDate(fromDate, toDate, weeklyOfflist,
 						locId, weekoffCatId);
-				// System.out.println("datesList: " + datesList.toString());
+				System.out.println("datesList before: " + datesList.toString());
 
-				if (sht != null) {
+				if (shiftedList != null) {
 
-					for (int j = 0; j < sht.size(); j++) {
+					for (int j = 0; j < shiftedList.size(); j++) {
 						for (int i = 0; i < datesList.size(); i++) {
 
-							if (datesList.get(i).equals(DateConvertor.convertToDMY(sht.get(j).getWeekofffromdate()))) {
+							if (datesList.get(i)
+									.equals(DateConvertor.convertToDMY(shiftedList.get(j).getWeekofffromdate()))) {
 								// System.err.println("matched" + datesList.get(i));
 								datesList.remove(i);
 								break;
@@ -916,8 +922,15 @@ public class WeeklyOffApiController {
 						}
 					}
 				}
+				if (shiftedToList != null) {
 
-				// System.out.println("datesList******: " + datesList.toString());
+					for (int j = 0; j < shiftedToList.size(); j++) {
+						datesList.add(DateConvertor.convertToDMY(shiftedList.get(j).getWeekoffshiftdate()));
+
+					}
+				}
+
+				 System.out.println("datesList after ******: " + datesList.toString());
 
 			} catch (Exception e) {
 

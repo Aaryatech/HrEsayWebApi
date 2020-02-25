@@ -78,11 +78,6 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	public int deleteEmployee(@Param("empId") int empId);
 	
 
-	@Transactional
-	@Modifying
-	@Query(value = "UPDATE m_employees SET current_shiftid =:shiftId WHERE emp_id IN(:empIdList)", nativeQuery = true)
-	int assignShift(@Param("empIdList") List<Integer> empIdList, @Param("shiftId") String shiftId);
-
 	
 	EmployeeMaster findByEmpCode(String empcode);
 
@@ -91,8 +86,14 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	List<EmployeeMaster> findByEmpTypeAndDelStatus(int empTypeId, int i);
 
 	List<EmployeeMaster> findByLocationIdAndDelStatus(int locId, int i);
+
+	@Query(value = "SELECT e.* from m_employees e  where e.del_status=1 AND e.current_shiftid=0", nativeQuery = true)
+	List<EmployeeMaster> getEmpSalAssign();
 	
 	
+	
+	
+	//Emp master Asssignment
 	@Transactional
 	@Modifying
 	@Query(value = "UPDATE m_employees SET  holiday_category   =:holiCatId WHERE emp_id IN(:empIdList)", nativeQuery = true)
@@ -104,6 +105,38 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	@Query(value = "UPDATE m_employees SET  weekend_category =:holiCatId WHERE emp_id IN(:empIdList)", nativeQuery = true)
 	int weekHoliCat(@Param("empIdList") List<Integer> empIdList, @Param("holiCatId") String holiCatId);
  
-	@Query(value = "SELECT e.* from m_employees e  where e.del_status=1 AND e.current_shiftid=0", nativeQuery = true)
-	List<EmployeeMaster> getEmpSalAssign();
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET current_shiftid =:shiftId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int assignShift(@Param("empIdList") List<Integer> empIdList, @Param("shiftId") String shiftId);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET location_id =:locId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int assignLocation(@Param("empIdList") List<Integer> empIdList, @Param("locId") String locId);
+	 
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET depart_id =:deptId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int assignDept(@Param("empIdList") List<Integer> empIdList, @Param("deptId") String deptId);
+
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET designation_id =:desnId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int assignDesignation(@Param("empIdList") List<Integer> empIdList, @Param("desnId") String desnId);
+ 
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET emp_type =:typeId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int assignEmpType(@Param("empIdList") List<Integer> empIdList, @Param("typeId") String typeId);
+	
+	
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE m_employees SET sub_cmp_id =:compId WHERE emp_id IN(:empIdList)", nativeQuery = true)
+	int assignComapny(@Param("empIdList") List<Integer> empIdList, @Param("compId") String compId);
+
+	
 }
