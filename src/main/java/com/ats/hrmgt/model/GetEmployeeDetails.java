@@ -153,6 +153,9 @@ public class GetEmployeeDetails {
 	private String locName;
 	private String orgName;
 	
+	
+ 	private double grossSalary;
+		
 	private String shiftname;
 	
 	private String empTypeName;
@@ -167,7 +170,16 @@ public class GetEmployeeDetails {
 	
 	private String woCatName;
 	
+	
+	
+	
  
+	public double getGrossSalary() {
+		return grossSalary;
+	}
+	public void setGrossSalary(double grossSalary) {
+		this.grossSalary = grossSalary;
+	}
 	public String getSubCompName() {
 		return subCompName;
 	}
@@ -521,10 +533,10 @@ public class GetEmployeeDetails {
 				+ ", empCategory=" + empCategory + ", exgratiaPerc=" + exgratiaPerc + ", newBasicRate=" + newBasicRate
 				+ ", newHraRate=" + newHraRate + ", newDaRate=" + newDaRate + ", delStatus=" + delStatus + ", exInt1="
 				+ exInt1 + ", exInt2=" + exInt2 + ", exVar1=" + exVar1 + ", exVar2=" + exVar2 + ", deptName=" + deptName
-				+ ", empDesgn=" + empDesgn + ", locName=" + locName + ", orgName=" + orgName + ", shiftname="
-				+ shiftname + ", empTypeName=" + empTypeName + ", salTypeName=" + salTypeName + ", subCompName="
-				+ subCompName + ", hoCatName=" + hoCatName + ", woCatName=" + woCatName + "]";
+				+ ", empDesgn=" + empDesgn + ", locName=" + locName + ", orgName=" + orgName + ", grossSalary="
+				+ grossSalary + ", shiftname=" + shiftname + ", empTypeName=" + empTypeName + ", salTypeName="
+				+ salTypeName + ", subCompName=" + subCompName + ", hoCatName=" + hoCatName + ", woCatName=" + woCatName
+				+ "]";
 	}
 	 
-
 }

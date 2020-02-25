@@ -24,7 +24,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    sht.shiftname,\n" + 
 			"    emptyp.name AS emp_type_name,\n" + 
 			"    saltype.sal_type_name,\n" + 
-			"    'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name \n" + 
+			"    'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name,salinfo.gross_salary \n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
 			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
@@ -60,7 +60,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    sht.shiftname,\n" + 
 			"    emptyp.name AS emp_type_name,\n" + 
 			"    saltype.sal_type_name,\n" + 
-			"    'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name \n" + 
+			"    'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name,salinfo.gross_salary \n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
 			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
@@ -94,7 +94,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"        sht.shiftname,\n" + 
 			"        emptyp.name AS emp_type_name,\n" + 
 			"        saltype.sal_type_name,\n" + 
-			"        'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name  \n" + 
+			"        'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name ,salinfo.gross_salary \n" + 
 			"    FROM\n" + 
 			"        m_employees emp \n" + 
 			"    INNER JOIN\n" + 
@@ -149,7 +149,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"        sht.shiftname,\n" + 
 			"        emptyp.name AS emp_type_name,\n" + 
 			"        saltype.sal_type_name,\n" + 
-			"        'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name  \n" + 
+			"        'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name ,salinfo.gross_salary \n" + 
 			"    FROM\n" + 
 			"        m_employees emp \n" + 
 			"    INNER JOIN\n" + 
@@ -206,7 +206,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"        sht.shiftname,\n" + 
 			"        emptyp.name AS emp_type_name,\n" + 
 			"        empd.licence_no as sal_type_name,\n" + 
-			"       'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name  \n" + 
+			"       'NA' AS  sub_comp_name,'NA' AS  wo_cat_name, 'NA'  as ho_cat_name ,salinfo.gross_salary \n" + 
 			"    FROM\n" + 
 			"        m_employees emp \n" + 
 			"    INNER JOIN\n" + 
@@ -253,7 +253,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    saltype.sal_type_name,\n" + 
 			"    succomp.name_sd  AS sub_comp_name,\n" + 
 			"    wocat.wo_cat_short_name as wo_cat_name,\n" + 
-			"    holidaycat.ho_cat_short_name as ho_cat_name\n" + 
+			"    holidaycat.ho_cat_short_name as ho_cat_name, salinfo.gross_salary\n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
 			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
@@ -300,7 +300,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    saltype.sal_type_name,\n" + 
 			"    succomp.name_sd  AS sub_comp_name,\n" + 
 			"    wocat.wo_cat_short_name as wo_cat_name,\n" + 
-			"    holidaycat.ho_cat_short_name as ho_cat_name\n" + 
+			"    holidaycat.ho_cat_short_name as ho_cat_name,salinfo.gross_salary \n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
 			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
@@ -346,7 +346,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    saltype.sal_type_name,\n" + 
 			"    succomp.name_sd  AS sub_comp_name,\n" + 
 			"    wocat.wo_cat_short_name as wo_cat_name,\n" + 
-			"    holidaycat.ho_cat_short_name as ho_cat_name\n" + 
+			"    holidaycat.ho_cat_short_name as ho_cat_name,salinfo.gross_salary \n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
 			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
@@ -401,7 +401,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    saltype.sal_type_name,\n" + 
 			"    succomp.name_sd  AS sub_comp_name,\n" + 
 			"    wocat.wo_cat_short_name as wo_cat_name,\n" + 
-			"    holidaycat.ho_cat_short_name as ho_cat_name\n" + 
+			"    holidaycat.ho_cat_short_name as ho_cat_name,salinfo.gross_salary \n" + 
 			"FROM\n" + 
 			"    m_employees emp\n" + 
 			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
@@ -449,7 +449,7 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"    saltype.sal_type_name,\n" + 
 			"    succomp.name_sd  AS sub_comp_name,\n" + 
 			"    wocat.wo_cat_short_name as wo_cat_name,\n" + 
-			"    holidaycat.ho_cat_short_name as ho_cat_name\n" + 
+			"    holidaycat.ho_cat_short_name as ho_cat_name,salinfo.gross_salary\n" + 
 			"FROM\n" + 
 			"     leave_authority au, m_employees emp\n" + 
 			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
