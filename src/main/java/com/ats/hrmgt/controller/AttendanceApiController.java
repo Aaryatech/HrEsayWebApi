@@ -66,7 +66,7 @@ import com.ats.hrmgt.repository.SummaryAttendanceRepository;
 import com.ats.hrmgt.repository.SummaryDailyAttendanceRepository;
 import com.ats.hrmgt.repository.WeeklyOffRepo;
 import com.ats.hrmgt.repository.WeeklyOffShitRepository;
-import com.ats.hrmgt.service.CommonFunctionService; 
+import com.ats.hrmgt.service.CommonFunctionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -131,7 +131,7 @@ public class AttendanceApiController {
 	GetDailyDailyRecordRepository getDailyDailyRecordRepository;
 
 	int PL_CL_HD_leave_insert_automatic = 0;
-	
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -157,29 +157,33 @@ public class AttendanceApiController {
 
 			List<SummaryDailyAttendance> summaryDailyAttendanceList = new ArrayList<>();
 
-			//SummaryDailyAttendance summaryDailyAttendance = new SummaryDailyAttendance();
+			// SummaryDailyAttendance summaryDailyAttendance = new SummaryDailyAttendance();
 			List<DailyAttendance> dailyAttendanceList = new ArrayList<>();
-			
+
 			String dailyDailyQuery = "INSERT INTO tbl_attt_daily_daily (id, company_id, emp_code, emp_name, att_date, att_status,  lv_sumup_id, working_hrs, in_time, rec_status, login_name, login_time, import_date, cmp_code, emp_id, ot_hr,  current_shiftid, late_mark, late_min, reason, current_shiftname, freeze_by_supervisor, comments_supervisor, get_pass_used_count, get_pass_used_hour, get_pass_used_hour_reason, raw_data_inout, manual_ot_hr, full_night, half_night, out_time, early_going_mark, early_going_min, multiple_entries, casetype, is_fixed, by_file_updated, location_id, emp_type, emp_json, atsumm_uid, file_name, row_id) VALUES  ";
 			String dailyDailySummryQuery = "INSERT INTO tbl_attt_summary_daily (id, company_id, emp_id, emp_code, emp_name, month, year, working_days, present_days, weekly_off, paid_holiday, paid_leave, legal_strike, lay_off, unpaid_holiday, unpaid_leave, absent_days, payable_days, ncp_days, totlate_mins, totlate_days, totout_mins, totworking_hrs, totot_hrs, tot_othr, tot_late, rec_status, login_name, login_time, status, import_date, cmp_code, rec_status_paid, total_days_inmonth, late_ded_leave_paid, holiday_present, weekly_off_present, full_night, half_night, holiday_present_half, weekly_off_present_half, weekly_off_holiday_off, weekly_off_holiday_off_present, weekly_off_holiday_off_present_halfday, hdpresent_hdleave, tot_early_going, atsumm_uid, calculation_done) VALUES ";
-			
-			
+
 			for (int i = 0; i < empList.size(); i++) {
 
 				String empName = empList.get(i).getFirstName() + " " + empList.get(i).getSurname();
-				/*summaryDailyAttendance = new SummaryDailyAttendance();
-				summaryDailyAttendance.setEmpCode(empList.get(i).getEmpCode());
-				summaryDailyAttendance.setEmpId(empList.get(i).getEmpId());
-				summaryDailyAttendance.setEmpName(empList.get(i).getFirstName() + " " + empList.get(i).getSurname());
-				summaryDailyAttendance.setMonth(month);
-				summaryDailyAttendance.setYear(year);
-				summaryDailyAttendance.setCompanyId(1);
-				summaryDailyAttendance.setLoginName(String.valueOf(userId));
-				summaryDailyAttendance.setRecStatus("O");
-				summaryDailyAttendanceList.add(summaryDailyAttendance);*/
+				/*
+				 * summaryDailyAttendance = new SummaryDailyAttendance();
+				 * summaryDailyAttendance.setEmpCode(empList.get(i).getEmpCode());
+				 * summaryDailyAttendance.setEmpId(empList.get(i).getEmpId());
+				 * summaryDailyAttendance.setEmpName(empList.get(i).getFirstName() + " " +
+				 * empList.get(i).getSurname()); summaryDailyAttendance.setMonth(month);
+				 * summaryDailyAttendance.setYear(year); summaryDailyAttendance.setCompanyId(1);
+				 * summaryDailyAttendance.setLoginName(String.valueOf(userId));
+				 * summaryDailyAttendance.setRecStatus("O");
+				 * summaryDailyAttendanceList.add(summaryDailyAttendance);
+				 */
 
-				dailyDailySummryQuery=dailyDailySummryQuery+"('0', '1', '"+empList.get(i).getEmpId()+"', '"+empList.get(i).getEmpCode()+"', '"+empName+"', '"+month+"', '"+year+"', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'O', '"+userId+"', NULL, '0', NULL, NULL, '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', NULL, '0'),";
-				
+				dailyDailySummryQuery = dailyDailySummryQuery + "('0', '1', '" + empList.get(i).getEmpId() + "', '"
+						+ empList.get(i).getEmpCode() + "', '" + empName + "', '" + month + "', '" + year
+						+ "', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'O', '"
+						+ userId
+						+ "', NULL, '0', NULL, NULL, '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', NULL, '0'),";
+
 				EmpJsonData empJsonData = new EmpJsonData();
 				empJsonData.setCmpCode(empList.get(i).getCmpCode());
 				empJsonData.setCmpJoiningDate(empList.get(i).getCmpJoiningDate());
@@ -213,49 +217,55 @@ public class AttendanceApiController {
 					temp = Calendar.getInstance();
 					temp.setTime(j);
 					String attdate = sf.format(j);
-					/*DailyAttendance dailyAttendance = new DailyAttendance();
-					dailyAttendance.setEmpCode(summaryDailyAttendance.getEmpCode());
-					dailyAttendance.setEmpId(summaryDailyAttendance.getEmpId());
-					dailyAttendance.setCompanyId(1);
-					dailyAttendance.setLocationId(empList.get(i).getLocationId());
-					dailyAttendance.setAttDate(attdate);
-					dailyAttendance.setEmpName(empList.get(i).getFirstName() + " " + empList.get(i).getSurname());
-					dailyAttendance.setLoginName(String.valueOf(userId));
-					dailyAttendance.setEmpJson(json);
-					dailyAttendance.setRecStatus("O");
-					dailyAttendance.setAttStatus("NA");
-					dailyAttendance.setLateMark("0");
-					dailyAttendanceList.add(dailyAttendance);*/
-					 
-					
-					dailyDailyQuery=dailyDailyQuery+"('0', '1','"+empList.get(i).getEmpCode()+"','"+ empName+"','"+ attdate+"', 'NA', '0', '0', NULL, 'O', \n '"
-					+userId+"', NULL, NULL, NULL, '"+empList.get(i).getEmpId()+"', NULL, '0', '0', '0', NULL, NULL, '0', NULL, '0', '0' \n "+
-							", NULL, NULL, '0', '0', '0', NULL, '0', '0.00', NULL, NULL, '0', '0', '"+empList.get(i).getLocationId()+"', '0', \n '"
-					+json+"', NULL, NULL, '0'),";
-					 
+					/*
+					 * DailyAttendance dailyAttendance = new DailyAttendance();
+					 * dailyAttendance.setEmpCode(summaryDailyAttendance.getEmpCode());
+					 * dailyAttendance.setEmpId(summaryDailyAttendance.getEmpId());
+					 * dailyAttendance.setCompanyId(1);
+					 * dailyAttendance.setLocationId(empList.get(i).getLocationId());
+					 * dailyAttendance.setAttDate(attdate);
+					 * dailyAttendance.setEmpName(empList.get(i).getFirstName() + " " +
+					 * empList.get(i).getSurname());
+					 * dailyAttendance.setLoginName(String.valueOf(userId));
+					 * dailyAttendance.setEmpJson(json); dailyAttendance.setRecStatus("O");
+					 * dailyAttendance.setAttStatus("NA"); dailyAttendance.setLateMark("0");
+					 * dailyAttendanceList.add(dailyAttendance);
+					 */
+
+					dailyDailyQuery = dailyDailyQuery + "('0', '1','" + empList.get(i).getEmpCode() + "','" + empName
+							+ "','" + attdate + "', 'NA', '0', '0', NULL, 'O', \n '" + userId + "', NULL, NULL, NULL, '"
+							+ empList.get(i).getEmpId() + "', NULL, '0', '0', '0', NULL, NULL, '0', NULL, '0', '0' \n "
+							+ ", NULL, NULL, '0', '0', '0', NULL, '0', '0.00', NULL, NULL, '0', '0', '"
+							+ empList.get(i).getLocationId() + "', '0', \n '" + json + "', NULL, NULL, '0'),";
+
 					j.setTime(j.getTime() + 1000 * 60 * 60 * 24);
 
 				}
 
 			}
-			dailyDailyQuery=dailyDailyQuery.substring(0, dailyDailyQuery.length()-1); 
-			dailyDailySummryQuery=dailyDailySummryQuery.substring(0, dailyDailySummryQuery.length()-1); 
+			dailyDailyQuery = dailyDailyQuery.substring(0, dailyDailyQuery.length() - 1);
+			dailyDailySummryQuery = dailyDailySummryQuery.substring(0, dailyDailySummryQuery.length() - 1);
 
-			/*Calendar cal1 = Calendar.getInstance();
-			SimpleDateFormat date_format = new SimpleDateFormat("HH:mm:ss");
-			System.out.println(date_format.format(cal1.getTime())); */
-			 jdbcTemplate.batchUpdate(dailyDailyQuery);
-			 jdbcTemplate.batchUpdate(dailyDailySummryQuery);
-			 
-			//query=query.substring(0, query.length()-1); 
-			//dailyAttendanceRepository.insert(query);
-			//System.out.println(query);
-			
-			
-			// List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
-			 /*cal1 = Calendar.getInstance();
-			 System.out.println(date_format.format(cal1.getTime()));*/
-			 List<SummaryDailyAttendance> summaryDailyAttendanceSaveRes = summaryDailyAttendanceRepository.saveAll(summaryDailyAttendanceList);
+			/*
+			 * Calendar cal1 = Calendar.getInstance(); SimpleDateFormat date_format = new
+			 * SimpleDateFormat("HH:mm:ss");
+			 * System.out.println(date_format.format(cal1.getTime()));
+			 */
+			jdbcTemplate.batchUpdate(dailyDailyQuery);
+			jdbcTemplate.batchUpdate(dailyDailySummryQuery);
+
+			// query=query.substring(0, query.length()-1);
+			// dailyAttendanceRepository.insert(query);
+			// System.out.println(query);
+
+			// List<DailyAttendance> dailyAttendanceSaveRes =
+			// dailyAttendanceRepository.saveAll(dailyAttendanceList);
+			/*
+			 * cal1 = Calendar.getInstance();
+			 * System.out.println(date_format.format(cal1.getTime()));
+			 */
+			List<SummaryDailyAttendance> summaryDailyAttendanceSaveRes = summaryDailyAttendanceRepository
+					.saveAll(summaryDailyAttendanceList);
 			info.setError(false);
 			info.setMsg("success");
 		} catch (Exception e) {
@@ -371,6 +381,8 @@ public class AttendanceApiController {
 			String inDttime = new String();
 			String outDttime = new String();
 			String shiftTime = new String();
+
+			StringBuilder querysb = new StringBuilder();
 
 			for (int i = 0; i < dailyAttendanceList.size(); i++) {
 
@@ -961,6 +973,8 @@ public class AttendanceApiController {
 							} // $case == '2467'
 							else if (atteanceCase.equals("2468")) {
 
+								System.out.println(defaultDate + "*******************" + atteanceCase + ""
+										+ sf.parse(employee.getCmpJoiningDate()));
 								if (defaultDate.compareTo(sf.parse(employee.getCmpJoiningDate())) >= 0) {
 									dailyAttendanceList.get(i).setAttStatus("AB");
 									for (int j = 0; j < lvTypeList.size(); j++) {
@@ -969,6 +983,7 @@ public class AttendanceApiController {
 											break;
 										}
 									}
+									System.out.println("******************* in if " + atteanceCase);
 								} // $att_date >= $forsaterday->cmp_joining_date
 								else {
 									dailyAttendanceList.get(i).setAttStatus("NA");
@@ -978,6 +993,7 @@ public class AttendanceApiController {
 											break;
 										}
 									}
+									System.out.println("******************* in else " + atteanceCase);
 								}
 							} // $case == '2468'
 						} // $case == '2467' || $case == '2468'
@@ -992,11 +1008,61 @@ public class AttendanceApiController {
 					// e.printStackTrace();
 				}
 
+				querysb = new StringBuilder();
+
+				if (dailyAttendanceList.get(i).getByFileUpdated() == 1) {
+					querysb.append("update\n" + "        tbl_attt_daily_daily \n" + "    set\n"
+							+ "        atsumm_uid=NULL," + "        att_date='"
+							+ dailyAttendanceList.get(i).getAttDate() + "'," + "        att_status='"
+							+ dailyAttendanceList.get(i).getAttStatus() + "'," + "        by_file_updated='"
+							+ dailyAttendanceList.get(i).getByFileUpdated() + "'," + "        casetype='"
+							+ dailyAttendanceList.get(i).getCasetype() + "'," + "        comments_supervisor=NULL,"
+							+ "        company_id='" + dailyAttendanceList.get(i).getCompanyId() + "',"
+							+ "        current_shiftid='" + dailyAttendanceList.get(i).getCurrentShiftid() + "',"
+							+ "        current_shiftname='" + dailyAttendanceList.get(i).getCurrentShiftname() + "',"
+							+ "        early_going_mark='" + dailyAttendanceList.get(i).getEarlyGoingMark() + "',"
+							+ "        early_going_min='" + dailyAttendanceList.get(i).getEarlyGoingMin() + "',"
+							+ "        emp_code='" + dailyAttendanceList.get(i).getEmpCode() + "'," + "        emp_id='"
+							+ dailyAttendanceList.get(i).getEmpId() + "'," + "        emp_json='"
+							+ dailyAttendanceList.get(i).getEmpJson() + "'," + "        emp_name='"
+							+ dailyAttendanceList.get(i).getEmpName() + "'," + "        emp_type='"
+							+ dailyAttendanceList.get(i).getEmpType() + "'," + "        file_name=NULL,"
+							+ "        freeze_by_supervisor='" + dailyAttendanceList.get(i).getFreezeBySupervisor()
+							+ "'," + "        full_night='" + dailyAttendanceList.get(i).getFullNight() + "',"
+							+ "        get_pass_used_count='" + dailyAttendanceList.get(i).getGetPassUsedCount() + "',"
+							+ "        get_pass_used_hour='" + dailyAttendanceList.get(i).getGetPassUsedHour() + "',"
+							+ "        get_pass_used_hour_reason=NULL," + "        half_night='"
+							+ dailyAttendanceList.get(i).getHalfNight() + "'," + "        import_date=NULL,"
+							+ "        in_time='" + dailyAttendanceList.get(i).getInTime() + "'," + "        is_fixed='"
+							+ dailyAttendanceList.get(i).getIsFixed() + "'," + "        late_mark='"
+							+ dailyAttendanceList.get(i).getLateMark() + "'," + "        late_min='"
+							+ dailyAttendanceList.get(i).getLateMin() + "'," + "        location_id='"
+							+ dailyAttendanceList.get(i).getLocationId() + "'," + "        login_name='"
+							+ dailyAttendanceList.get(i).getLoginName() + "'," + "        login_time=NULL,"
+							+ "        lv_sumup_id='" + dailyAttendanceList.get(i).getLvSumupId() + "',"
+							+ "        manual_ot_hr='" + dailyAttendanceList.get(i).getManualOtHr() + "',"
+							+ "        multiple_entries=NULL," + "        ot_hr='"
+							+ dailyAttendanceList.get(i).getOtHr() + "'," + "        out_time='"
+							+ dailyAttendanceList.get(i).getOutTime() + "'," + "        raw_data_inout=NULL,"
+							+ "        reason=NULL," + "        rec_status='"
+							+ dailyAttendanceList.get(i).getRecStatus() + "'," + "        row_id='"
+							+ dailyAttendanceList.get(i).getRowId() + "'," + "        working_hrs='"
+							+ dailyAttendanceList.get(i).getWorkingHrs() + "'" + "    where\n" + "        id="
+							+ dailyAttendanceList.get(i).getId() + ";");
+					try {
+						String quiry = querysb.toString();
+						jdbcTemplate.batchUpdate(quiry);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				
 			}
 
-			// System.out.println("dailyAttendanceList " + dailyAttendanceList);
+			// System.out.println("dailyAttendanceList " + quiry);
 
-			List<DailyAttendance> dailyAttendanceSaveRes = dailyAttendanceRepository.saveAll(dailyAttendanceList);
+			// List<DailyAttendance> dailyAttendanceSaveRes =
+			// dailyAttendanceRepository.saveAll(dailyAttendanceList);
 			info.setError(false);
 			info.setMsg("success");
 
