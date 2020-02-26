@@ -333,7 +333,7 @@ public class EmpShiftDetailsController {
 				}
 
 				int weekEndStatus = commonFunctionService.findDateInWeekEnd(calcDate, calcDate, weeklyOfflist,
-						weeklyOffShitList, empShiftList.get(m).getLocationId(),WeekoffCat);
+						weeklyOffShitList, empShiftList.get(m).getLocationId(),WeekoffCat,empIdNew);
 
 				int holidayStatus = commonFunctionService.findDateInHoliday(calcDate, calcDate, holidayList, location,holidayCat);
 
