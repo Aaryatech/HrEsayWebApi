@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ats.hrmgt.model.Holiday;
@@ -14,19 +16,24 @@ import com.ats.hrmgt.model.LeaveApply;
 import com.ats.hrmgt.model.LeaveStsAndLeaveId;
 import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeeklyOffShit;
+import com.ats.hrmgt.repository.WeeklyOffShitRepository;
 
 @Service
 public class CommonFunctionServiceImpl implements CommonFunctionService {
 
+	
+	@Autowired
+	WeeklyOffShitRepository weeklyOffShitRepository;
+	
 	@Override
 	public Integer findDateInWeekEnd(String fromDate, String toDate, List<WeeklyOff> weeklyList,
-			List<WeeklyOffShit> weeklyOffShitList, int locationId, int weekendCatId) {
+			List<WeeklyOffShit> weeklyOffShitList, int locationId, int weekendCatId, int empId) {
 
 		int sts = 2;
 
 		try {
 
-			sts = findShiftedWeekEnd(fromDate, weeklyOffShitList, locationId);
+			sts = findShiftedWeekEnd(fromDate, weeklyOffShitList, locationId, empId);
 
 			if (sts == 2) {
 
@@ -436,11 +443,16 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 				if (sts == 1) {
 
-					Date frmdt = yydate.parse(fromDate);
+					List<WeeklyOffShit> weeklyOffShitFromList = weeklyOffShitRepository.getWeeklyOffShitListbetweenweekofffromdatebyempId(fromDate, fromDate,empId);
+					
+					if (weeklyOffShitFromList.size()>0) { 
+						sts = 2; 
+					}
+					/*Date frmdt = yydate.parse(fromDate);
 
 					for (int i = 0; i < weeklyOffShitList.size(); i++) {
 
-						if (locationId == weeklyOffShitList.get(i).getLocationId()
+						if (empId == weeklyOffShitList.get(i).getEmpId()
 								&& frmdt.compareTo(yydate.parse(weeklyOffShitList.get(i).getWeekofffromdate())) == 0) {
 
 							sts = 2;
@@ -448,7 +460,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 						}
 
-					}
+					}*/
 
 				}
 			}
@@ -513,8 +525,8 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 					}
 				}
-				
-				if(sts==3) {
+
+				if (sts == 3) {
 					break;
 				}
 
@@ -526,7 +538,8 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 		return sts;
 	}
 
-	public Integer findShiftedWeekEnd(String fromDate, List<WeeklyOffShit> weeklyOffShitList, int locationId) {
+	public Integer findShiftedWeekEnd(String fromDate, List<WeeklyOffShit> weeklyOffShitList, int locationId,
+			int empId) {
 
 		int sts = 2;
 		try {
@@ -535,7 +548,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 			for (int i = 0; i < weeklyOffShitList.size(); i++) {
 
-				if (locationId == weeklyOffShitList.get(i).getLocationId()
+				if (empId == weeklyOffShitList.get(i).getEmpId()
 						&& frmdt.compareTo(yydate.parse(weeklyOffShitList.get(i).getWeekoffshiftdate())) == 0) {
 
 					sts = 1;
@@ -607,7 +620,6 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 							if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())) {
 
-								System.out.println(j);
 								String dt = dddate.format(j);
 								dates.add(dt);
 							}

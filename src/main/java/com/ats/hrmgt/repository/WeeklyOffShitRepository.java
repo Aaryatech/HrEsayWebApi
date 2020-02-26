@@ -23,4 +23,8 @@ public interface WeeklyOffShitRepository extends JpaRepository<WeeklyOffShit, In
 	@Query(value="select * from tbl_weekoffshift where weekoffshiftdate between :fromDate and :toDate AND del_status=1 and emp_id=:empId",nativeQuery=true)
 	List<WeeklyOffShit> getWeeklyOffShitListbetweenweekoffondatebyempId(@Param("fromDate") String fromDate,@Param("toDate") String toDate,@Param("empId") int empId);
 
+
+	@Query(value="select * from tbl_weekoffshift where id=:id ",nativeQuery=true)
+	WeeklyOffShit shiftWeeklyofById(@Param("id") int id);
+
 }

@@ -582,7 +582,8 @@ public class AttendanceApiController {
 
 					int weekEndStatus = commonFunctionService.findDateInWeekEnd(sf.format(defaultDate),
 							sf.format(defaultDate), weeklyOfflist, weeklyOffShitList,
-							dailyAttendanceList.get(i).getLocationId(), employee.getWeekEndCatId());
+							dailyAttendanceList.get(i).getLocationId(), employee.getWeekEndCatId(),
+							dailyAttendanceList.get(i).getEmpId());
 
 					int holidayStatus = commonFunctionService.findDateInHoliday(sf.format(defaultDate),
 							sf.format(defaultDate), holidayList, dailyAttendanceList.get(i).getLocationId(),
@@ -595,7 +596,9 @@ public class AttendanceApiController {
 					int presentStatus = 7;
 
 					if (dailyAttendanceList.get(i).getInTime().equals("0:00")
-							|| dailyAttendanceList.get(i).getOutTime().equals("0:00")) {
+							|| dailyAttendanceList.get(i).getOutTime().equals("0:00")
+							|| dailyAttendanceList.get(i).getInTime().equals("00:00")
+							|| dailyAttendanceList.get(i).getOutTime().equals("00:00")) {
 						presentStatus = 8;
 					}
 
@@ -973,8 +976,6 @@ public class AttendanceApiController {
 							} // $case == '2467'
 							else if (atteanceCase.equals("2468")) {
 
-								System.out.println(defaultDate + "*******************" + atteanceCase + ""
-										+ sf.parse(employee.getCmpJoiningDate()));
 								if (defaultDate.compareTo(sf.parse(employee.getCmpJoiningDate())) >= 0) {
 									dailyAttendanceList.get(i).setAttStatus("AB");
 									for (int j = 0; j < lvTypeList.size(); j++) {
@@ -983,7 +984,7 @@ public class AttendanceApiController {
 											break;
 										}
 									}
-									System.out.println("******************* in if " + atteanceCase);
+
 								} // $att_date >= $forsaterday->cmp_joining_date
 								else {
 									dailyAttendanceList.get(i).setAttStatus("NA");
@@ -993,7 +994,7 @@ public class AttendanceApiController {
 											break;
 										}
 									}
-									System.out.println("******************* in else " + atteanceCase);
+
 								}
 							} // $case == '2468'
 						} // $case == '2467' || $case == '2468'
@@ -1010,6 +1011,8 @@ public class AttendanceApiController {
 
 				querysb = new StringBuilder();
 
+				// System.out.println("case type
+				// -----------------"+dailyAttendanceList.get(i).getCasetype());
 				if (dailyAttendanceList.get(i).getByFileUpdated() == 1) {
 					querysb.append("update\n" + "        tbl_attt_daily_daily \n" + "    set\n"
 							+ "        atsumm_uid=NULL," + "        att_date='"
@@ -1641,6 +1644,86 @@ public class AttendanceApiController {
 					info = getVariousListForUploadAttendace(dataForUpdateAttendance);
 					info = finalUpdateDailySumaryRecord(fromDate, toDate, userId, month, year,
 							dailyRecordById.getEmpId());
+
+				}
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+
+	@RequestMapping(value = { "/updateAttendaceOfWeeklyOffInDailyDaily" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateAttendaceOfWeeklyOffInDailyDaily(@RequestParam("id") int id,
+			@RequestParam("userId") int userId) {
+
+		Info info = new Info();
+		try {
+
+			WeeklyOffShit shiftWeeklyofById = weeklyOffShitRepository.shiftWeeklyofById(id);
+
+			if (shiftWeeklyofById != null) {
+				List<DailyAttendance> dailyRecordByfromDate = dailyAttendanceRepository.dailyAttendanceList(
+						shiftWeeklyofById.getWeekofffromdate(), shiftWeeklyofById.getWeekofffromdate(),
+						shiftWeeklyofById.getEmpId());
+				List<DailyAttendance> dailyRecordByonDate = dailyAttendanceRepository.dailyAttendanceList(
+						shiftWeeklyofById.getWeekoffshiftdate(), shiftWeeklyofById.getWeekoffshiftdate(),
+						shiftWeeklyofById.getEmpId());
+				Info fistres = changeStatusOfDailyDailyDate(dailyRecordByfromDate, shiftWeeklyofById, userId);
+				Info setcondres = changeStatusOfDailyDailyDate(dailyRecordByonDate, shiftWeeklyofById, userId);
+				// System.out.println(dailyRecordByDate);
+
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+
+	public Info changeStatusOfDailyDailyDate(List<DailyAttendance> dailyRecordByDate, WeeklyOffShit shiftWeeklyofById,
+			int userId) {
+
+		Info info = new Info();
+		try {
+			System.out.println(dailyRecordByDate.size());
+			if (dailyRecordByDate.size() > 0) {
+
+				if (dailyRecordByDate.get(0).getByFileUpdated() == 1) {
+
+					List<FileUploadedData> fileUploadedDataList = new ArrayList<>();
+					FileUploadedData fileUploadedData = new FileUploadedData();
+					fileUploadedData.setEmpCode(dailyRecordByDate.get(0).getEmpCode());
+					fileUploadedData.setEmpName(dailyRecordByDate.get(0).getEmpName());
+					fileUploadedData.setLogDate(DateConvertor.convertToDMY(dailyRecordByDate.get(0).getAttDate()));
+					fileUploadedData.setInTime(dailyRecordByDate.get(0).getInTime().substring(0,
+							dailyRecordByDate.get(0).getInTime().length() - 3));
+					fileUploadedData.setOutTime(dailyRecordByDate.get(0).getOutTime().substring(0,
+							dailyRecordByDate.get(0).getOutTime().length() - 3));
+					fileUploadedDataList.add(fileUploadedData);
+
+					DataForUpdateAttendance dataForUpdateAttendance = new DataForUpdateAttendance();
+					dataForUpdateAttendance.setFromDate(dailyRecordByDate.get(0).getAttDate());
+					dataForUpdateAttendance.setToDate(dailyRecordByDate.get(0).getAttDate());
+					dataForUpdateAttendance.setMonth(shiftWeeklyofById.getMonth());
+					dataForUpdateAttendance.setYear(shiftWeeklyofById.getYear());
+					dataForUpdateAttendance.setUserId(userId);
+					dataForUpdateAttendance.setFileUploadedDataList(fileUploadedDataList);
+					dataForUpdateAttendance.setEmpId(shiftWeeklyofById.getEmpId());
+
+					// System.out.println(fileUploadedData);
+
+					info = getVariousListForUploadAttendace(dataForUpdateAttendance);
+					/*
+					 * info = finalUpdateDailySumaryRecord(dailyRecordByDate.get(0).getAttDate(),
+					 * dailyRecordByDate.get(0).getAttDate(), userId, shiftWeeklyofById.getMonth(),
+					 * shiftWeeklyofById.getYear(), shiftWeeklyofById.getEmpId());
+					 */
 
 				}
 			}
