@@ -26,7 +26,7 @@ public interface PayDeductionDetailListRepo extends JpaRepository<PayDeductionDe
 			"    tbl_pay_deduction payDeductType\n" + 
 			"    \n" + 
 			"WHERE\n" + 
-			"    payDeductDetail.emp_id=emp.emp_id AND\n" + 
+			"    payDeductDetail.emp_id=emp.emp_id AND  payDeductDetail.is_deducted=0 AND  \n" + 
 			"    payDeductDetail.ded_type_id=payDeductType.ded_type_id AND\n" + 
 			"    payDeductDetail.del_status=1 Order By payDeductDetail.ded_id Desc",nativeQuery=true)
 	List<PayDeductionDetailList> getEmpPayDeductDetail();
