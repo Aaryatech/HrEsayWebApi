@@ -31,11 +31,15 @@ import com.ats.hrmgt.model.bonus.BonusCalc;
 import com.ats.hrmgt.model.bonus.BonusDates;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.model.bonus.BonusParam;
+import com.ats.hrmgt.model.bonus.PayBonus;
+import com.ats.hrmgt.model.bonus.PayBonusDetails;
 import com.ats.hrmgt.repo.bonus.BonusApplicableRepo;
 import com.ats.hrmgt.repo.bonus.BonusCalcRepo;
 import com.ats.hrmgt.repo.bonus.BonusDatesRepo;
 import com.ats.hrmgt.repo.bonus.BonusMasterRepo;
 import com.ats.hrmgt.repo.bonus.BonusParamRepo;
+import com.ats.hrmgt.repo.bonus.PayBonusDetailsRepo;
+import com.ats.hrmgt.repo.bonus.PayBonusRepo;
 import com.ats.hrmgt.repository.AllowancesRepo;
 import com.ats.hrmgt.repository.EmpSalAllowanceRepo;
 import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
@@ -85,8 +89,6 @@ public class BonusApiController {
 		try {
 
 			list = bonusMasterRepo.findByDelStatus();
-
-		 
 
 		} catch (Exception e) {
 
@@ -338,10 +340,8 @@ public class BonusApiController {
 				 */
 
 				List<Setting> settingList = new ArrayList<Setting>();
-				settingList = settingRepo.findByGroup("BONUS"); 
+				settingList = settingRepo.findByGroup("BONUS");
 				String bonusFormula = new String();
-				
-			
 
 				for (int k = 0; k < settingList.size(); k++) {
 					if (settingList.get(k).getKey().equalsIgnoreCase("bonus_app_below_amount")) {
@@ -471,8 +471,6 @@ public class BonusApiController {
 		BonusMaster bonus = new BonusMaster();
 		bonus = bonusMasterRepo.findByBonusIdAndDelStatus(bonusId, 1);
 		double bonusPrcnt = bonus.getBonusPercentage();
-	
-		
 
 		BonusDates datesDet = bonusDatesRepo.getDates(bonusId);
 
@@ -482,8 +480,8 @@ public class BonusApiController {
 		double advPrcnt = 0.0;
 		double pujaPrcnt = 0.0;
 		double lossPrcnt = 0.0;
-		settingList = settingRepo.findByGroup("BONUS"); 
-		
+		settingList = settingRepo.findByGroup("BONUS");
+
 		/*
 		 * try { settingList = settingRepo.findByGroup("BONUS"); if (settingList !=
 		 * null) { for (int i = 0; i < settingList.size(); i++) {
@@ -500,7 +498,6 @@ public class BonusApiController {
 		 * 
 		 * }
 		 */
-		 
 
 		for (int k = 0; k < settingList.size(); k++) {
 			if (settingList.get(k).getKey().equalsIgnoreCase("bonus_formula")) {
@@ -523,11 +520,11 @@ public class BonusApiController {
 			insertVal = 0;
 
 		}
-		bonusPrcnt=NumberFormatting.castNumber(bonusPrcnt, insertVal);
-		// System.err.println("bonusFormula  **" + bonusFormula);
+		bonusPrcnt = NumberFormatting.castNumber(bonusPrcnt, insertVal);
+		// System.err.println("bonusFormula **" + bonusFormula);
 		String[] forList = bonusFormula.split("\\+");
 		List<String> formulaList = new ArrayList<String>(Arrays.asList(forList));
-	 //System.err.println("formulaList before**" + formulaList.toString());
+		// System.err.println("formulaList before**" + formulaList.toString());
 		for (int j = 0; j < formulaList.size(); j++) {
 
 			if ((formulaList.get(j).trim()).equals("basic_cal")) {
@@ -536,8 +533,8 @@ public class BonusApiController {
 			}
 
 		}
-		//System.err.println("formulaList after**" + formulaList.toString());
-	// System.err.println("empIdList **" + empIdList.toString());
+		// System.err.println("formulaList after**" + formulaList.toString());
+		// System.err.println("empIdList **" + empIdList.toString());
 		try {
 			for (int i = 0; i < empIdList.size(); i++) {
 
@@ -563,7 +560,7 @@ public class BonusApiController {
 					BonusParam salDays = bonusParamRepo.getDays(empId, datesDet.getMonthFrom(), datesDet.getMonthTo(),
 							datesDet.getYearFrom(), datesDet.getYearTo());
 					payableDay = Double.parseDouble(salDays.getTotalBasicCal());
-					payableDay=NumberFormatting.castNumber(payableDay, insertVal);
+					payableDay = NumberFormatting.castNumber(payableDay, insertVal);
 				} catch (Exception e) {
 
 					payableDay = 0;
@@ -579,12 +576,12 @@ public class BonusApiController {
 				double formTot = 0.0;
 
 				if (isAdd == 1) {
-					//System.err.println("isert process");
+					// System.err.println("isert process");
 
 					if (payableDay <= bonus.getMinDays()) {
 						isApplicable = "Yes";
 
-						//System.err.println("Applicable");
+						// System.err.println("Applicable");
 						double basic_calc = 0;
 
 						// to get total from formula
@@ -592,7 +589,7 @@ public class BonusApiController {
 						List<Integer> allIdList = new ArrayList<Integer>();
 						for (int j = 0; j < formulaList.size(); j++) {
 
-							//System.err.println("formulaList for **" + formulaList.get(j));
+							// System.err.println("formulaList for **" + formulaList.get(j));
 							Allowances ac = new Allowances();
 							try {
 								ac = AalowancesRepo.findByShortNameAndDelStatus(formulaList.get(j).trim(), 1);
@@ -633,8 +630,8 @@ public class BonusApiController {
 							grossBonus = formTot;
 							bonusAmt = (0 * bonusPrcnt) / 100;
 						}
-					//	System.err.println("grossBonus"+grossBonus);
-					//	System.err.println("formTot"+formTot);
+						// System.err.println("grossBonus"+grossBonus);
+						// System.err.println("formTot"+formTot);
 						advPrcntAmt = (grossBonus * advPrcnt) / 100;
 						advPrcntAmt = advPrcntAmt + grossBonus;
 						advPrcntAmt = NumberFormatting.castNumber(advPrcntAmt, insertVal);
@@ -642,19 +639,19 @@ public class BonusApiController {
 						pujaPrcntAmt = pujaPrcntAmt + grossBonus;
 						pujaPrcntAmt = NumberFormatting.castNumber(pujaPrcntAmt, insertVal);
 
-						lossPrcntAmt = (grossBonus * lossPrcnt) /100;
+						lossPrcntAmt = (grossBonus * lossPrcnt) / 100;
 						lossPrcntAmt = lossPrcntAmt + grossBonus;
 						lossPrcntAmt = NumberFormatting.castNumber(lossPrcntAmt, insertVal);
 
-					// System.err.println("advPrcntAmt"+advPrcntAmt);
-					// System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
-						System.err.println("lossPrcntAmt"+lossPrcntAmt);
+						// System.err.println("advPrcntAmt"+advPrcntAmt);
+						// System.err.println("pujaPrcntAmt"+pujaPrcntAmt);
+						System.err.println("lossPrcntAmt" + lossPrcntAmt);
 					} else {
 						isApplicable = "No";
-						//System.err.println("not Applicable");
+						// System.err.println("not Applicable");
 					}
 
-				//	System.err.println("param **" + salCal.toString());
+					// System.err.println("param **" + salCal.toString());
 
 					GetEmployeeDetails list = getEmployeeDetailsRepo.getEmpDetailList(empId);
 
@@ -700,7 +697,7 @@ public class BonusApiController {
 					calcSave.setPaidExgretiaAmt(0);
 					// calcSave.setPaidExgretiaDate(paidExgretiaDate);
 					calcSave.setRecStatus(0);// ***
-					calcSave.setTotalBonusWages((int)formTot);// ******
+					calcSave.setTotalBonusWages((int) formTot);// ******
 					calcSave.setTotalExgretiaDays(0);
 					calcSave.setTotalExgretiaWages("0");
 					calcSave.setTotalBonusDays((int) payableDay);// ***
@@ -747,5 +744,177 @@ public class BonusApiController {
 		return info;
 
 	}
+
+	// *******************Pay Bonus Ws****************************
+
+	@Autowired
+	PayBonusRepo payBonusRepo;
+
+	@RequestMapping(value = { "/savePayBonusType" }, method = RequestMethod.POST)
+	public @ResponseBody PayBonus savePayBonusType(@RequestBody PayBonus paybonus) {
+		PayBonus pay = new PayBonus();
+		try {
+			pay = payBonusRepo.save(paybonus);
+
+			if (pay == null) {
+				pay = new PayBonus();
+				pay.setError(true);
+			} else {
+				pay.setError(false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return paybonus;
+
+	}
+
+	@RequestMapping(value = { "/getAllPayBonus" }, method = RequestMethod.GET)
+	public @ResponseBody List<PayBonus> getAllPayBonus() {
+
+		List<PayBonus> payBonusList = new ArrayList<PayBonus>();
+
+		try {
+			payBonusList = payBonusRepo.findByDelStatus(1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
+
+	}
+
+	@RequestMapping(value = { "/getPayBonusById" }, method = RequestMethod.POST)
+	public @ResponseBody PayBonus getPayBonusById(@RequestParam("payBonusTypeId") int payBonusTypeId) {
+
+		PayBonus pay = new PayBonus();
+
+		try {
+			pay = payBonusRepo.findByPayTypeIdAndDelStatus(payBonusTypeId, 1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return pay;
+
+	}
+
+	@RequestMapping(value = { "/deletePayBonus" }, method = RequestMethod.POST)
+	public @ResponseBody Info deletePayBonus(@RequestParam("payBonusTypeId") int payBonusTypeId) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = payBonusRepo.deleteBonusPayType(payBonusTypeId);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
+		}
+
+		return info;
+
+	}
+
+	PayBonusDetailsRepo payBonusDetailsRepo;
+
+	@RequestMapping(value = { "/savePayBonusDetails" }, method = RequestMethod.POST)
+	public @ResponseBody PayBonusDetails savePayBonusDetails(@RequestBody PayBonusDetails det) {
+		PayBonusDetails payDet = new PayBonusDetails();
+
+		try {
+			payDet = payBonusDetailsRepo.save(det);
+
+			if (payDet == null) {
+				payDet = new PayBonusDetails();
+				payDet.setError(true);
+			} else {
+				payDet.setError(false);
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return payDet;
+
+	}
+
+	@RequestMapping(value = { "/getPayDetById" }, method = RequestMethod.POST)
+	public @ResponseBody PayBonusDetails getPayDetById(@RequestParam int payDetId) {
+
+		PayBonusDetails payDet = new PayBonusDetails();
+
+		try {
+			payDet = payBonusDetailsRepo.findByPayIdAndDelStatus(payDetId, 1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return payDet;
+
+	}
+
+	@RequestMapping(value = { "/getAllPayDetails" }, method = RequestMethod.GET)
+	public @ResponseBody List<PayBonusDetails> getAllPayDetails() {
+
+		List<PayBonusDetails> detList = new ArrayList<PayBonusDetails>();
+		
+		try {
+			detList=payBonusDetailsRepo.findByDelStatus(1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+
+	}
+	
+	
+	
+	@RequestMapping(value = { "/deletePayBonusDet" }, method = RequestMethod.POST)
+	public @ResponseBody Info deletePayBonusDet(@RequestParam("payId") int payId) {
+
+		Info info = new Info();
+
+		try {
+
+			int delete = payBonusDetailsRepo.deleteBonusPay(payId);
+
+			if (delete > 0) {
+				info.setError(false);
+				info.setMsg("deleted");
+			} else {
+				info.setError(true);
+				info.setMsg("failed");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			info.setError(true);
+			info.setMsg("failed");
+		}
+
+		return info;
+
+	}
+
 
 }
