@@ -1,6 +1,7 @@
 package com.ats.hrmgt.controller;
 
 import java.text.SimpleDateFormat;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -884,19 +885,21 @@ public class WeeklyOffApiController {
 			}
 
 			int monthN = Integer.parseInt(monthNew);
-
-			Calendar calendar = Calendar.getInstance();
-			int date = 1;
-			calendar.set(year, monthN, date);
-			int days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-			// System.out.println("Number of Days: " + days);
+			/*
+			 * Calendar calendar = Calendar.getInstance(); int date = 1; calendar.set(year,
+			 * monthN, date); int days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+			 */ 
+			YearMonth yearMonthObject = YearMonth.of(year, monthN);
+			int days = yearMonthObject.lengthOfMonth(); //28  
+			 
+			//  System.out.println("Number of Days: " + days);
 			String fromDate = String.valueOf(year).concat("-").concat(String.valueOf(monthN)).concat("-").concat("01");
 			String toDate = String.valueOf(year).concat("-").concat(String.valueOf(monthN)).concat("-")
 					.concat(String.valueOf(days));
 			// System.out.println("sht: " +
 			// DateConvertor.convertToDMY(sht.getWeekofffromdate()));
-			 System.out.println("fromDate: " + fromDate);
-			 System.out.println("toDate: " + toDate);
+			// System.out.println("fromDate: " + fromDate);
+			// System.out.println("toDate: " + toDate);
 			shiftedList = weeklyOffShitRepository.getWeeklyOffShitListbetweenweekofffromdatebyempId(fromDate, toDate,
 					empId);
 
@@ -906,7 +909,7 @@ public class WeeklyOffApiController {
 				List<WeeklyOff> weeklyOfflist = weeklyOffRepo.getWeeklyOffList();
 				datesList = commonFunctionService.getDatesOfWeeklyOfForShiftingDate(fromDate, toDate, weeklyOfflist,
 						locId, weekoffCatId);
-				System.out.println("datesList before: " + datesList.toString());
+				//System.out.println("datesList before: " + datesList.toString());
 
 				if (shiftedList != null) {
 
@@ -930,7 +933,7 @@ public class WeeklyOffApiController {
 					}
 				}
 
-				 System.out.println("datesList after ******: " + datesList.toString());
+				// System.out.println("datesList after ******: " + datesList.toString());
 
 			} catch (Exception e) {
 

@@ -396,15 +396,15 @@ public class HrEasyApiController {
 	GetWeekShiftChangeRepo getWeekShiftChangeRepo;
 
 	@RequestMapping(value = { "/getAllWeekOffShifted" }, method = RequestMethod.POST)
-	public List<GetWeekShiftChange> getAllWeekOffShifted(@RequestParam String year, @RequestParam int empId) {
+	public List<GetWeekShiftChange> getAllWeekOffShifted(@RequestParam String month,@RequestParam String year, @RequestParam int empId) {
 		List<GetWeekShiftChange> list = new ArrayList<GetWeekShiftChange>();
 		try {
 			
 			if(empId!=-1) {
-				list = getWeekShiftChangeRepo.getAllWeekShifted(year, empId);
+				list = getWeekShiftChangeRepo.getAllWeekShifted(month,year, empId);
 
 			}else {
-				list = getWeekShiftChangeRepo.getAllWeekShiftedAllEmp(year);
+				list = getWeekShiftChangeRepo.getAllWeekShiftedAllEmp(month,year);
 
 			}
 		} catch (Exception e) {
