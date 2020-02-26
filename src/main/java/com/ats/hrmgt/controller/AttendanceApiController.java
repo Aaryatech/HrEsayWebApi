@@ -1674,11 +1674,14 @@ public class AttendanceApiController {
 						shiftWeeklyofById.getEmpId());
 				Info fistres = changeStatusOfDailyDailyDate(dailyRecordByfromDate, shiftWeeklyofById, userId);
 				Info setcondres = changeStatusOfDailyDailyDate(dailyRecordByonDate, shiftWeeklyofById, userId);
+				info.setError(false);
+				info.setMsg("success");
 				// System.out.println(dailyRecordByDate);
 
 			}
 		} catch (Exception e) {
-
+			info.setError(true);
+			info.setMsg("failed");
 			e.printStackTrace();
 		}
 
