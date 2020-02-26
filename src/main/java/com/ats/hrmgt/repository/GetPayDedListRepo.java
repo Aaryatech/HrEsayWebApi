@@ -20,4 +20,21 @@ public interface GetPayDedListRepo extends JpaRepository<GetPayDedList, Integer>
 	List<GetPayDedList> getLoanList(@Param("date") String date ,
 			@Param("empIds") List<Integer> empIds);
 
+	@Query(value = "select\n" + 
+			"        uuid() as id,\n" + 
+			"        emp_id,\n" + 
+			"        sum(pay_rate) as amt \n" + 
+			"    from\n" + 
+			"        tblm_pay_bonus_details \n" + 
+			"    where\n" + 
+			"        month=:month \n" + 
+			"        and year=:year \n" + 
+			"        and del_status=1 \n" + 
+			"        and is_paid=0 \n" + 
+			"        and emp_id in (:empIds) \n" + 
+			"    group by\n" + 
+			"        emp_id", nativeQuery = true)
+	List<GetPayDedList> getBonusList(@Param("month") int month, @Param("year") int year,
+	@Param("empIds") List<Integer> empIds);
+
 }

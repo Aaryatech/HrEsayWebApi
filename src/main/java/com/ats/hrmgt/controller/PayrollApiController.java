@@ -278,6 +278,7 @@ public class PayrollApiController {
 			List<GetAdvanceList> getAdvanceList = getAdvanceListRepo.getAdvanceList(month, year, empIds);
 			List<GetClaimList> getClaimList = getClaimListRepo.getClaimList(month, year, empIds);
 			List<GetPayDedList> getPayDedList = getPayDedListRepo.getPayDedList(month, year, empIds);
+			List<GetPayDedList> getBonusList = getPayDedListRepo.getBonusList(month, year, empIds);
 			List<GetPayDedList> getLoanList = getPayDedListRepo.getLoanList(year + "-" + month + "-01", empIds);
 
 			for (int i = 0; i < listForUpdatedValue.size(); i++) {
@@ -322,6 +323,20 @@ public class PayrollApiController {
 				}
 				if (flag == 0) {
 					listForUpdatedValue.get(i).setPayDed(0);
+				}
+
+				flag = 0;
+				for (int j = 0; j < getBonusList.size(); j++) {
+
+					if (getBonusList.get(j).getEmpId() == listForUpdatedValue.get(i).getEmpId()) {
+						listForUpdatedValue.get(i).setReward(getBonusList.get(j).getAmt());
+						flag = 1;
+						break;
+					}
+
+				}
+				if (flag == 0) {
+					listForUpdatedValue.get(i).setReward(0);
 				}
 
 				flag = 0;
@@ -994,7 +1009,8 @@ public class PayrollApiController {
 				getSalaryTempList.get(i).setStatusDytemp(1);
 				getSalaryTempList.get(i).setNetSalary(castNumber((getSalaryTempList.get(i).getGrossSalaryDytemp()
 						+ getSalaryTempList.get(i).getPerformanceBonus() + getSalaryTempList.get(i).getMiscExpAdd()
-						+ getSalaryTempList.get(i).getOtWages() + getSalaryTempList.get(i).getProductionInsentive())
+						+ getSalaryTempList.get(i).getOtWages() + getSalaryTempList.get(i).getProductionInsentive()
+						+ getSalaryTempList.get(i).getReward())
 						- (getSalaryTempList.get(i).getAdvanceDed() + getSalaryTempList.get(i).getLoanDed()
 								+ getSalaryTempList.get(i).getPayDed() + getSalaryTempList.get(i).getEsic()
 								+ getSalaryTempList.get(i).getEmployeePf() + getSalaryTempList.get(i).getPtDed()

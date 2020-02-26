@@ -72,6 +72,10 @@ public class SalaryCalcTemp {
 	private String  empCategory;
 	private double basicDefault;
 	private double abDeduction;
+	private double adjustMinus;
+	private double adjustPlus;
+	private double reward;
+	
 	public int getId() {
 		return id;
 	}
@@ -434,6 +438,24 @@ public class SalaryCalcTemp {
 	public void setAbDeduction(double abDeduction) {
 		this.abDeduction = abDeduction;
 	}
+	public double getAdjustMinus() {
+		return adjustMinus;
+	}
+	public void setAdjustMinus(double adjustMinus) {
+		this.adjustMinus = adjustMinus;
+	}
+	public double getAdjustPlus() {
+		return adjustPlus;
+	}
+	public void setAdjustPlus(double adjustPlus) {
+		this.adjustPlus = adjustPlus;
+	}
+	public double getReward() {
+		return reward;
+	}
+	public void setReward(double reward) {
+		this.reward = reward;
+	}
 	@Override
 	public String toString() {
 		return "SalaryCalcTemp [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode
@@ -455,7 +477,7 @@ public class SalaryCalcTemp {
 				+ ", mlwfApplicable=" + mlwfApplicable + ", ptApplicable=" + ptApplicable + ", payDed=" + payDed
 				+ ", commentsForItBonus=" + commentsForItBonus + ", societyContribution=" + societyContribution
 				+ ", empCategory=" + empCategory + ", basicDefault=" + basicDefault + ", abDeduction=" + abDeduction
-				+ "]";
+				+ ", adjustMinus=" + adjustMinus + ", adjustPlus=" + adjustPlus + ", reward=" + reward + "]";
 	}
 	 
 }
