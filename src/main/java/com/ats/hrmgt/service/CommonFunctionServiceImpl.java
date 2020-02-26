@@ -607,6 +607,7 @@ public class CommonFunctionServiceImpl implements CommonFunctionService {
 
 							if (dayOfWeek == Integer.parseInt(weeklyList.get(i).getWoDay())) {
 
+								System.out.println(j);
 								String dt = dddate.format(j);
 								dates.add(dt);
 							}
