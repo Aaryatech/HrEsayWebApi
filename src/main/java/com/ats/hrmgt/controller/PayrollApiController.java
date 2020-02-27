@@ -45,6 +45,7 @@ import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.model.SlabMaster;
 import com.ats.hrmgt.model.loan.LoanDetails;
 import com.ats.hrmgt.model.loan.LoanMain;
+import com.ats.hrmgt.repo.bonus.PayBonusDetailsRepo;
 import com.ats.hrmgt.repo.loan.LoanDetailsRepo;
 import com.ats.hrmgt.repo.loan.LoanMainRepo;
 import com.ats.hrmgt.repository.AllowancesRepo;
@@ -145,6 +146,9 @@ public class PayrollApiController {
 	@Autowired
 	LoanDetailsRepo loanDetailsRepo;
 
+	@Autowired
+	PayBonusDetailsRepo payBonusDetailsRepo;
+	
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
 			@RequestParam("year") int year) {
@@ -1364,6 +1368,9 @@ public class PayrollApiController {
 				SalaryCalc.setEmployerEsicPercentage(salList.get(i).getEmployerEsicPercentage());
 				SalaryCalc.setEmployerMlwf(salList.get(i).getEmployerMlwf());
 				SalaryCalc.setGrossSalDefault(salList.get(i).getGrossSalary());
+				SalaryCalc.setAdjustMinus(salList.get(i).getAdjustMinus());
+				SalaryCalc.setAdjustPlus(salList.get(i).getAdjustPlus());
+				SalaryCalc.setReward(salList.get(i).getReward());
 				SalaryCalc saveres = salaryCalcRepo.save(SalaryCalc);
 
 				List<SalAllownceCal> allowlist = new ArrayList<>();
@@ -1414,6 +1421,7 @@ public class PayrollApiController {
 			int updateAdv = advanceRepo.updateAdv(month, year, empIds);
 			int updateClaim = claimHeaderRepo.updateClaim(month, year, empIds);
 			int updatePayde = payDeductionDetailsRepo.updatePayde(month, year, empIds);
+			int updateBonus = payBonusDetailsRepo.updateBonus(month, year, empIds);
 			// List<GetPayDedList> getLoanList = getPayDedListRepo.getLoanList(year + "-" +
 			// month + "-01", empIds);
 			List<LoanMain> getLoanList = loanMainRepo.getLoanList(year + "-" + month + "-01", empIds);

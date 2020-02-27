@@ -90,6 +90,9 @@ public class SalaryCalc {
 	private double employeeEsicPercentage;
 	private double employerMlwf; 
 	private double grossSalDefault;
+	private double adjustMinus;
+	private double adjustPlus;
+	private double reward;
 	
 	public int getId() {
 		return id;
@@ -554,6 +557,24 @@ public class SalaryCalc {
 	public void setGrossSalDefault(double grossSalDefault) {
 		this.grossSalDefault = grossSalDefault;
 	}
+	public double getAdjustMinus() {
+		return adjustMinus;
+	}
+	public void setAdjustMinus(double adjustMinus) {
+		this.adjustMinus = adjustMinus;
+	}
+	public double getAdjustPlus() {
+		return adjustPlus;
+	}
+	public void setAdjustPlus(double adjustPlus) {
+		this.adjustPlus = adjustPlus;
+	}
+	public double getReward() {
+		return reward;
+	}
+	public void setReward(double reward) {
+		this.reward = reward;
+	}
 	@Override
 	public String toString() {
 		return "SalaryCalc [id=" + id + ", cmpId=" + cmpId + ", empId=" + empId + ", empCode=" + empCode + ", empType="
@@ -582,7 +603,8 @@ public class SalaryCalc {
 				+ epmloyerEpfExtra + ", pfAdminChPercentage=" + pfAdminChPercentage + ", edliPercentage="
 				+ edliPercentage + ", edliAdminPercentage=" + edliAdminPercentage + ", employerEsicPercentage="
 				+ employerEsicPercentage + ", employeeEsicPercentage=" + employeeEsicPercentage + ", employerMlwf="
-				+ employerMlwf + ", grossSalDefault=" + grossSalDefault + "]";
+				+ employerMlwf + ", grossSalDefault=" + grossSalDefault + ", adjustMinus=" + adjustMinus
+				+ ", adjustPlus=" + adjustPlus + ", reward=" + reward + "]";
 	}
 	 
 	 
