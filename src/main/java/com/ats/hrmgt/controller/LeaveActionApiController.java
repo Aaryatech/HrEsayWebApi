@@ -20,6 +20,7 @@ import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.common.Firebase;
 import com.ats.hrmgt.model.AuthorityInformation;
 import com.ats.hrmgt.model.CalenderYear;
+import com.ats.hrmgt.model.EmpBasicAllownceForLeaveInCash;
 import com.ats.hrmgt.model.EmpLeaveHistoryRep;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.GetAuthorityIds;
@@ -33,6 +34,7 @@ import com.ats.hrmgt.model.PayableDayAndPresentDays;
 import com.ats.hrmgt.model.Setting;
 import com.ats.hrmgt.repository.AuthorityInformationRepository;
 import com.ats.hrmgt.repository.CalculateYearRepository;
+import com.ats.hrmgt.repository.EmpBasicAllownceForLeaveInCashRepo;
 import com.ats.hrmgt.repository.EmpLeaveHistoryRepRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetAuthorityIdsRepo;
@@ -79,6 +81,9 @@ public class LeaveActionApiController {
 
 	@Autowired
 	LeaveTypeWithLimitRepository leaveTypeWithLimitRepository;
+
+	@Autowired
+	EmpBasicAllownceForLeaveInCashRepo empBasicAllownceForLeaveInCashRepo;
 
 	@RequestMapping(value = { "/updateLeaveStatus" }, method = RequestMethod.POST)
 	public @ResponseBody Info updateLeaveStatus(@RequestParam("leaveId") int leaveId,
@@ -388,6 +393,27 @@ public class LeaveActionApiController {
 
 	}
 
+	@RequestMapping(value = { "/getEmployeeBasicAndAllownceValueByEmpIdAndStructId" }, method = RequestMethod.POST)
+	public @ResponseBody EmpBasicAllownceForLeaveInCash getEmployeeBasicAndAllownceValueByEmpIdAndStructId(
+			@RequestParam("empId") int empId, @RequestParam("lvsId") int lvsId) {
+
+		EmpBasicAllownceForLeaveInCash empBasicAllownceForLeaveInCash = new EmpBasicAllownceForLeaveInCash();
+		try {
+
+			empBasicAllownceForLeaveInCash = empBasicAllownceForLeaveInCashRepo
+					.getEmployeeBasicAndAllownceValueByEmpIdAndStructId(empId, lvsId);
+
+			// System.err.println("LeaveHistory" + list.toString());
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return empBasicAllownceForLeaveInCash;
+
+	}
+
 	@RequestMapping(value = { "/checkDateForRepetedLeaveValidation" }, method = RequestMethod.POST)
 	public @ResponseBody Info checkDateForRepetedLeaveValidation(@RequestParam("fromDate") String fromDate,
 			@RequestParam("toDate") String toDate, @RequestParam("empId") int empId,
@@ -415,7 +441,7 @@ public class LeaveActionApiController {
 
 						info = LeaveTypeValidation(empId, leaveTypeId, shortName, noOfDays);
 					} else {
-						
+
 						list = leaveApplyRepository.checkContinueDateLeave(fromDate, toDate, empId, leaveTypeId);
 						if (list.size() > 0) {
 
