@@ -829,28 +829,34 @@ public class BonusApiController {
 
 	}
 
+	@Autowired
 	PayBonusDetailsRepo payBonusDetailsRepo;
 
+	 
+	
+	
 	@RequestMapping(value = { "/savePayBonusDetails" }, method = RequestMethod.POST)
-	public @ResponseBody PayBonusDetails savePayBonusDetails(@RequestBody PayBonusDetails det) {
-		PayBonusDetails payDet = new PayBonusDetails();
+	public @ResponseBody PayBonusDetails savePayBonusDetails(@RequestBody PayBonusDetails payBonusDetails) {
 
+		PayBonusDetails save = new PayBonusDetails();
 		try {
-			payDet = payBonusDetailsRepo.save(det);
 
-			if (payDet == null) {
-				payDet = new PayBonusDetails();
-				payDet.setError(true);
+			save = payBonusDetailsRepo.saveAndFlush(payBonusDetails);
+			if (save == null) {
+
+				save = new PayBonusDetails();
+				save.setError(true);
+
 			} else {
-				payDet.setError(false);
+				save.setError(false);
 			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
-		return payDet;
+		return save;
 
 	}
 
@@ -885,6 +891,27 @@ public class BonusApiController {
 		return null;
 
 	}
+	
+	
+
+	@RequestMapping(value = { "/getAllPayPedingDetails" }, method = RequestMethod.GET)
+	public @ResponseBody List<PayBonusDetails> getAllPayPedingDetails() {
+
+		List<PayBonusDetails> detList = new ArrayList<PayBonusDetails>();
+		
+		try {
+			detList=payBonusDetailsRepo.getAllUnpaid();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return detList;
+
+	}
+	
+	
+	
 	
 	
 	
