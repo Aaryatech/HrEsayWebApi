@@ -20,7 +20,7 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 			"        leave_structure_details.lvs_alloted_leaves,\n" + 
 			"        leave_structure_header.lvs_id,leave_type.is_file,leave_structure_details.max_accumulate_carryforward,\n" + 
 			"        leave_structure_details.is_carryforward,\n" + 
-			"        leave_structure_details.max_carryforward,\n" + 
+			"        leave_structure_details.max_carryforward,leave_structure_details.ex_int1 as is_in_cash,\n" + 
 			"        coalesce((select\n" + 
 			"            b.op_bal \n" + 
 			"        from\n" + 
@@ -75,7 +75,7 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 	
 	@Query(value = " SELECT\n" + 
 			"    leave_structure_details.lvs_alloted_leaves as bal_leave,0 as lv_type_id,0 as lv_title_short, 0 as lv_title,0 as lvs_alloted_leaves,"
-			+ " 0 as saction_leave, 0 as apllied_leaeve,0 as lvs_id  ,0 as is_file,0 as max_accumulate_carryforward,\n" + 
+			+ " 0 as saction_leave, 0 as apllied_leaeve,0 as lvs_id  ,0 as is_file,0 as max_accumulate_carryforward, 0 as is_in_cash,\n" + 
 			"        0 as is_carryforward,\n" + 
 			"        0 as max_carryforward , 0 as lvs_name \n" + 
 			"FROM\n" + 
@@ -94,7 +94,7 @@ public interface LeaveHistoryRepo  extends JpaRepository<LeaveHistory, Integer>{
 			"        leave_structure_details.lvs_alloted_leaves,\n" + 
 			"        leave_structure_header.lvs_id,leave_type.is_file,leave_structure_details.max_accumulate_carryforward,\n" + 
 			"        leave_structure_details.is_carryforward,\n" + 
-			"        leave_structure_details.max_carryforward,\n" + 
+			"        leave_structure_details.max_carryforward,leave_structure_details.ex_int1 as is_in_cash,\n" + 
 			"        coalesce((select\n" + 
 			"            b.op_bal          \n" + 
 			"        from\n" + 
