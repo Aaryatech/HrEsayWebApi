@@ -148,7 +148,7 @@ public class PayrollApiController {
 
 	@Autowired
 	PayBonusDetailsRepo payBonusDetailsRepo;
-	
+
 	@RequestMapping(value = { "/getEmployeeListWithEmpSalEnfoForPayRoll" }, method = RequestMethod.POST)
 	public PayRollDataForProcessing getEmployeeListWithEmpSalEnfoForPayRoll(@RequestParam("month") int month,
 			@RequestParam("year") int year) {
@@ -1505,13 +1505,20 @@ public class PayrollApiController {
 	@RequestMapping(value = { "/getPayrollGenratedList" }, method = RequestMethod.POST)
 	@ResponseBody
 	public PayRollDataForProcessing getPayrollGenratedList(@RequestParam("month") int month,
-			@RequestParam("year") int year) {
+			@RequestParam("year") int year, @RequestParam("companyId") int companyId) {
 
 		PayRollDataForProcessing payRollDataForProcessing = new PayRollDataForProcessing();
 
 		try {
 
-			List<GetPayrollGeneratedList> list = getPayrollGeneratedListRepo.getPayrollGenratedList(month, year);
+			List<GetPayrollGeneratedList> list = new ArrayList<>();
+
+			if (companyId == 0) {
+				list = getPayrollGeneratedListRepo.getPayrollGenratedList(month, year);
+			} else {
+				list = getPayrollGeneratedListRepo.getPayrollGenratedList(month, year, companyId);
+			}
+
 			List<Allowances> allowancelist = allowanceRepo.findBydelStatusAndIsActive(0, 1);
 			List<SalAllownceCal> getPayrollAllownceList = salAllownceCalRepo.getPayrollAllownceList(month, year);
 

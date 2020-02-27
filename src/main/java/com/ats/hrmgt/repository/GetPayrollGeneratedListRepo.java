@@ -14,7 +14,7 @@ public interface GetPayrollGeneratedListRepo extends JpaRepository<GetPayrollGen
 			"        concat(e.first_name,\n" + 
 			"        ' ',\n" + 
 			"        e.surname) as name,\n" + 
-			"        et.name as emp_type_name,\n" + 
+			"        et.name as emp_type_name,e.sub_cmp_id,\n" + 
 			"        d.name as depart_name,\n" + 
 			"        dg.name as design_name,\n" + 
 			"        sc.*,\n" + 
@@ -45,7 +45,7 @@ public interface GetPayrollGeneratedListRepo extends JpaRepository<GetPayrollGen
 	@Query(value = "select\n" + 
 			"        concat(e.first_name,\n" + 
 			"        ' ',\n" + 
-			"        e.surname) as name,\n" + 
+			"        e.surname) as name,e.sub_cmp_id,\n" + 
 			"        et.name as emp_type_name,\n" + 
 			"        d.name as depart_name,\n" + 
 			"        dg.name as design_name,\n" + 
@@ -72,5 +72,36 @@ public interface GetPayrollGeneratedListRepo extends JpaRepository<GetPayrollGen
 			"        and dg.desig_id=e.designation_id\n" + 
 			"        and dd.id=sc.att_sum_id and e.emp_id in(:empIds) order by e.emp_id asc", nativeQuery = true)
 	List<GetPayrollGeneratedList> getPayrollGenratedList(@Param("month") int month, @Param("year") int year,@Param("empIds") List<Integer> empIds);
+
+	@Query(value = "select\n" + 
+			"        concat(e.first_name,\n" + 
+			"        ' ',\n" + 
+			"        e.surname) as name,e.sub_cmp_id,\n" + 
+			"        et.name as emp_type_name,\n" + 
+			"        d.name as depart_name,\n" + 
+			"        dg.name as design_name,\n" + 
+			"        sc.*,\n" + 
+			"        dd.payable_days,\n" + 
+			"        dd.present_days,\n" + 
+			"        dd.weekly_off,\n" + 
+			"        dd.paid_holiday,\n" + 
+			"        dd.paid_leave,\n" + 
+			"        dd.unpaid_leave\n" + 
+			"    from\n" + 
+			"        tbl_salary_calc sc,\n" + 
+			"        m_employees e,\n" + 
+			"        tbl_mst_emp_types et,\n" + 
+			"        m_department d,\n" + 
+			"        m_designation dg,\n" + 
+			"        tbl_attt_summary_daily dd\n" + 
+			"    where\n" + 
+			"        sc.calc_month=:month \n" + 
+			"        and calc_year=:year \n" + 
+			"        and e.emp_id=sc.emp_id \n" + 
+			"        and et.emp_type_id=sc.emp_type \n" + 
+			"        and d.depart_id=sc.depart_id \n" + 
+			"        and dg.desig_id=e.designation_id\n" + 
+			"        and dd.id=sc.att_sum_id and e.sub_cmp_id=:companyId order by e.emp_id asc", nativeQuery = true) 
+	List<GetPayrollGeneratedList> getPayrollGenratedList(@Param("month") int month, @Param("year") int year,@Param("companyId") int companyId);
 
 }
