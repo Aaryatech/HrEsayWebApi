@@ -97,6 +97,25 @@ public class EmployeeApiController {
 
 	}
 
+	
+	
+	@RequestMapping(value = { "/getMaxEmp" }, method = RequestMethod.GET)
+	public int  getMaxEmp() {
+		int n=0;
+		EmployeeMaster emp = new EmployeeMaster();
+
+ 		try {
+ 			emp = empRepo.getEmpMax();
+ 			n=emp.getEmpId();
+		} catch (Exception e) {
+			System.err.println("Excep in getEmpInfoByEmpCode : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return n;
+
+	}
+
 	@Autowired
 	SettingRepo settingRepo;
 

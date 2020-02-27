@@ -91,6 +91,13 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	List<EmployeeMaster> getEmpSalAssign();
 	
 	
+	@Query(value = "SELECT e.* from m_employees e  ORDER BY e.emp_id DESC LIMIT 1", nativeQuery = true)
+	 EmployeeMaster  getEmpMax();
+	
+	
+	
+	 
+	 
 	
 	
 	//Emp master Asssignment
