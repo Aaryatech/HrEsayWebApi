@@ -14,10 +14,13 @@ public interface LeaveBalanceCalRepo extends JpaRepository<LeaveBalanceCal, Inte
 
 	List<LeaveBalanceCal> findByCalYrIdAndEmpIdAndDelStatusAndIsActive(int empId, int calYrId, int j, int k);
 
-	
-	
 	@Transactional
 	@Modifying
 	@Query("update LeaveBalanceCal set op_bal=:noDays  WHERE lv_type_id=:lvTypeId AND emp_id=:empId AND cal_yr_id=:calYrID  ")
-	int updateLeaveBalCal(int lvTypeId,int empId ,int calYrID ,int noDays );
+	int updateLeaveBalCal(int lvTypeId, int empId, int calYrID, int noDays);
+
+	@Transactional
+	@Modifying
+	@Query("update LeaveBalanceCal set ex_int1=0,ex_var1=:date  WHERE cal_yr_id=:yearId AND emp_id in (:empId)")
+	int updateIsPaidIncash(int yearId, List<Integer> empId,String date);
 }

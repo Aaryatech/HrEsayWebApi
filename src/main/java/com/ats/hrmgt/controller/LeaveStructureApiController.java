@@ -23,9 +23,11 @@ import com.ats.hrmgt.model.GetLeaveStatus;
 import com.ats.hrmgt.model.GetStructureAllotment;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveBalanceCal;
+import com.ats.hrmgt.model.LeaveCashReport;
 import com.ats.hrmgt.model.LeaveStructureDetails;
 import com.ats.hrmgt.model.LeaveStructureHeader;
 import com.ats.hrmgt.model.LeavesAllotment;
+import com.ats.hrmgt.repo.LeaveCashReportRepository;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.EmployeeLeaveDetailRepo;
 import com.ats.hrmgt.repository.GetLeaveApplyAuthwiseRepo;
@@ -71,6 +73,9 @@ public class LeaveStructureApiController {
 	@Autowired
 	GetLeaveStatusRepo getLeaveStatusRepo;
 
+	@Autowired
+	LeaveCashReportRepository leaveCashReportRepository;
+
 	// ----------------------Leave balance Cal---------------------
 
 	@RequestMapping(value = { "/saveLeaveBalanceCal" }, method = RequestMethod.POST)
@@ -98,20 +103,19 @@ public class LeaveStructureApiController {
 		return save;
 
 	}
-	
+
 	@RequestMapping(value = { "/saveNewBalRecord" }, method = RequestMethod.POST)
-	public @ResponseBody List<LeaveBalanceCal> saveNewLeaveAllotmentWith(@RequestBody List<LeaveBalanceCal> leavesAllotment) {
+	public @ResponseBody List<LeaveBalanceCal> saveNewLeaveAllotmentWith(
+			@RequestBody List<LeaveBalanceCal> leavesAllotment) {
 
 		List<LeaveBalanceCal> leaveBalanccRes = new ArrayList<>();
 
 		try {
 
-			 
-			 leaveBalanccRes = leaveBalanceCalRepo.saveAll(leavesAllotment);
-			 
+			leaveBalanccRes = leaveBalanceCalRepo.saveAll(leavesAllotment);
 
 		} catch (Exception e) {
-			 
+
 			e.printStackTrace();
 		}
 		return leaveBalanccRes;
@@ -525,6 +529,57 @@ public class LeaveStructureApiController {
 			e.printStackTrace();
 		}
 		return save;
+	}
+
+	@RequestMapping(value = { "/getPendingListOfleaveCash" }, method = RequestMethod.POST)
+	public @ResponseBody List<LeaveCashReport> getPendingListOfleaveCash(@RequestParam("yearId") int yearId) {
+
+		List<LeaveCashReport> list = new ArrayList<>();
+
+		try {
+
+			list = leaveCashReportRepository.getPendingListOfleaveCash(yearId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@RequestMapping(value = { "/getPaidListOfleaveCash" }, method = RequestMethod.POST)
+	public @ResponseBody List<LeaveCashReport> getPaidListOfleaveCash(@RequestParam("yearId") int yearId) {
+
+		List<LeaveCashReport> list = new ArrayList<>();
+
+		try {
+
+			list = leaveCashReportRepository.getPaidListOfleaveCash(yearId);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@RequestMapping(value = { "/updateIsPaidIncash" }, method = RequestMethod.POST)
+	public @ResponseBody Info updateIsPaidIncash(@RequestParam("yearId") int yearId,
+			@RequestParam("empId") List<Integer> empId, @RequestParam("date") String date) {
+
+		Info info = new Info();
+
+		try {
+
+			int update = leaveBalanceCalRepo.updateIsPaidIncash(yearId, empId, date);
+			info.setError(false);
+			info.setMsg("update");
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return info;
 	}
 
 }
