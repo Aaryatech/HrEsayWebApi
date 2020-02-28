@@ -41,21 +41,20 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 			"                    where\n" + 
 			"                        is_current=1\n" + 
 			"                )\n" + 
-			"            ) \n" + 
-			"            ", nativeQuery = true)
+			"            ) and e.del_status=1", nativeQuery = true)
 	List<EmployeeMaster> getemplistwhichisnotyearend();
 
 	@Query(value = "SELECT e.* from m_employees e  where e.emp_id=:empId", nativeQuery = true)
 	EmployeeMaster getEmpInfoByEmpId(@Param("empId") int empId);
 	
-	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE cmp_code=:companyId AND contractor_id=:contractId", nativeQuery = true)
+	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE cmp_code=:companyId AND contractor_id=:contractId and e.del_status=1", nativeQuery = true)
 	int getEmpInfoByContractId(@Param("contractId") int contractId, @Param("companyId") int companyId);
 	
-	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE cmp_code=:companyId AND depart_id=:deptId",nativeQuery=true)
+	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE cmp_code=:companyId AND depart_id=:deptId and e.del_status=1",nativeQuery=true)
 	int getEmpInfoByDepartment(@Param("deptId") int deptId, @Param("companyId") int companyId);
 	
 	
-	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE cmp_code=:companyId AND designation_id=:desigId",nativeQuery=true)
+	@Query(value = "SELECT count(emp_id) FROM m_employees WHERE cmp_code=:companyId AND designation_id=:desigId and e.del_status=1",nativeQuery=true)
 	int getEmpInfoByDesigId(@Param("desigId") int desigId, @Param("companyId") int companyId);
 
 	public List<EmployeeMaster> findByCmpCodeAndDelStatusOrderByEmpIdDesc(int companyId, int del);
@@ -91,7 +90,7 @@ public interface EmployeeMasterRepository extends JpaRepository<EmployeeMaster, 
 	List<EmployeeMaster> getEmpSalAssign();
 	
 	
-	@Query(value = "SELECT e.* from m_employees e  ORDER BY e.emp_id DESC LIMIT 1", nativeQuery = true)
+	@Query(value = "SELECT e.* from m_employees e where e.del_status=1  ORDER BY e.emp_id DESC LIMIT 1", nativeQuery = true)
 	 EmployeeMaster  getEmpMax();
 	
 	
