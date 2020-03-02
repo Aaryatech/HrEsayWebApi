@@ -153,6 +153,31 @@ public class AdvanceApiController {
 
 	}
 
+	
+	@RequestMapping(value = { "/saveAdvanceList" }, method = RequestMethod.POST)
+	public @ResponseBody Info saveAdvanceList(@RequestBody List<Advance> advList) {
+
+		Info info = new Info();
+		List<Advance> inf = new ArrayList<Advance>();
+		try {
+
+			inf = advanceRepo.saveAll(advList);
+			if (inf == null) {
+
+				info.setMsg("Failed");
+				info.setError(true);
+			} else {
+				info.setMsg("Success");
+				info.setError(false);
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
 	@RequestMapping(value = { "/saveAdvanceDetails" }, method = RequestMethod.POST)
 	public @ResponseBody AdvanceDetails saveAdvanceDetails(@RequestBody AdvanceDetails leaveType) {
 
