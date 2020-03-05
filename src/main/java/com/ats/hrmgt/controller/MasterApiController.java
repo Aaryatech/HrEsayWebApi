@@ -26,12 +26,14 @@ import com.ats.hrmgt.model.LeaveStructureDetails;
 import com.ats.hrmgt.model.LeaveSummary;
 import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
+import com.ats.hrmgt.model.RouteDriver;
 import com.ats.hrmgt.model.SelfGroup;
 import com.ats.hrmgt.model.ShiftMaster;
 import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeekoffCategory;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.model.claim.GetEmployeeInfo;
+import com.ats.hrmgt.repo.RouteDriverRepo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
@@ -1053,5 +1055,78 @@ public class MasterApiController {
 
 	}
 	
+	
+/*****************************************************************************/
+	
+	@Autowired
+	RouteDriverRepo routeRepo;
+	
+	@RequestMapping(value = { "/addNewRoute" }, method = RequestMethod.POST)
+	public RouteDriver addNewRoute(@RequestBody RouteDriver route) {
+		RouteDriver saveRoute = new RouteDriver();
+		try {
+			saveRoute = routeRepo.save(route);
+		} catch (Exception e) {
+			System.err.println("Excep in addNewRoute : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return saveRoute;
+
+	}
+	
+	@RequestMapping(value = { "/getAllRoute" }, method = RequestMethod.GET)
+	public List<RouteDriver> getAllRoute() {
+		List<RouteDriver> routeList = new ArrayList<RouteDriver>();
+		try {
+			routeList = routeRepo.findAllByDelStatusOrderByRouteIdDesc(1);
+		} catch (Exception e) {
+			System.err.println("Excep in getAllRoute : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return routeList;
+
+	}
+	
+	@RequestMapping(value = { "/getRouteById" }, method = RequestMethod.POST)
+	public RouteDriver getRouteById(@RequestParam int rId) {
+		RouteDriver route = new RouteDriver();
+		try {
+			route = routeRepo.findByRouteId(rId);
+		} catch (Exception e) {
+			System.err.println("Excep in getRouteById : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return route;
+
+	}
+	
+	@RequestMapping(value = { "/deleteRouteById" }, method = RequestMethod.POST)
+	public Info deleteRouteById(@RequestParam int rId) {
+
+		Info info = new Info();
+		try {
+				int res = routeRepo.delRoutById(rId);
+
+				if (res > 0) {
+					info.setError(false);
+					info.setMsg("Route Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed To Delete Route");
+				}
+		
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("Failed To Delete Route");
+			System.err.println("Excep in deleteRouteById : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return info;
+	}
+
 	
 }
