@@ -26,6 +26,7 @@ import com.ats.hrmgt.model.LeaveStructureDetails;
 import com.ats.hrmgt.model.LeaveSummary;
 import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
+import com.ats.hrmgt.model.PerformanceBonus;
 import com.ats.hrmgt.model.RouteDriver;
 import com.ats.hrmgt.model.SelfGroup;
 import com.ats.hrmgt.model.ShiftMaster;
@@ -33,6 +34,7 @@ import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeekoffCategory;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.model.claim.GetEmployeeInfo;
+import com.ats.hrmgt.repo.PerformanceBonusRepo;
 import com.ats.hrmgt.repo.RouteDriverRepo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.DepartmentRepo;
@@ -1128,5 +1130,19 @@ public class MasterApiController {
 		return info;
 	}
 
+	@Autowired PerformanceBonusRepo performRepo;
+	@RequestMapping(value = { "/getAllPerformanceBonus" }, method = RequestMethod.POST)
+	public List<PerformanceBonus> getAllPerformanceBonus(@RequestParam String varDate) {
+		List<PerformanceBonus> list = new ArrayList<PerformanceBonus>();
+		try {
+			list = performRepo.getPerformanceBonusDetails(varDate);
+		} catch (Exception e) {
+			System.err.println("Excep in getAllPerformanceBonus : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
 	
 }
