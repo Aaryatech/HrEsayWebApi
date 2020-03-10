@@ -15,18 +15,21 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ats.hrmgt.claim.repository.GetEmpInfoRepo;
 import com.ats.hrmgt.common.DateConvertor;
 import com.ats.hrmgt.model.CalenderYear;
+import com.ats.hrmgt.model.DeductionDetails;
 import com.ats.hrmgt.model.Department;
 import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.GetEmployeeDetails;
 import com.ats.hrmgt.model.Holiday;
 import com.ats.hrmgt.model.HolidayCategory;
+import com.ats.hrmgt.model.IncentiveProduction;
 import com.ats.hrmgt.model.Info;
 import com.ats.hrmgt.model.LeaveStructureDetails;
 import com.ats.hrmgt.model.LeaveSummary;
 import com.ats.hrmgt.model.LeaveType;
 import com.ats.hrmgt.model.Location;
 import com.ats.hrmgt.model.PerformanceBonus;
+import com.ats.hrmgt.model.RewardDetail;
 import com.ats.hrmgt.model.RouteDriver;
 import com.ats.hrmgt.model.SelfGroup;
 import com.ats.hrmgt.model.ShiftMaster;
@@ -34,7 +37,10 @@ import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeekoffCategory;
 import com.ats.hrmgt.model.bonus.BonusMaster;
 import com.ats.hrmgt.model.claim.GetEmployeeInfo;
+import com.ats.hrmgt.repo.DeductionDetailsRepo;
+import com.ats.hrmgt.repo.IncentiveProductionRepo;
 import com.ats.hrmgt.repo.PerformanceBonusRepo;
+import com.ats.hrmgt.repo.RewardDetailRepo;
 import com.ats.hrmgt.repo.RouteDriverRepo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.DepartmentRepo;
@@ -1138,6 +1144,60 @@ public class MasterApiController {
 			list = performRepo.getPerformanceBonusDetails(varDate);
 		} catch (Exception e) {
 			System.err.println("Excep in getAllPerformanceBonus : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@Autowired IncentiveProductionRepo incentiveProdRepo;
+	@RequestMapping(value = { "/getAllIncentiveProduction" }, method = RequestMethod.POST)
+	public List<IncentiveProduction> getAllIncentiveProduction(@RequestParam String varDate) {
+		List<IncentiveProduction> list = new ArrayList<IncentiveProduction>();
+		try {
+			list = incentiveProdRepo.getIncentiveProductionDetails(varDate);
+		} catch (Exception e) {
+			System.err.println("Excep in getAllIncentiveProduction : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	
+	@Autowired DeductionDetailsRepo deductionDetailRepo;
+	@RequestMapping(value = { "/getAllDeductionDetails" }, method = RequestMethod.POST)
+	public List<DeductionDetails> getAllDeductionDetails(@RequestParam String varMonth,
+			@RequestParam String varYear) {
+		List<DeductionDetails> list = new ArrayList<DeductionDetails>();
+		try {
+			
+			list = deductionDetailRepo.getDeductionDetails(varMonth, varYear);
+			
+		} catch (Exception e) {
+			System.err.println("Excep in getAllDeductionDetails : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	
+	@Autowired RewardDetailRepo rewardDetailRepo;
+	@RequestMapping(value = { "/getAllRewardDetail" }, method = RequestMethod.POST)
+	public List<RewardDetail> getAllRewardDetail(@RequestParam String varMonth,
+			@RequestParam String varYear, @RequestParam int empId) {
+		List<RewardDetail> list = new ArrayList<RewardDetail>();
+		try {
+			if(empId>0) {
+			list = rewardDetailRepo.getRewardDetailByEmpId(varMonth, varYear, empId);
+			}else {
+				list = rewardDetailRepo.getRewardDetail(varMonth, varYear);
+			}
+		} catch (Exception e) {
+			System.err.println("Excep in getAllRewardDetail : " + e.getMessage());
 			e.printStackTrace();
 		}
 

@@ -9,6 +9,8 @@ public class PerformanceBonus {
 	private int id;
 	private String attDate;
 	private int otHr;
+	private int exInt1;
+	private String exVar1;
 	public int getId() {
 		return id;
 	}
@@ -29,8 +31,20 @@ public class PerformanceBonus {
 	}
 	@Override
 	public String toString() {
-		return "PerformanceBonus [id=" + id + ", attDate=" + attDate + ", otHr=" + otHr + "]";
+		return "PerformanceBonus [id=" + id + ", attDate=" + attDate + ", otHr=" + otHr + ", exInt1=" + exInt1
+				+ ", exVar1=" + exVar1 + "]";
 	}
-	
+	public int getExInt1() {
+		return exInt1;
+	}
+	public void setExInt1(int exInt1) {
+		this.exInt1 = exInt1;
+	}
+	public String getExVar1() {
+		return exVar1;
+	}
+	public void setExVar1(String exVar1) {
+		this.exVar1 = exVar1;
+	}
 	
 }
