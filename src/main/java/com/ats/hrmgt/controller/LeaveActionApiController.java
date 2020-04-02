@@ -506,4 +506,91 @@ public class LeaveActionApiController {
 		}
 		return info;
 	}
+	
+	
+	@RequestMapping(value = { "/checkUniqueCalDates" }, method = RequestMethod.POST)
+	public @ResponseBody Info checkUniqueCalDates(@RequestParam("inputValue") String inputValue, @RequestParam("valueType") int valueType, 
+	@RequestParam("isEdit") int isEdit, @RequestParam("primaryKey") int primaryKey) {
+		Info info = new Info();
+		List<CalenderYear> list = new ArrayList<CalenderYear>();
+		try {
+			System.out.println("isEdit-------------"+isEdit);
+			if(valueType==1) {
+				if(isEdit==0) {
+					list = calculateYearRepository.findByCalYrFromDate(inputValue);
+				}else {
+					list = calculateYearRepository.findByCalYrFromDateAndCalYrIdNot(inputValue, primaryKey);
+				}
+			}else if(valueType==2) {
+				if(isEdit==0) {
+					list = calculateYearRepository.findByCalYrToDate(inputValue);
+				}else {
+					list = calculateYearRepository.findByCalYrToDateAndCalYrIdNot(inputValue, primaryKey);
+				}
+			}
+			
+			for (int i = 0; i < list.size(); i++) {
+				list.get(i).setCalYrFromDate(DateConvertor.convertToDMY(list.get(i).getCalYrFromDate()));
+				list.get(i).setCalYrToDate(DateConvertor.convertToDMY(list.get(i).getCalYrToDate()));
+			}
+
+			if (list.size() <= 0) {
+				info.setError(false);
+				info.setMsg("0");
+			} else {
+				info.setError(true);
+				info.setMsg("1");
+
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
+
+	@RequestMapping(value = { "/saveCalYear" }, method = RequestMethod.POST)
+	public @ResponseBody CalenderYear checkUniqueCalDates(@RequestBody CalenderYear year) {
+		CalenderYear  calYear = new CalenderYear();
+		try {
+			calYear = calculateYearRepository.save(year);
+			if(calYear.getIsCurrent()==1) {
+				int a = calculateYearRepository.updateOtherIds(calYear.getCalYrId());
+					
+				
+			}
+		}catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return calYear;
+		
+	}
+	
+	@RequestMapping(value = { "/getCalYearById" }, method = RequestMethod.POST)
+	public @ResponseBody CalenderYear getCalYearById(@RequestParam int calYearId) {
+		CalenderYear  calYear = new CalenderYear();
+		try {
+			calYear = calculateYearRepository.findByCalYrId(calYearId);
+		}catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return calYear;
+		
+	}
+	@RequestMapping(value = { "/getCountCalYear" }, method = RequestMethod.GET)
+	public @ResponseBody Integer getCountCalYear() {
+		int cntCalYear = 0;
+		try {
+			cntCalYear = calculateYearRepository.countCalyear();
+		}catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return cntCalYear;
+		
+	}
 }
