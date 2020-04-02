@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ats.hrmgt.claim.repository.EmployeeRelatedTblsRepo;
+import com.ats.hrmgt.claim.repository.ViewEmployeeRepo;
 import com.ats.hrmgt.model.Allowances;
 import com.ats.hrmgt.model.EmpDoctype;
 import com.ats.hrmgt.model.EmpDriver;
@@ -28,6 +29,7 @@ import com.ats.hrmgt.model.TblEmpBankInfo;
 import com.ats.hrmgt.model.TblEmpInfo;
 import com.ats.hrmgt.model.TblEmpNominees;
 import com.ats.hrmgt.model.User;
+import com.ats.hrmgt.model.ViewEmployee;
 import com.ats.hrmgt.repository.AllowancesRepo;
 import com.ats.hrmgt.repository.EmpDoctypeRepo;
 import com.ats.hrmgt.repository.EmpDriverRepo;
@@ -576,5 +578,23 @@ public class EmployeeApiController {
 
 		return docs;
 	}
+	@Autowired ViewEmployeeRepo empProfileRepo;
+	@RequestMapping(value = { "/getEmployeeAllInfo" }, method = RequestMethod.POST)
+	public @ResponseBody ViewEmployee getEmployeeAllInfo(@RequestParam int empId) {
 
+		ViewEmployee emp = new ViewEmployee();
+		try {
+
+			emp = empProfileRepo.getEmployeeDetails(empId);
+			System.out.println(emp);
+			
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return emp;
+	}
+	
+	
 }
