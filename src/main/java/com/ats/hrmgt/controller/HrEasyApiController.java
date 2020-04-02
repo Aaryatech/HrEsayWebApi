@@ -17,6 +17,7 @@ import com.ats.hrmgt.model.Designation;
 import com.ats.hrmgt.model.EmployeeMaster;
 import com.ats.hrmgt.model.GetWeekShiftChange;
 import com.ats.hrmgt.model.Info;
+import com.ats.hrmgt.model.SlabMaster;
 import com.ats.hrmgt.model.TblEmpBankInfo;
 import com.ats.hrmgt.repository.BankRepo;
 import com.ats.hrmgt.repository.ContractorRepo;
@@ -24,6 +25,7 @@ import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
 import com.ats.hrmgt.repository.EmployeeMasterRepository;
 import com.ats.hrmgt.repository.GetWeekShiftChangeRepo;
+import com.ats.hrmgt.repository.SlabMasterRepository;
 import com.ats.hrmgt.repository.TblEmpBankInfoRepo;
 
 @RestController
@@ -415,5 +417,79 @@ public class HrEasyApiController {
 		return list;
 
 	}
+	/*****************************************************************/
+	@Autowired SlabMasterRepository salSlabRepo; 
+	
+	@RequestMapping(value = { "/getAllSalSlab" }, method = RequestMethod.POST)
+	public List<SlabMaster> getAllSalSlab() {
+		List<SlabMaster> list = new ArrayList<SlabMaster>();
+		try {
+			list = salSlabRepo.getAllOrderBySlabIdDesc();
+		} catch (Exception e) {
+			System.err.println("Excep in getAllSalSlab : " + e.getMessage());
+			e.printStackTrace();
+		}
 
+		return list;
+
+	}
+
+	
+	@RequestMapping(value = { "/saveSalSlab" }, method = RequestMethod.POST)
+	public SlabMaster saveSalSlab(@RequestBody SlabMaster slab) {
+		SlabMaster salSlab = new SlabMaster();
+		try {
+			salSlab = salSlabRepo.save(slab);
+		} catch (Exception e) {
+			System.err.println("Excep in saveSalSlab : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return salSlab;
+
+	}
+	
+	@RequestMapping(value = { "/getSalSlabById" }, method = RequestMethod.POST)
+	public SlabMaster getSalSlabById(@RequestParam int slabId) {
+		SlabMaster salSlab = new SlabMaster();
+		try {
+			salSlab = salSlabRepo.findBySlabId(slabId);
+		} catch (Exception e) {
+			System.err.println("Excep in getSalSlabById : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return salSlab;
+
+	}
+
+	@RequestMapping(value = { "/deleteSalSlab" }, method = RequestMethod.POST)
+	public Info deleteSalSlab(@RequestParam int slabId) {
+
+		Info info = new Info();
+
+		try {
+
+				int res = salSlabRepo.deleteSlabSlabById(slabId);
+
+				if (res > 0) {
+					info.setError(false);
+					info.setMsg("Bank Deleted Successfully");
+				} else {
+					info.setError(true);
+					info.setMsg("Failed To Delete Bank");
+				}
+			
+			 
+
+		} catch (Exception e) {
+			info.setError(true);
+			info.setMsg("Failed To Delete Bank");
+			System.err.println("Excep in deleteBank : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return info;
+
+	}
 }

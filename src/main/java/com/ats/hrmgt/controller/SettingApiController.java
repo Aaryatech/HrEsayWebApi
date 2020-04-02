@@ -1,5 +1,8 @@
 package com.ats.hrmgt.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -142,5 +145,38 @@ public class SettingApiController {
 
 	}
 	
+	@RequestMapping(value = { "/getAllSettingLabels" }, method = RequestMethod.GET)
+	public List<Setting> getAllSettingLabels() {
+		List<Setting> list = new ArrayList<Setting>();
+		try {
+			list = settingRepo.findAllByEditableLabels();
+		} catch (Exception e) {
+			System.err.println("Excep in getAllSettingLabels : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
+	@RequestMapping(value = { "/getSettingById" }, method = RequestMethod.POST)
+	public @ResponseBody Setting getSettingById(@RequestParam("settingId") int settingId) {
+
+		Setting setting = new Setting();
+		 
+		try {  
+					
+			setting = settingRepo.findBySettingId(settingId);
+		
+			
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			 
+
+		}
+		return setting;
+
+	}
 
 }
