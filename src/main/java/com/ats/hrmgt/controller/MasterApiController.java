@@ -33,6 +33,7 @@ import com.ats.hrmgt.model.RewardDetail;
 import com.ats.hrmgt.model.RouteDriver;
 import com.ats.hrmgt.model.SelfGroup;
 import com.ats.hrmgt.model.ShiftMaster;
+import com.ats.hrmgt.model.SkillRates;
 import com.ats.hrmgt.model.WeeklyOff;
 import com.ats.hrmgt.model.WeekoffCategory;
 import com.ats.hrmgt.model.bonus.BonusMaster;
@@ -42,6 +43,7 @@ import com.ats.hrmgt.repo.IncentiveProductionRepo;
 import com.ats.hrmgt.repo.PerformanceBonusRepo;
 import com.ats.hrmgt.repo.RewardDetailRepo;
 import com.ats.hrmgt.repo.RouteDriverRepo;
+import com.ats.hrmgt.repo.SkillRatesRepo;
 import com.ats.hrmgt.repository.CalculateYearRepository;
 import com.ats.hrmgt.repository.DepartmentRepo;
 import com.ats.hrmgt.repository.DesignationRepo;
@@ -1205,4 +1207,65 @@ public class MasterApiController {
 
 	}
 	
+	@Autowired
+	SkillRatesRepo skillRatesRepo;
+	@RequestMapping(value = { "/getSkillRateList" }, method = RequestMethod.GET)
+	public @ResponseBody List<SkillRates> getSkillRateList() {
+
+		List<SkillRates> list = new ArrayList<SkillRates>();
+		try {
+
+			list = skillRatesRepo.findByDelStatus(1);
+			
+			
+			System.err.println("SkillRates---"+list.toString());
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+	@RequestMapping(value = { "/getAllEmployeeDetailSkillRate" }, method = RequestMethod.GET)
+	public List<GetEmployeeDetails> getAllEmployeeDetailSkillRate() {
+		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
+		try {
+			
+			System.err.println("skill");
+			list = getEmployeeDetailsRepo.getEmpDetailListForSkillRate();
+		} catch (Exception e) {
+			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+	
+	
+	@RequestMapping(value = { "/saveSkillRate" }, method = RequestMethod.POST)
+	public @ResponseBody SkillRates saveSkillRate(@RequestBody SkillRates skill) {
+
+		SkillRates save = new SkillRates();
+		try {
+
+			save = skillRatesRepo.saveAndFlush(skill);
+			if (save == null) {
+
+				save = new SkillRates();
+				save.setError(true);
+
+			} else {
+				save.setError(false);
+			}
+			 
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return save;
+
+	}
 }
