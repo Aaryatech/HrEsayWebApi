@@ -485,5 +485,60 @@ public interface GetEmployeeDetailsRepo extends JpaRepository<GetEmployeeDetails
 			"        ) >= DATE_FORMAT(CURDATE(), '%Y-%m'))", nativeQuery = true)
   	List<GetEmployeeDetails>   getAuthorityWiseEmpListByEmpId(@Param("empId")int empId);
 
+
+
+	@Query(value = "SELECT\n" + 
+			"    emp.*,\n" + 
+			"    dep.name_sd AS dept_name,\n" + 
+			"    dg.name_sd AS emp_desgn,\n" + 
+			"    (\n" + 
+			"    SELECT\n" + 
+			"        GROUP_CONCAT(loc.loc_name)\n" + 
+			"    FROM\n" + 
+			"        m_location loc,\n" + 
+			"        m_user u,\n" + 
+			"        m_employees empnew\n" + 
+			"    WHERE\n" + 
+			"        FIND_IN_SET(loc.loc_id, u.loc_id) AND empnew.emp_id = u.emp_id AND emp.emp_id = empnew.emp_id\n" + 
+			") AS loc_name,\n" + 
+			"con.org_name,\n" + 
+			"sht.shiftname,\n" + 
+			"emptyp.name AS emp_type_name,\n" + 
+			"saltype.sal_type_name,\n" + 
+			"succomp.name_sd AS sub_comp_name,\n" + 
+			"wocat.wo_cat_short_name AS wo_cat_name,\n" + 
+			"holidaycat.ho_cat_short_name AS ho_cat_name,\n" + 
+			"salinfo.gross_salary\n" + 
+			"FROM\n" + 
+			"    m_employees emp\n" + 
+			"INNER JOIN tbl_emp_salary_info salinfo ON\n" + 
+			"    emp.emp_id = salinfo.emp_id\n" + 
+			"LEFT JOIN m_designation dg ON\n" + 
+			"    emp.designation_id = dg.desig_id\n" + 
+			"LEFT JOIN m_department dep ON\n" + 
+			"    emp.depart_id = dep.depart_id\n" + 
+			"LEFT JOIN m_contractor con ON\n" + 
+			"    emp.contractor_id = con.contractor_id\n" + 
+			"LEFT JOIN tbl_mst_emp_types emptyp ON\n" + 
+			"    emp.emp_type = emptyp.emp_type_id\n" + 
+			"LEFT JOIN tbl_shift_timming sht ON\n" + 
+			"    emp.current_shiftid = sht.id\n" + 
+			"LEFT JOIN mst_salary_types saltype ON\n" + 
+			"    salinfo.salary_type_id = saltype.sal_type_id\n" + 
+			"LEFT JOIN tbl_mst_sub_company succomp ON\n" + 
+			"    succomp.company_id = emp.sub_cmp_id\n" + 
+			"LEFT JOIN weekoff_category wocat ON\n" + 
+			"    wocat.wo_cat_id = emp.weekend_category\n" + 
+			"LEFT JOIN holiday_category holidaycat ON\n" + 
+			"    holidaycat.ho_cat_id = emp.holiday_category\n" + 
+			"WHERE\n" + 
+			"    emp.del_status = 1 AND(\n" + 
+			"        salinfo.cmp_leaving_date IS NULL OR salinfo.cmp_leaving_date = '' OR salinfo.cmp_leaving_date = 1970 -00 -00 OR DATE_FORMAT(\n" + 
+			"            salinfo.cmp_leaving_date,\n" + 
+			"            '%Y-%m'\n" + 
+			"        ) >= DATE_FORMAT(CURDATE(), '%Y-%m'))", nativeQuery = true)
+
+	List<GetEmployeeDetails> getEmpDetailListForAccessibleLoc();
+
    
 }

@@ -26,6 +26,7 @@ import com.ats.hrmgt.repository.GetEmployeeDetailsRepo;
 import com.ats.hrmgt.repository.MstEmpTypeRepository;
 import com.ats.hrmgt.repository.SalaryTypesMasterRepo;
 import com.ats.hrmgt.repository.ShiftMasterRepository;
+import com.ats.hrmgt.repository.UserRepo;
 
 @RestController
 public class EmpShiftAssignApiController {
@@ -147,6 +148,8 @@ public class EmpShiftAssignApiController {
 		return info;
 
 	}
+	@Autowired
+	UserRepo userRepo;
      
 	@RequestMapping(value = { "/empParamAssignmentUpdate" }, method = RequestMethod.POST)
 	public @ResponseBody Info empParamAssignmentUpdate(@RequestParam("empIdList") List<Integer> empIdList,
@@ -173,6 +176,12 @@ public class EmpShiftAssignApiController {
 				res = employeeMasterRepository.assignShift(empIdList, upDateId);
 			}else if(flag==8) {
 				res = employeeMasterRepository.weekHoliCat(empIdList, upDateId);
+			}else if(flag==9) {
+				res = userRepo.updateAccLoc(empIdList, upDateId);
+			}else if(flag==10) {
+				res = employeeMasterRepository.empSkillUpdate(empIdList, upDateId);
+			}else if(flag==11) {
+				res = employeeMasterRepository.empEmpCategoryUpdate(empIdList, upDateId);
 			}else {
 				res = 0;
 			}
@@ -350,10 +359,22 @@ public class EmpShiftAssignApiController {
 	}
 	
 	
-	///******************************Asiignment of emp Related  Master*****************
+	///******************************Asiignment of emp Related  Master*****************/
+	///********************************************************************************/
 	
-	 
-	 
+	@RequestMapping(value = { "/getAllEmployeeDetailAccesibleLoc" }, method = RequestMethod.GET)
+	public List<GetEmployeeDetails> getAllEmployeeDetailAccesibleLoc() {
+		List<GetEmployeeDetails> list = new ArrayList<GetEmployeeDetails>();
+		try {
+			list = getEmployeeDetailsRepo.getEmpDetailListForAccessibleLoc();
+		} catch (Exception e) {
+			System.err.println("Excep in getAllEmployeeDetail : " + e.getMessage());
+			e.printStackTrace();
+		}
 
+		return list;
+	}
+	 
+	
 
 }

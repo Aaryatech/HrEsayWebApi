@@ -1,5 +1,7 @@
 package com.ats.hrmgt.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +23,11 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 	User getSpecificUserRecord(@Param("empId") int empId, @Param("password") String password);
 
 	User findByEmpId(int empId);
+
+	
+	@Transactional
+	@Modifying
+	@Query("update User set loc_id=:loc  WHERE emp_id IN (:empIdList)")
+	int updateAccLoc(@Param("empIdList") List<Integer> empIdList, @Param("loc") String loc);
+
 }
