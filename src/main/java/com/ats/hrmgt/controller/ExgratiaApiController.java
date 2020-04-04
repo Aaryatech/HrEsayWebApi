@@ -161,7 +161,7 @@ public class ExgratiaApiController {
 						organisation.setExgratiaPrcnt(exgretia_percentage);
 						organisation.setExgretiaApplicable("Yes");
 						organisation.setTotalExgretiaDays((int) (payableDays));
-						organisation.setTotalExgretiaWages(String.valueOf(formTot));
+						organisation.setTotalExgretiaWages(formTot);
 						organisation.setIsExgretiaFinalized(String.valueOf("0"));
 						organisation.setLoginIdExgretia(userId);
 						organisation.setLoginTimeExgretia(yyDtTm.format(date));
@@ -350,7 +350,7 @@ public class ExgratiaApiController {
 				if (isApp.equals("Yes")) {
 					payableDays = bonusCalc.getTotalBonusDays();
 					payableDays = NumberFormatting.castNumber(payableDays, insertVal);
-					exgratiaAmt1 = Double.parseDouble(bonusCalc.getTotalExgretiaWages());
+					exgratiaAmt1 = bonusCalc.getTotalExgretiaWages();
 					exgratiaAmt1 = NumberFormatting.castNumber(exgratiaAmt1, insertVal);
 
 					exgratiaAmt = (exgratiaAmt1 * exPrcnt) / 100;
@@ -383,7 +383,7 @@ public class ExgratiaApiController {
 					organisation.setExgratiaPrcnt(exPrcnt);
 					organisation.setExgretiaApplicable("Yes");
 					organisation.setTotalExgretiaDays((int) (payableDays));
-					organisation.setTotalExgretiaWages(String.valueOf(exgratiaAmt1));
+					organisation.setTotalExgretiaWages(exgratiaAmt1);
 					organisation.setIsExgretiaFinalized(String.valueOf("0"));
 					organisation.setLoginIdExgretia(userId);
 					organisation.setLoginTimeExgretia(yyDtTm.format(date));

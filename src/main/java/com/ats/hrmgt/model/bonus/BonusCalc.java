@@ -39,8 +39,8 @@ public class BonusCalc {
 	private String currDesignation;
 
 	private String bonusDetails;
-	private int totalBonusDays ;
-	private int totalBonusWages;
+	private double totalBonusDays ;
+	private double totalBonusWages;
 
 	private String bonusApplicable;
 
@@ -64,7 +64,7 @@ public class BonusCalc {
 
 	private int totalExgretiaDays;
 
-	private String totalExgretiaWages;
+	private double totalExgretiaWages;
 
 	private String exgretiaApplicable;
 
@@ -196,11 +196,11 @@ public class BonusCalc {
 		this.bonusDetails = bonusDetails;
 	}
 
-	public int getTotalBonusWages() {
+	public double getTotalBonusWages() {
 		return totalBonusWages;
 	}
 
-	public void setTotalBonusWages(int totalBonusWages) {
+	public void setTotalBonusWages(double totalBonusWages) {
 		this.totalBonusWages = totalBonusWages;
 	}
 
@@ -294,11 +294,11 @@ public class BonusCalc {
 		this.totalExgretiaDays = totalExgretiaDays;
 	}
 
-	public String getTotalExgretiaWages() {
+	public double getTotalExgretiaWages() {
 		return totalExgretiaWages;
 	}
 
-	public void setTotalExgretiaWages(String totalExgretiaWages) {
+	public void setTotalExgretiaWages(double totalExgretiaWages) {
 		this.totalExgretiaWages = totalExgretiaWages;
 	}
 
@@ -452,11 +452,11 @@ public class BonusCalc {
 	
 	
 
-	public int getTotalBonusDays() {
+	public double getTotalBonusDays() {
 		return totalBonusDays;
 	}
 
-	public void setTotalBonusDays(int totalBonusDays) {
+	public void setTotalBonusDays(double totalBonusDays) {
 		this.totalBonusDays = totalBonusDays;
 	}
 
