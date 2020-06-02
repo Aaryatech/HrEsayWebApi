@@ -86,20 +86,21 @@ public class ReportsApiController {
 			String frmDate = fromDate;
 			//System.out.println("From Date Before-----------"+frmDate);
 			String[] parts = frmDate.split("-");
-			String date = parts[0];
+			String year = parts[0];
 			String month = parts[1];
-			String year = parts[2];
-			//System.out.println("From Date After-----------"+date+"/"+month+"/"+year);
+			String date = parts[2];
+		//	System.out.println("From Date After-----------"+date+"/"+month+"/"+year);
 			
 			
 			String tDate = toDate;
-			//System.out.println("To Date Before-----------"+toDate);
+		//	System.out.println("To Date Before-----------"+toDate);
 			String[] toparts = tDate.split("-");
-			String todate = toparts[0];
+			String toyear  = toparts[0];			
 			String tomonth = toparts[1];
-			String toyear = toparts[2];
+			String todate = toparts[2];
 			
-			list = otRepo.getEmpOtDetails(companyId, month, year, tomonth ,toyear);
+		
+			list = otRepo.getEmpOtDetails(companyId, month, year, tomonth ,toyear, todate);
 
 		} catch (Exception e) {
 

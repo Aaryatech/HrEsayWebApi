@@ -33,14 +33,14 @@ public interface EmpOtRegRepo extends JpaRepository<EmpOtReg, Integer> {
 		"        CONCAT(:year, '-', :month, '-01'),\n" + 
 		"        '%Y-%m-%d'\n" + 
 		"    ) AND DATE_FORMAT(\n" + 
-		"        CONCAT(:toyear, '-', :tomonth, '-31'),\n" + 
+		"        CONCAT(:toyear, '-', :tomonth, '-', :todate),\n" + 
 		"        '%Y-%m-%d'\n" + 
 		"    ) AND emp.del_status=1 \n" + 
 		" GROUP BY atd.emp_id\n" + 
 		" ORDER BY atd.month",nativeQuery=true)
 
 List<EmpOtReg> getEmpOtDetails(@Param("companyId") int companyId, @Param("month")String month,
-		@Param("year") String year, @Param("tomonth") String tomonth, @Param("toyear") String toyear);
+		@Param("year") String year, @Param("tomonth") String tomonth, @Param("toyear") String toyear, @Param("todate") String todate);
 }
 
 	/*	SELECT \n" + 
